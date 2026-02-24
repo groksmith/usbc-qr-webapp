@@ -1,0 +1,15 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreFiles": [
+    "src/routes.tsx",
+    "src/features/auth/index.ts",
+    "src/**/*.test.{ts,tsx}",
+    "src/setupTests.ts"
+  ],
+  "ignoreDependencies": [
+    "@testing-library/dom",
+    "@testing-library/jest-dom",
+    "@testing-library/react",
+    "@testing-library/user-event"
+  ]
+}
