@@ -51,7 +51,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         <h2>QR code</h2>
         <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Value Embed QR code – scan to check balance or redeem" />
         <p style={{ fontSize: "14px", marginTop: "8px" }}>
-          Links to: <a href={code.qrUrl} target="_blank" rel="noopener noreferrer">{code.qrUrl}</a>
+          <a href={code.qrUrl} target="_blank" rel="noopener noreferrer">{code.qrUrl}</a>
         </p>
       </section>
 

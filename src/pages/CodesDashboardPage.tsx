@@ -2,13 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getValueEmbedCodes, getSelfTitlingCodes } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, CodeSetStatus } from "../types";
-import { pathToValueEmbedDetail, pathToSelfTitlingDetail } from "../constants/routes";
+import { pathToSelfTitlingDetail } from "../constants/routes";
 import { Button, Tabs, StickerExportModal, SortIcon, SearchIcon } from "../components/ui";
 import type { ValueEmbedCodeExportData } from "../components/ui/StickerExportModal";
 import { STATUS_LABELS, STATUS_COLORS } from "../constants/status";
 import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExport";
 import csvIcon from "../assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
+import { ValueEmbedDetailSidebar } from "../components/ValueEmbedDetailSidebar";
 
 type DashboardTab = "value-embed" | "self-titling";
 
@@ -22,6 +23,7 @@ export function CodesDashboardPage(): React.ReactElement {
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
   const [stickerValueEmbedCode, setStickerValueEmbedCode] = useState<ValueEmbedCodeExportData | null>(null);
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
+  const [viewDetailCodeId, setViewDetailCodeId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -146,13 +148,6 @@ export function CodesDashboardPage(): React.ReactElement {
             <Button onClick={() => setGenerateModalOpen(true)}>
               Generate code
             </Button>
-            <Button
-              variant="outline"
-              onClick={() => setGenerateModalOpen(true)}
-              style={{ color: "#000000", border: "1px solid #000000" }}
-            >
-              Bulk generate
-            </Button>
             <button
               type="button"
               onClick={() => {
@@ -167,7 +162,7 @@ export function CodesDashboardPage(): React.ReactElement {
                 borderRadius: "12px",
                 border: "none",
                 outline: "none",
-                backgroundColor: "#777777",
+                backgroundColor: "#DFDFDF",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
@@ -220,7 +215,7 @@ export function CodesDashboardPage(): React.ReactElement {
                       {new Date(row.createdAt).toLocaleDateString()}
                     </td>
                     <td style={{ ...tdStyle, textAlign: "right" }}>
-                      <Link to={pathToValueEmbedDetail(row.id)} style={{ color: "var(--color-primary)", marginRight: "12px" }}>View</Link>
+                      <button type="button" onClick={() => setViewDetailCodeId(row.id)} style={{ background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", marginRight: "12px" }}>View</button>
                       <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", marginRight: "12px" }}>Export</button>
                       {row.status === "active" && (
                         <button type="button" style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>Cancel</button>
@@ -294,6 +289,11 @@ export function CodesDashboardPage(): React.ReactElement {
         open={generateModalOpen}
         onClose={() => setGenerateModalOpen(false)}
         defaultCodeType={activeTab}
+      />
+      <ValueEmbedDetailSidebar
+        open={!!viewDetailCodeId}
+        onClose={() => setViewDetailCodeId(null)}
+        codeId={viewDetailCodeId}
       />
     </div>
   );

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { getSelfTitlingCodeById, transferSelfTitling } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
 import { ROUTES, pathToItemProfile } from "../constants/routes";
-import { Button, Badge, Input, CopyButton, StickerExportModal } from "../components/ui";
+import { Button, Badge, Input, CopyButton, StickerExportModal, QRCodeDisplay } from "../components/ui";
 import { validateUnsName, UNS_NAME_HINT } from "../utils/validation";
 
 export function SelfTitlingDetailPage(): React.ReactElement {
@@ -72,21 +72,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
 
       <section style={{ marginTop: "24px" }}>
         <h2>QR code</h2>
-        <div
-          style={{
-            width: "160px",
-            height: "160px",
-            backgroundColor: "#f3f4f6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "8px",
-            fontFamily: "monospace",
-            fontSize: "12px",
-          }}
-        >
-          QR placeholder
-        </div>
+        <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Item profile QR code" />
         <p style={{ fontSize: "14px", marginTop: "8px" }}>Links to item profile.</p>
       </section>
 

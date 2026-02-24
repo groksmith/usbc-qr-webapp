@@ -33,6 +33,7 @@ export function Button({
   return (
     <button
       type="button"
+      className={`btn btn--${variant}`}
       style={{ ...base, ...variants[variant], ...style }}
       {...props}
     >

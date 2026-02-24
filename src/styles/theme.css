@@ -100,3 +100,21 @@ input:-ms-input-placeholder {
   font-weight: 500;
   color: #99a1af;
 }
+
+/* Button hover effects */
+.btn {
+  transition: filter 0.15s ease, background-color 0.15s ease;
+}
+.btn:hover {
+  filter: brightness(0.94);
+}
+.btn:active {
+  filter: brightness(0.9);
+}
+.btn--outline:hover {
+  filter: none;
+  background-color: rgba(93, 159, 181, 0.12) !important;
+}
+.btn--outline:active {
+  background-color: rgba(93, 159, 181, 0.18) !important;
+}

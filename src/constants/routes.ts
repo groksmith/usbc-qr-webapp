@@ -8,7 +8,6 @@ export const ROUTES = {
   CODES_VALUE_EMBED_DETAIL: "/codes/value-embed/:id",
   CODES_SELF_TITLING_NEW: "/codes/self-titling/new",
   CODES_SELF_TITLING_DETAIL: "/codes/self-titling/:id",
-  WALLET: "/wallet",
   CHECK_BALANCE: "/check-balance",
   REDEEM: "/redeem",
   ITEM_PROFILE: "/item/:publicCode",

@@ -9,3 +9,4 @@ export { SearchIcon } from "./SearchIcon";
 export { SortIcon } from "./SortIcon";
 export { DownloadIcon } from "./DownloadIcon";
 export { QRCodeDisplay } from "./QRCodeDisplay";
+export { ViewQRCodeSidebar } from "./ViewQRCodeSidebar";

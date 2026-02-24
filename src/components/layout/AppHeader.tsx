@@ -137,12 +137,6 @@ export function AppHeader(): React.ReactElement {
           >
             Codes
           </NavLink>
-          <NavLink
-            to={ROUTES.WALLET}
-            style={({ isActive }) => headerStyles.navLink(isActive)}
-          >
-            Wallet
-          </NavLink>
         </nav>
       </div>
 

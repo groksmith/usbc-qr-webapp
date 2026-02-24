@@ -6,7 +6,6 @@ import {
   CodesDashboardPage,
   ValueEmbedDetailPage,
   SelfTitlingDetailPage,
-  WalletPage,
   CheckBalancePage,
   RedeemPage,
   ItemProfilePage,
@@ -33,7 +32,6 @@ export function RoutesConfig(): React.ReactElement {
             path={ROUTES.CODES_SELF_TITLING_DETAIL}
             element={<SelfTitlingDetailPage />}
           />
-          <Route path={ROUTES.WALLET} element={<WalletPage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
