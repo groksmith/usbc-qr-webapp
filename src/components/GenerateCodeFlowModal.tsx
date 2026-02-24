@@ -38,23 +38,24 @@ const overlayStyle: React.CSSProperties = {
 const shellStyle: React.CSSProperties = {
   width: "100%",
   maxWidth: "420px",
-  borderRadius: "20px",
+  borderRadius: "24px",
   background: "linear-gradient(135deg, rgba(193, 220, 230, 0.65), rgba(210, 232, 240, 0.55))",
   backdropFilter: "blur(16px)",
   WebkitBackdropFilter: "blur(16px)",
   border: "none",
   outline: "none",
-  boxShadow: "0 8px 40px rgba(0,0,0,0.10)",
-  padding: "20px 24px 24px",
+  boxShadow: "0 8px 48px rgba(0,0,0,0.06)",
+  padding: "24px 28px 28px",
 };
 
 const innerCardStyle: React.CSSProperties = {
   backgroundColor: "#FFFFFF",
-  borderRadius: "16px",
+  borderRadius: "20px",
   paddingTop: "36px",
   paddingRight: "40px",
   paddingBottom: "40px",
   paddingLeft: "40px",
+  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
 };
 
 const contentWrapStyle: React.CSSProperties = {

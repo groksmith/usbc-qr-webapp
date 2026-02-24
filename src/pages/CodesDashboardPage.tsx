@@ -49,43 +49,44 @@ export function CodesDashboardPage(): React.ReactElement {
   ];
 
   const cardStyle: React.CSSProperties = {
-    backgroundColor: "rgba(255, 255, 255, 0.9)",
-    borderRadius: "20px",
-    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
-    padding: "32px",
+    backgroundColor: "rgba(255, 255, 255, 0.95)",
+    borderRadius: "12px",
+    boxShadow: "var(--shadow-card)",
+    padding: "32px 40px 40px",
   };
 
   const tableWrapStyle: React.CSSProperties = {
     overflow: "hidden",
-    border: "1px solid #E0E0E0",
+    border: "1px solid #E8E8E8",
     borderRadius: "0 0 12px 12px",
     backgroundColor: "#FFFFFF",
+    boxShadow: "var(--shadow-soft)",
   };
 
   const thStyle: React.CSSProperties = {
-    padding: "14px 16px",
+    padding: "16px 20px",
     textAlign: "left",
-    backgroundColor: "#F8F8F8",
-    color: "#5A5A5A",
+    backgroundColor: "#F8FAFA",
+    color: "var(--color-body)",
     fontWeight: 600,
     fontSize: "14px",
-    borderBottom: "1px solid #E8E8E8",
+    borderBottom: "1px solid #EEF2F2",
   };
 
   const getRowStyle = (index: number): React.CSSProperties => ({
-    backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F6FCFC",
-    borderBottom: "1px solid #E8E8E8",
+    backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F8FCFC",
+    borderBottom: "1px solid #EEF2F2",
   });
 
   const tdStyle: React.CSSProperties = {
-    padding: "14px 16px",
+    padding: "16px 20px",
     fontSize: "14px",
-    color: "#333333",
+    color: "var(--color-heading)",
   };
 
   return (
     <div>
-      <div style={cardStyle}>
+      <div className="card" style={cardStyle}>
         <div
           style={{
             display: "flex",
@@ -214,13 +215,14 @@ export function CodesDashboardPage(): React.ReactElement {
                     <td style={tdStyle}>
                       {new Date(row.createdAt).toLocaleDateString()}
                     </td>
-                    <td style={{ ...tdStyle, textAlign: "right" }}>
-                      <button type="button" onClick={() => setViewDetailCodeId(row.id)} style={{ background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", marginRight: "12px" }}>View</button>
-                      <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", marginRight: "12px" }}>Export</button>
-                      {row.status === "active" && (
-                        <button type="button" style={{ background: "none", border: "none", color: "#6b7280", cursor: "pointer" }}>Cancel</button>
-                      )}
-                      <span style={{ color: "#9ca3af", marginLeft: "8px" }}>›</span>
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                        <button type="button" onClick={() => setViewDetailCodeId(row.id)} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>View</button>
+                        <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Export</button>
+                        {row.status === "active" && (
+                          <button type="button" style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Cancel</button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
@@ -259,11 +261,12 @@ export function CodesDashboardPage(): React.ReactElement {
                     <td style={tdStyle}>
                       {new Date(row.createdAt).toLocaleDateString()}
                     </td>
-                    <td style={{ ...tdStyle, textAlign: "right" }}>
-                      <Link to={pathToSelfTitlingDetail(row.id)} style={{ color: "var(--color-primary)", marginRight: "12px" }}>View</Link>
-                      <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", marginRight: "12px" }}>Export</button>
-                      <button type="button" style={{ background: "none", border: "none", color: "var(--color-primary)", cursor: "pointer", marginRight: "8px" }}>Transfer</button>
-                      <span style={{ color: "#9ca3af" }}>›</span>
+                    <td style={tdStyle}>
+                      <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+                        <Link to={pathToSelfTitlingDetail(row.id)} style={{ color: "#09090b", textDecoration: "none" }}>View</Link>
+                        <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Export</button>
+                        <button type="button" style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Transfer</button>
+                      </div>
                     </td>
                   </tr>
                 ))}

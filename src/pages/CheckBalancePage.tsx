@@ -60,11 +60,9 @@ export function CheckBalancePage(): React.ReactElement {
 
       {searched && !loading && result && (
         <div
+          className="card"
           style={{
-            padding: "24px",
-            backgroundColor: "var(--color-secondary)",
-            borderRadius: "8px",
-            boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
+            padding: "28px 32px",
             marginBottom: "24px",
           }}
         >
@@ -88,11 +86,10 @@ export function CheckBalancePage(): React.ReactElement {
       )}
 
       <section
+        className="card"
         style={{
           marginTop: "32px",
-          padding: "16px",
-          backgroundColor: "rgba(255,255,255,0.6)",
-          borderRadius: "8px",
+          padding: "24px 28px",
         }}
       >
         <h2>How to redeem</h2>

@@ -26,14 +26,14 @@ const SIDEBAR_TRANSITION_MS = 300;
 const shellStyleBase: React.CSSProperties = {
   width: "100%",
   maxWidth: "520px",
-  borderRadius: "20px 0 0 20px",
+  borderRadius: "24px 0 0 24px",
   background: "linear-gradient(135deg, rgba(193, 220, 230, 0.65), rgba(210, 232, 240, 0.55))",
   backdropFilter: "blur(16px)",
   WebkitBackdropFilter: "blur(16px)",
   border: "none",
   outline: "none",
-  boxShadow: "-4px 0 40px rgba(0,0,0,0.10)",
-  padding: "20px 24px 24px",
+  boxShadow: "-4px 0 48px rgba(0,0,0,0.06)",
+  padding: "24px 28px 28px",
   display: "flex",
   flexDirection: "column",
   overflow: "hidden",
@@ -42,10 +42,11 @@ const shellStyleBase: React.CSSProperties = {
 
 const innerCardStyle: React.CSSProperties = {
   backgroundColor: "#FFFFFF",
-  borderRadius: "16px",
-  padding: "24px 32px 32px",
+  borderRadius: "20px",
+  padding: "28px 36px 36px",
   flex: "1 1 auto",
   overflow: "auto",
+  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
 };
 
 const headerRowStyle: React.CSSProperties = {

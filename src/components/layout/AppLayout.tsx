@@ -6,7 +6,7 @@ export function AppLayout(): React.ReactElement {
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
       <AppHeader />
-      <main style={{ flex: 1, padding: "24px" }}>
+      <main style={{ flex: 1, padding: "28px 32px" }}>
         <Outlet />
       </main>
     </div>

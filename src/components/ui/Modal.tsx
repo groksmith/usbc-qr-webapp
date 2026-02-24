@@ -28,12 +28,12 @@ export function Modal({ open, onClose, title, children }: ModalProps): React.Rea
       <div
         style={{
           backgroundColor: "var(--color-secondary)",
-          borderRadius: "8px",
-          padding: "24px",
+          borderRadius: "var(--radius-card-inner)",
+          padding: "28px 32px 32px",
           maxWidth: "90vw",
           maxHeight: "90vh",
           overflow: "auto",
-          boxShadow: "0 4px 20px rgba(0,0,0,0.2)",
+          boxShadow: "var(--shadow-elevated)",
         }}
         onClick={(e) => e.stopPropagation()}
       >
