@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import { getValueEmbedCodes, getSelfTitlingCodes } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, CodeSetStatus } from "../types";
-import { Button, Tabs, StickerExportModal, SortIcon, SearchIcon, CopyIconButton } from "../components/ui";
+import { Button, Tabs, StickerExportModal, SearchIcon, CopyIconButton } from "../components/ui";
 import type { ValueEmbedCodeExportData } from "../components/ui/StickerExportModal";
 import { STATUS_LABELS, STATUS_COLORS } from "../constants/status";
 import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExport";
@@ -14,6 +13,12 @@ import { SelfTitlingDetailSidebar } from "../components/SelfTitlingDetailSidebar
 import { TransferTitleModal } from "../components/TransferTitleModal";
 
 type DashboardTab = "value-embed" | "self-titling";
+
+const PAGE_SIZE = 10;
+
+type ValueEmbedSortColumn = "label" | "publicCode" | "value" | "status" | "createdAt" | "expiration";
+type SelfTitlingSortColumn = "itemTag" | "unsName" | "publicCode" | "status" | "createdAt";
+type SortDirection = "asc" | "desc";
 
 export function CodesDashboardPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<DashboardTab>("value-embed");
@@ -29,6 +34,21 @@ export function CodesDashboardPage(): React.ReactElement {
   const [viewDetailCodeId, setViewDetailCodeId] = useState<string | null>(null);
   const [viewDetailSelfTitlingId, setViewDetailSelfTitlingId] = useState<string | null>(null);
   const [transferModal, setTransferModal] = useState<{ codeId: string; itemTag: string; publicCode: string } | null>(null);
+  const [valueEmbedSort, setValueEmbedSort] = useState<{ column: ValueEmbedSortColumn; direction: SortDirection }>({
+    column: "createdAt",
+    direction: "desc",
+  });
+  const [selfTitlingSort, setSelfTitlingSort] = useState<{ column: SelfTitlingSortColumn; direction: SortDirection }>({
+    column: "createdAt",
+    direction: "desc",
+  });
+  const [valueEmbedPage, setValueEmbedPage] = useState(1);
+  const [selfTitlingPage, setSelfTitlingPage] = useState(1);
+
+  useEffect(() => {
+    setValueEmbedPage(1);
+    setSelfTitlingPage(1);
+  }, [statusFilter, search]);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,6 +67,59 @@ export function CodesDashboardPage(): React.ReactElement {
       cancelled = true;
     };
   }, [statusFilter, search]);
+
+  const sortValueEmbed = (list: ValueEmbedCodeSet[], col: ValueEmbedSortColumn, dir: SortDirection): ValueEmbedCodeSet[] => {
+    return [...list].sort((a, b) => {
+      let cmp = 0;
+      if (col === "value") cmp = a.value - b.value;
+      else if (col === "createdAt" || col === "expiration")
+        cmp = new Date(a[col] ?? 0).getTime() - new Date(b[col] ?? 0).getTime();
+      else cmp = String(a[col as keyof ValueEmbedCodeSet] ?? "").localeCompare(String(b[col as keyof ValueEmbedCodeSet] ?? ""));
+      return dir === "asc" ? cmp : -cmp;
+    });
+  };
+  const sortSelfTitling = (list: SelfTitlingCodeSet[], col: SelfTitlingSortColumn, dir: SortDirection): SelfTitlingCodeSet[] => {
+    return [...list].sort((a, b) => {
+      let cmp = 0;
+      if (col === "createdAt") cmp = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      else cmp = String(a[col] ?? "").localeCompare(String(b[col] ?? ""));
+      return dir === "asc" ? cmp : -cmp;
+    });
+  };
+
+  const sortedValueEmbedList = useMemo(
+    () => sortValueEmbed(valueEmbedList, valueEmbedSort.column, valueEmbedSort.direction),
+    [valueEmbedList, valueEmbedSort]
+  );
+  const sortedSelfTitlingList = useMemo(
+    () => sortSelfTitling(selfTitlingList, selfTitlingSort.column, selfTitlingSort.direction),
+    [selfTitlingList, selfTitlingSort]
+  );
+
+  const valueEmbedTotalPages = Math.max(1, Math.ceil(sortedValueEmbedList.length / PAGE_SIZE));
+  const selfTitlingTotalPages = Math.max(1, Math.ceil(sortedSelfTitlingList.length / PAGE_SIZE));
+
+  const paginatedValueEmbedList = useMemo(
+    () => sortedValueEmbedList.slice((valueEmbedPage - 1) * PAGE_SIZE, valueEmbedPage * PAGE_SIZE),
+    [sortedValueEmbedList, valueEmbedPage]
+  );
+  const paginatedSelfTitlingList = useMemo(
+    () => sortedSelfTitlingList.slice((selfTitlingPage - 1) * PAGE_SIZE, selfTitlingPage * PAGE_SIZE),
+    [sortedSelfTitlingList, selfTitlingPage]
+  );
+
+  const handleValueEmbedSort = (column: ValueEmbedSortColumn): void => {
+    setValueEmbedSort((prev) => ({
+      column,
+      direction: prev.column === column ? (prev.direction === "asc" ? "desc" : "asc") : "desc",
+    }));
+  };
+  const handleSelfTitlingSort = (column: SelfTitlingSortColumn): void => {
+    setSelfTitlingSort((prev) => ({
+      column,
+      direction: prev.column === column ? (prev.direction === "asc" ? "desc" : "asc") : "desc",
+    }));
+  };
 
   const tabs = [
     { id: "value-embed" as const, label: "Value Embed" },
@@ -72,10 +145,16 @@ export function CodesDashboardPage(): React.ReactElement {
     padding: "16px 20px",
     textAlign: "left",
     backgroundColor: "#F8FAFA",
-    color: "var(--color-body)",
+    color: "#64748b",
     fontWeight: 600,
     fontSize: "14px",
     borderBottom: "1px solid #EEF2F2",
+  };
+
+  const sortableThStyle: React.CSSProperties = {
+    ...thStyle,
+    cursor: "pointer",
+    userSelect: "none",
   };
 
   const getRowStyle = (index: number): React.CSSProperties => ({
@@ -87,6 +166,24 @@ export function CodesDashboardPage(): React.ReactElement {
     padding: "16px 20px",
     fontSize: "14px",
     color: "var(--color-heading)",
+  };
+
+  const paginationStyle: React.CSSProperties = {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    padding: "16px 20px",
+    borderTop: "1px solid #EEF2F2",
+  };
+
+  const paginationBtnStyle: React.CSSProperties = {
+    padding: "6px 14px",
+    fontSize: "14px",
+    borderRadius: "8px",
+    border: "1px solid #d1d5db",
+    backgroundColor: "#f3f4f6",
+    cursor: "pointer",
+    color: "#4b5563",
   };
 
   return (
@@ -202,17 +299,29 @@ export function CodesDashboardPage(): React.ReactElement {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
-                  <th style={thStyle}>Description tag <SortIcon /></th>
-                  <th style={thStyle}>Public code <SortIcon /></th>
-                  <th style={thStyle}>Value <SortIcon /></th>
-                  <th style={thStyle}>Status <SortIcon /></th>
-                  <th style={thStyle}>Created <SortIcon /></th>
-                  <th style={thStyle}>Expiration <SortIcon /></th>
+                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("label")} aria-sort={valueEmbedSort.column === "label" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Description tag
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("publicCode")} aria-sort={valueEmbedSort.column === "publicCode" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Public code
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("value")} aria-sort={valueEmbedSort.column === "value" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Value
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("status")} aria-sort={valueEmbedSort.column === "status" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Status
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("createdAt")} aria-sort={valueEmbedSort.column === "createdAt" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Created
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("expiration")} aria-sort={valueEmbedSort.column === "expiration" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Expiration
+                  </th>
                   <th style={thStyle}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {valueEmbedList.map((row, index) => (
+                {paginatedValueEmbedList.map((row, index) => (
                   <tr key={row.id} style={getRowStyle(index)}>
                     <td style={tdStyle}>{row.label}</td>
                     <td style={{ ...tdStyle, fontFamily: "monospace" }}>
@@ -246,6 +355,33 @@ export function CodesDashboardPage(): React.ReactElement {
                 ))}
               </tbody>
             </table>
+            {sortedValueEmbedList.length > 0 && (
+              <div style={paginationStyle}>
+                <span style={{ fontSize: "14px", color: "#6b7280" }}>
+                  Showing {(valueEmbedPage - 1) * PAGE_SIZE + 1} to{" "}
+                  {Math.min(valueEmbedPage * PAGE_SIZE, sortedValueEmbedList.length)} of{" "}
+                  {sortedValueEmbedList.length} codes
+                </span>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    type="button"
+                    style={{ ...paginationBtnStyle, ...(valueEmbedPage <= 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
+                    onClick={() => setValueEmbedPage((p) => Math.max(1, p - 1))}
+                    disabled={valueEmbedPage <= 1}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    style={{ ...paginationBtnStyle, ...(valueEmbedPage >= valueEmbedTotalPages ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
+                    onClick={() => setValueEmbedPage((p) => Math.min(valueEmbedTotalPages, p + 1))}
+                    disabled={valueEmbedPage >= valueEmbedTotalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           {valueEmbedList.length === 0 && (
             <p style={{ padding: "24px", color: "var(--color-body)" }}>No Value Embed codes found.</p>
@@ -257,25 +393,35 @@ export function CodesDashboardPage(): React.ReactElement {
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
               <thead>
                 <tr>
-                  <th style={thStyle}>Item tag <SortIcon /></th>
-                  <th style={thStyle}>UNS name <SortIcon /></th>
-                  <th style={thStyle}>Public code <SortIcon /></th>
-                  <th style={thStyle}>Status <SortIcon /></th>
-                  <th style={thStyle}>Created <SortIcon /></th>
+                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("itemTag")} aria-sort={selfTitlingSort.column === "itemTag" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Item tag
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("publicCode")} aria-sort={selfTitlingSort.column === "publicCode" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Public code
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("unsName")} aria-sort={selfTitlingSort.column === "unsName" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    UNS name
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("status")} aria-sort={selfTitlingSort.column === "status" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Status
+                  </th>
+                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("createdAt")} aria-sort={selfTitlingSort.column === "createdAt" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                    Created
+                  </th>
                   <th style={thStyle}>Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {selfTitlingList.map((row, index) => (
+                {paginatedSelfTitlingList.map((row, index) => (
                   <tr key={row.id} style={getRowStyle(index)}>
                     <td style={tdStyle}>{row.itemTag}</td>
-                    <td style={tdStyle}>{row.unsName}</td>
                     <td style={{ ...tdStyle, fontFamily: "monospace" }}>
                       <span style={{ display: "inline-flex", alignItems: "center" }}>
                         {row.publicCode}
                         <CopyIconButton text={row.publicCode} />
                       </span>
                     </td>
+                    <td style={tdStyle}>{row.unsName}</td>
                     <td style={tdStyle}>
                       <span style={{ color: STATUS_COLORS[row.status], fontWeight: 500 }}>
                         {STATUS_LABELS[row.status]}
@@ -295,6 +441,33 @@ export function CodesDashboardPage(): React.ReactElement {
                 ))}
               </tbody>
             </table>
+            {sortedSelfTitlingList.length > 0 && (
+              <div style={paginationStyle}>
+                <span style={{ fontSize: "14px", color: "#6b7280" }}>
+                  Showing {(selfTitlingPage - 1) * PAGE_SIZE + 1} to{" "}
+                  {Math.min(selfTitlingPage * PAGE_SIZE, sortedSelfTitlingList.length)} of{" "}
+                  {sortedSelfTitlingList.length} codes
+                </span>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <button
+                    type="button"
+                    style={{ ...paginationBtnStyle, ...(selfTitlingPage <= 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
+                    onClick={() => setSelfTitlingPage((p) => Math.max(1, p - 1))}
+                    disabled={selfTitlingPage <= 1}
+                  >
+                    Previous
+                  </button>
+                  <button
+                    type="button"
+                    style={{ ...paginationBtnStyle, ...(selfTitlingPage >= selfTitlingTotalPages ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
+                    onClick={() => setSelfTitlingPage((p) => Math.min(selfTitlingTotalPages, p + 1))}
+                    disabled={selfTitlingPage >= selfTitlingTotalPages}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
           {selfTitlingList.length === 0 && (
             <p style={{ padding: "24px", color: "var(--color-body)" }}>No Self-Titling codes found.</p>
