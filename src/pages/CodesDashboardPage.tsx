@@ -20,6 +20,7 @@ export function CodesDashboardPage(): React.ReactElement {
   const [valueEmbedList, setValueEmbedList] = useState<ValueEmbedCodeSet[]>([]);
   const [selfTitlingList, setSelfTitlingList] = useState<SelfTitlingCodeSet[]>([]);
   const [statusFilter, setStatusFilter] = useState<CodeSetStatus | "">("");
+  const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
@@ -135,9 +136,12 @@ export function CodesDashboardPage(): React.ReactElement {
               </span>
               <input
                 type="search"
-                placeholder="Search by tag or code..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by tag or code... (press Enter to search)"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") setSearch(searchInput.trim());
+                }}
                 style={{
                   height: "44px",
                   padding: "0 14px 0 40px",
