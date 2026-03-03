@@ -5,6 +5,7 @@ import {
   Button,
   Badge,
   CopyButton,
+  CopyIconButton,
   StickerExportModal,
   QRCodeDisplay,
 } from "./ui";
@@ -27,26 +28,15 @@ const shellStyleBase: React.CSSProperties = {
   width: "100%",
   maxWidth: "520px",
   borderRadius: "24px 0 0 24px",
-  background: "linear-gradient(135deg, rgba(193, 220, 230, 0.65), rgba(210, 232, 240, 0.55))",
-  backdropFilter: "blur(16px)",
-  WebkitBackdropFilter: "blur(16px)",
+  background: "#FFFFFF",
   border: "none",
   outline: "none",
-  boxShadow: "-4px 0 48px rgba(0,0,0,0.06)",
+  boxShadow: "-4px 0 48px rgba(0,0,0,0.10)",
   padding: "24px 28px 28px",
   display: "flex",
   flexDirection: "column",
-  overflow: "hidden",
-  transition: `transform ${SIDEBAR_TRANSITION_MS}ms ease-out`,
-};
-
-const innerCardStyle: React.CSSProperties = {
-  backgroundColor: "#FFFFFF",
-  borderRadius: "20px",
-  padding: "28px 36px 36px",
-  flex: "1 1 auto",
   overflow: "auto",
-  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+  transition: `transform ${SIDEBAR_TRANSITION_MS}ms ease-out`,
 };
 
 const headerRowStyle: React.CSSProperties = {
@@ -157,8 +147,7 @@ export function ValueEmbedDetailSidebar({
     <>
       <div style={overlayStyle} onClick={handleClose} role="dialog" aria-modal="true" aria-label="Value Embed code detail">
         <div style={{ ...shellStyleBase, transform: shellTransform }} onClick={(e) => e.stopPropagation()}>
-          <div style={innerCardStyle}>
-            <div style={headerRowStyle}>
+          <div style={headerRowStyle}>
               <h2 style={titleStyle}>Value Embed Code</h2>
               <button type="button" onClick={handleClose} style={closeBtnStyle} aria-label="Close">
                 ×
@@ -184,9 +173,9 @@ export function ValueEmbedDetailSidebar({
 
                 <section style={sectionStyle}>
                   <h3 style={sectionTitleStyle}>Public code</h3>
-                  <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
                     <code style={{ fontFamily: "monospace", fontSize: "14px" }}>{code.publicCode}</code>
-                    <CopyButton text={code.publicCode} />
+                    <CopyIconButton text={code.publicCode} />
                   </div>
                 </section>
 
@@ -268,7 +257,6 @@ export function ValueEmbedDetailSidebar({
                 </p>
               </>
             )}
-          </div>
         </div>
       </div>
 

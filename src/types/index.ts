@@ -9,6 +9,7 @@ export type {
   RedeemParams,
   RedeemResult,
   ItemProfilePublic,
+  BulkValueEmbedItem,
   CreateValueEmbedParams,
   CreateSelfTitlingParams,
 } from "./codeSet";

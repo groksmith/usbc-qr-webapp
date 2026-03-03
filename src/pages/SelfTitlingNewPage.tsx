@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createSelfTitlingCodes } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
 import { ROUTES, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input } from "../components/ui";
+import { Button, Input, SearchInput } from "../components/ui";
 
 const STEPS = ["Type", "Configuration", "Review", "Create"] as const;
 
@@ -11,7 +11,6 @@ export function SelfTitlingNewPage(): React.ReactElement {
   const [step, setStep] = useState(0);
   const [itemTag, setItemTag] = useState("");
   const [unsName, setUnsName] = useState("");
-  const [quantity, setQuantity] = useState("1");
   const [created, setCreated] = useState<SelfTitlingCodeSet[] | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -22,7 +21,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
       const result = await createSelfTitlingCodes({
         itemTag,
         unsName,
-        quantity: Math.max(1, parseInt(quantity, 10) || 1),
+        quantity: 1,
       });
       setCreated(result.codes);
     } finally {
@@ -34,7 +33,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
     return (
       <div>
         <h1>Self-Titling code created</h1>
-        <p>{created.length === 1 ? "Code set created." : `Created ${created.length} code sets.`}</p>
+        <p>Code set created.</p>
         <ul style={{ marginBottom: "24px" }}>
           {created.map((c) => (
             <li key={c.id}>
@@ -74,18 +73,12 @@ export function SelfTitlingNewPage(): React.ReactElement {
             onChange={(e) => setItemTag(e.target.value)}
             placeholder="e.g. Conference badge"
           />
-          <Input
+          <SearchInput
             label="UNS name (required)"
+            required
             value={unsName}
             onChange={(e) => setUnsName(e.target.value)}
             placeholder="e.g. alice.uns"
-          />
-          <Input
-            label="Quantity (bulk)"
-            type="number"
-            min={1}
-            value={quantity}
-            onChange={(e) => setQuantity(e.target.value)}
           />
           <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
             <Button variant="outline" onClick={() => setStep(0)}>Back</Button>
@@ -103,7 +96,6 @@ export function SelfTitlingNewPage(): React.ReactElement {
         <div>
           <p><strong>Item tag:</strong> {itemTag}</p>
           <p><strong>UNS name:</strong> {unsName}</p>
-          <p><strong>Quantity:</strong> {quantity}</p>
           <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
             <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
             <Button onClick={handleCreate} disabled={loading}>

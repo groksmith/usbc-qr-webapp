@@ -12,7 +12,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function Input({ label, error, hint, required, id, style, ...props }: InputProps): React.ReactElement {
   const inputId = id ?? (label ? label.replace(/\s+/g, "-").toLowerCase() : undefined);
   return (
-    <div style={{ marginBottom: "16px", width: "320px" }}>
+    <div style={{ marginBottom: "16px", width: "100%" }}>
       {label && (
         <>
           <label
@@ -38,8 +38,8 @@ export function Input({ label, error, hint, required, id, style, ...props }: Inp
       <input
         id={inputId}
         style={{
-          width: "320px",
-          maxWidth: "320px",
+          width: "100%",
+          boxSizing: "border-box",
           padding: "10px 14px",
           fontSize: "14px",
           borderRadius: "12px",

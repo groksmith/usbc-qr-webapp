@@ -37,8 +37,8 @@ export function Tabs({ tabs, activeId, onChange, variant = "default" }: TabsProp
             style={{
               display: isDashboard ? "flex" : undefined,
               alignItems: isDashboard ? "center" : undefined,
-              padding: isDashboard ? "0 20px" : "10px 20px",
-              height: isDashboard ? "44px" : undefined,
+              padding: isDashboard ? "0 30px" : "15px 30px",
+              height: isDashboard ? "54px" : undefined,
               fontSize: "16px",
               fontWeight: isDashboard ? 600 : (isActive ? 600 : 400),
               color: isActive ? (isDashboard ? "#FFFFFF" : "var(--color-primary)") : (isDashboard ? "#333333" : "var(--color-body)"),

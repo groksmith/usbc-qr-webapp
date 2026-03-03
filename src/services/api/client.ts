@@ -96,12 +96,15 @@ export async function createValueEmbedCodes(
   params: CreateValueEmbedParams
 ): Promise<{ codes: ValueEmbedCodeSet[] }> {
   await delay();
-  const quantity = params.quantity ?? 1;
+  const hasBulk = params.bulkItems && params.bulkItems.length > 0;
+  const quantity = hasBulk ? params.bulkItems!.length : (params.quantity ?? 1);
   const codes: ValueEmbedCodeSet[] = [];
   const baseUrl =
     typeof window !== "undefined" ? window.location.origin : "https://example.com";
 
   for (let i = 0; i < quantity; i++) {
+    const itemValue = hasBulk ? params.bulkItems![i].value : params.value;
+    const itemExpiration = hasBulk ? params.bulkItems![i].expiration : params.expiration;
     const id = `ve-new-${Date.now()}-${i}`;
     const publicCode = `VE-NEW-${randomSegment()}-${randomSegment()}-${randomSegment()}`;
     const privateCode = `priv-${randomSegment()}-${randomSegment()}`;
@@ -117,9 +120,9 @@ export async function createValueEmbedCodes(
       updatedAt: now,
       qrUrl: `${baseUrl}/check-balance?code=${encodeURIComponent(publicCode)}`,
       fundingSourceId: params.fundingSourceId,
-      value: params.value,
-      balance: params.value,
-      expiration: params.expiration,
+      value: itemValue,
+      balance: itemValue,
+      expiration: itemExpiration,
     };
     codes.push(code);
     valueEmbedStore.push(code);

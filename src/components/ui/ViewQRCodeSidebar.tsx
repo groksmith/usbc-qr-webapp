@@ -20,25 +20,15 @@ const shellStyleBase: React.CSSProperties = {
   width: "100%",
   maxWidth: "420px",
   borderRadius: "24px 0 0 24px",
-  background: "linear-gradient(135deg, rgba(193, 220, 230, 0.65), rgba(210, 232, 240, 0.55))",
-  backdropFilter: "blur(16px)",
-  WebkitBackdropFilter: "blur(16px)",
+  background: "#FFFFFF",
   border: "none",
   outline: "none",
-  boxShadow: "-4px 0 48px rgba(0,0,0,0.06)",
+  boxShadow: "-4px 0 48px rgba(0,0,0,0.10)",
   padding: "24px 28px 28px",
   display: "flex",
   flexDirection: "column",
   overflow: "auto",
   transition: `transform ${SIDEBAR_TRANSITION_MS}ms ease-out`,
-};
-
-const innerCardStyle: React.CSSProperties = {
-  backgroundColor: "#FFFFFF",
-  borderRadius: "20px",
-  padding: "36px 40px 40px",
-  flex: "1 1 auto",
-  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
 };
 
 const headerRowStyle: React.CSSProperties = {
@@ -137,43 +127,41 @@ export function ViewQRCodeSidebar({
         style={{ ...shellStyleBase, transform: shellTransform }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={innerCardStyle}>
-          <div style={headerRowStyle}>
-            <h2 style={titleStyle}>{title}</h2>
-            <button
-              type="button"
-              onClick={handleClose}
-              style={closeBtnStyle}
-              aria-label="Close"
-            >
-              ×
-            </button>
-          </div>
-          <div style={contentWrapStyle}>
-            {label && (
-              <p style={{ margin: "0 0 16px", fontSize: "14px", color: "#64748b" }}>
-                {label}
-              </p>
-            )}
-            <QRCodeDisplay value={qrUrl} size={200} linkToUrl alt={`QR code – ${title}`} />
-            <p style={{ fontSize: "14px", marginTop: "16px", color: "#64748b", wordBreak: "break-all" }}>
-              Links to:{" "}
-              <a href={qrUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-primary)" }}>
-                {qrUrl}
-              </a>
+        <div style={headerRowStyle}>
+          <h2 style={titleStyle}>{title}</h2>
+          <button
+            type="button"
+            onClick={handleClose}
+            style={closeBtnStyle}
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <div style={contentWrapStyle}>
+          {label && (
+            <p style={{ margin: "0 0 16px", fontSize: "14px", color: "#64748b" }}>
+              {label}
             </p>
-            {publicCode && (
-              <div style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>
-                <p style={{ margin: "0 0 8px", fontSize: "14px", fontWeight: 500, color: "#09090b" }}>
-                  Public code
-                </p>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                  <code style={{ fontFamily: "monospace", fontSize: "16px" }}>{publicCode}</code>
-                  <CopyButton text={publicCode} />
-                </div>
+          )}
+          <QRCodeDisplay value={qrUrl} size={200} linkToUrl alt={`QR code – ${title}`} />
+          <p style={{ fontSize: "14px", marginTop: "16px", color: "#64748b", wordBreak: "break-all" }}>
+            Links to:{" "}
+            <a href={qrUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-primary)" }}>
+              {qrUrl}
+            </a>
+          </p>
+          {publicCode && (
+            <div style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>
+              <p style={{ margin: "0 0 8px", fontSize: "14px", fontWeight: 500, color: "#09090b" }}>
+                Public code
+              </p>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
+                <code style={{ fontFamily: "monospace", fontSize: "16px" }}>{publicCode}</code>
+                <CopyButton text={publicCode} />
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

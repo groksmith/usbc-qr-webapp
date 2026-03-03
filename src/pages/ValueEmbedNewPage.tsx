@@ -10,7 +10,7 @@ const STEPS = ["Type", "Configuration", "Review", "Create"] as const;
 export function ValueEmbedNewPage(): React.ReactElement {
   const [step, setStep] = useState(0);
   const [descriptionTag, setDescriptionTag] = useState("");
-  const [fundingSourceId, setFundingSourceId] = useState("fs-mock-001");
+  const [fundingSourceId, setFundingSourceId] = useState("USBC");
   const [value, setValue] = useState("");
   const [expirationEnabled, setExpirationEnabled] = useState(false);
   const [expiration, setExpiration] = useState("");
@@ -79,11 +79,31 @@ export function ValueEmbedNewPage(): React.ReactElement {
             onChange={(e) => setDescriptionTag(e.target.value)}
             placeholder="e.g. Holiday promo 2024"
           />
-          <Input
-            label="Funding source ID"
-            value={fundingSourceId}
-            onChange={(e) => setFundingSourceId(e.target.value)}
-          />
+          <div style={{ marginBottom: "16px" }}>
+            <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#09090b", marginBottom: "6px" }}>
+              Funding source
+            </label>
+            <select
+              className="select-chevron-right"
+              value={fundingSourceId}
+              onChange={(e) => setFundingSourceId(e.target.value)}
+              style={{
+                width: "100%",
+                height: "40px",
+                fontSize: "14px",
+                border: "1px solid #E0E0E0",
+                borderRadius: "12px",
+                backgroundColor: "#fff",
+                outline: "none",
+                color: "#09090b",
+                fontFamily: "var(--font-family)",
+                boxSizing: "border-box",
+              }}
+            >
+              <option value="USBC">USBC</option>
+              <option value="URT">URT</option>
+            </select>
+          </div>
           <Input
             label="Value amount (required)"
             type="number"

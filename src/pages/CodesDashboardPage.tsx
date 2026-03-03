@@ -2,14 +2,16 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getValueEmbedCodes, getSelfTitlingCodes } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, CodeSetStatus } from "../types";
-import { pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Tabs, StickerExportModal, SortIcon, SearchIcon } from "../components/ui";
+import { Button, Tabs, StickerExportModal, SortIcon, SearchIcon, CopyIconButton } from "../components/ui";
 import type { ValueEmbedCodeExportData } from "../components/ui/StickerExportModal";
 import { STATUS_LABELS, STATUS_COLORS } from "../constants/status";
 import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExport";
+import { formatTableDate } from "../utils/date";
 import csvIcon from "../assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
 import { ValueEmbedDetailSidebar } from "../components/ValueEmbedDetailSidebar";
+import { SelfTitlingDetailSidebar } from "../components/SelfTitlingDetailSidebar";
+import { TransferTitleModal } from "../components/TransferTitleModal";
 
 type DashboardTab = "value-embed" | "self-titling";
 
@@ -24,6 +26,8 @@ export function CodesDashboardPage(): React.ReactElement {
   const [stickerValueEmbedCode, setStickerValueEmbedCode] = useState<ValueEmbedCodeExportData | null>(null);
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
   const [viewDetailCodeId, setViewDetailCodeId] = useState<string | null>(null);
+  const [viewDetailSelfTitlingId, setViewDetailSelfTitlingId] = useState<string | null>(null);
+  const [transferModal, setTransferModal] = useState<{ codeId: string; itemTag: string; publicCode: string } | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -44,8 +48,8 @@ export function CodesDashboardPage(): React.ReactElement {
   }, [statusFilter, search]);
 
   const tabs = [
-    { id: "value-embed" as const, label: "Value Embed Codes" },
-    { id: "self-titling" as const, label: "Self-Titling Codes" },
+    { id: "value-embed" as const, label: "Value Embed" },
+    { id: "self-titling" as const, label: "Self-Titling" },
   ];
 
   const cardStyle: React.CSSProperties = {
@@ -100,9 +104,10 @@ export function CodesDashboardPage(): React.ReactElement {
           <h1 style={{ margin: 0, fontSize: "24px" }}>Codes Dashboard</h1>
           <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
             <select
+              className="select-chevron-right"
               value={statusFilter}
               onChange={(e) => setStatusFilter((e.target.value || "") as CodeSetStatus | "")}
-              style={{ height: "36px", padding: "0 14px", boxSizing: "border-box", fontSize: "14px", borderRadius: "12px", border: "1px solid #E0E0E0", outline: "none", backgroundColor: "#FFFFFF" }}
+              style={{ height: "44px", boxSizing: "border-box", fontSize: "14px", borderRadius: "12px", border: "1px solid #E0E0E0", outline: "none", backgroundColor: "#FFFFFF" }}
             >
               <option value="">All statuses</option>
               <option value="active">Active</option>
@@ -134,7 +139,7 @@ export function CodesDashboardPage(): React.ReactElement {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 style={{
-                  height: "36px",
+                  height: "44px",
                   padding: "0 14px 0 40px",
                   boxSizing: "border-box",
                   fontSize: "14px",
@@ -146,9 +151,6 @@ export function CodesDashboardPage(): React.ReactElement {
                 }}
               />
             </div>
-            <Button onClick={() => setGenerateModalOpen(true)}>
-              Generate code
-            </Button>
             <button
               type="button"
               onClick={() => {
@@ -158,20 +160,31 @@ export function CodesDashboardPage(): React.ReactElement {
               title="Download CSV"
               aria-label="Download CSV"
               style={{
-                width: "36px",
-                height: "36px",
+                height: "44px",
+                width: "165px",
+                padding: "0 16px 0 14px",
                 borderRadius: "12px",
-                border: "none",
+                border: "1px solid #dcdcdc",
                 outline: "none",
-                backgroundColor: "#DFDFDF",
+                backgroundColor: "#ffffff",
+                color: "#1e1e1e",
+                fontSize: "14px",
+                fontWeight: 600,
+                fontFamily: "var(--font-family)",
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
+                gap: "10px",
                 cursor: "pointer",
+                boxSizing: "border-box",
               }}
             >
-              <img src={csvIcon} alt="" width={16} height={16} style={{ display: "block" }} />
+              <img src={csvIcon} alt="" width={18} height={18} style={{ display: "block", flexShrink: 0 }} />
+              <span>Download csv</span>
             </button>
+            <Button onClick={() => setGenerateModalOpen(true)} style={{ height: "44px", width: "165px" }}>
+              Generate code
+            </Button>
           </div>
         </div>
 
@@ -188,10 +201,9 @@ export function CodesDashboardPage(): React.ReactElement {
                   <th style={thStyle}>Description tag <SortIcon /></th>
                   <th style={thStyle}>Public code <SortIcon /></th>
                   <th style={thStyle}>Value <SortIcon /></th>
-                  <th style={thStyle}>Balance <SortIcon /></th>
-                  <th style={thStyle}>Expiration <SortIcon /></th>
                   <th style={thStyle}>Status <SortIcon /></th>
                   <th style={thStyle}>Created <SortIcon /></th>
+                  <th style={thStyle}>Expiration <SortIcon /></th>
                   <th style={thStyle}>Actions</th>
                 </tr>
               </thead>
@@ -199,21 +211,23 @@ export function CodesDashboardPage(): React.ReactElement {
                 {valueEmbedList.map((row, index) => (
                   <tr key={row.id} style={getRowStyle(index)}>
                     <td style={tdStyle}>{row.label}</td>
-                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>{row.publicCode}</td>
-                    <td style={tdStyle}>{row.value}</td>
-                    <td style={tdStyle}>{row.balance}</td>
-                    <td style={tdStyle}>
-                      {row.expiration
-                        ? new Date(row.expiration).toLocaleDateString()
-                        : "—"}
+                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>
+                      <span style={{ display: "inline-flex", alignItems: "center" }}>
+                        {row.publicCode}
+                        <CopyIconButton text={row.publicCode} />
+                      </span>
                     </td>
+                    <td style={tdStyle}>{row.value} {row.fundingSourceId}</td>
                     <td style={tdStyle}>
                       <span style={{ color: STATUS_COLORS[row.status], fontWeight: 500 }}>
                         {STATUS_LABELS[row.status]}
                       </span>
                     </td>
                     <td style={tdStyle}>
-                      {new Date(row.createdAt).toLocaleDateString()}
+                      {formatTableDate(row.createdAt)}
+                    </td>
+                    <td style={tdStyle}>
+                      {formatTableDate(row.expiration)}
                     </td>
                     <td style={tdStyle}>
                       <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
@@ -252,20 +266,25 @@ export function CodesDashboardPage(): React.ReactElement {
                   <tr key={row.id} style={getRowStyle(index)}>
                     <td style={tdStyle}>{row.itemTag}</td>
                     <td style={tdStyle}>{row.unsName}</td>
-                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>{row.publicCode}</td>
+                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>
+                      <span style={{ display: "inline-flex", alignItems: "center" }}>
+                        {row.publicCode}
+                        <CopyIconButton text={row.publicCode} />
+                      </span>
+                    </td>
                     <td style={tdStyle}>
                       <span style={{ color: STATUS_COLORS[row.status], fontWeight: 500 }}>
                         {STATUS_LABELS[row.status]}
                       </span>
                     </td>
                     <td style={tdStyle}>
-                      {new Date(row.createdAt).toLocaleDateString()}
+                      {formatTableDate(row.createdAt)}
                     </td>
                     <td style={tdStyle}>
                       <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                        <Link to={pathToSelfTitlingDetail(row.id)} style={{ color: "#09090b", textDecoration: "none" }}>View</Link>
+                        <button type="button" onClick={() => setViewDetailSelfTitlingId(row.id)} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer", padding: 0, font: "inherit", textDecoration: "none" }}>View</button>
                         <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Export</button>
-                        <button type="button" style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Transfer</button>
+                        <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Transfer</button>
                       </div>
                     </td>
                   </tr>
@@ -298,6 +317,29 @@ export function CodesDashboardPage(): React.ReactElement {
         onClose={() => setViewDetailCodeId(null)}
         codeId={viewDetailCodeId}
       />
+      <SelfTitlingDetailSidebar
+        open={!!viewDetailSelfTitlingId}
+        onClose={() => setViewDetailSelfTitlingId(null)}
+        codeId={viewDetailSelfTitlingId}
+      />
+      {transferModal && (
+        <TransferTitleModal
+          open={!!transferModal}
+          onClose={() => setTransferModal(null)}
+          codeId={transferModal.codeId}
+          itemTag={transferModal.itemTag}
+          publicCode={transferModal.publicCode}
+          onTransferred={() => {
+            void Promise.all([
+              getSelfTitlingCodes({ status: statusFilter || undefined, search: search || undefined }),
+              getValueEmbedCodes({ status: statusFilter || undefined, search: search || undefined }),
+            ]).then(([st, ve]) => {
+              setSelfTitlingList(st);
+              setValueEmbedList(ve);
+            });
+          }}
+        />
+      )}
     </div>
   );
 }

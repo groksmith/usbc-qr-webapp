@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { createValueEmbedCodes, createSelfTitlingCodes } from "../services/api";
-import type { ValueEmbedCodeSet, SelfTitlingCodeSet } from "../types";
+import type { ValueEmbedCodeSet, SelfTitlingCodeSet, BulkValueEmbedItem } from "../types";
 import { pathToValueEmbedDetail, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input } from "./ui";
+import { Button, Input, SearchInput } from "./ui";
 import {
   validateDescriptionTag,
   validateValueAmount,
@@ -12,8 +12,6 @@ import {
   validateUnsName,
   UNS_NAME_HINT,
 } from "../utils/validation";
-
-const TOTAL_STEPS = 4;
 
 type CodeType = "value-embed" | "self-titling" | null;
 
@@ -38,33 +36,20 @@ const overlayStyle: React.CSSProperties = {
 const shellStyle: React.CSSProperties = {
   width: "100%",
   maxWidth: "420px",
-  borderRadius: "24px",
-  background: "linear-gradient(135deg, rgba(193, 220, 230, 0.65), rgba(210, 232, 240, 0.55))",
-  backdropFilter: "blur(16px)",
-  WebkitBackdropFilter: "blur(16px)",
+  borderRadius: "20px",
+  background: "#FFFFFF",
   border: "none",
   outline: "none",
-  boxShadow: "0 8px 48px rgba(0,0,0,0.06)",
-  padding: "24px 28px 28px",
-};
-
-const innerCardStyle: React.CSSProperties = {
-  backgroundColor: "#FFFFFF",
-  borderRadius: "20px",
-  paddingTop: "36px",
-  paddingRight: "40px",
-  paddingBottom: "40px",
-  paddingLeft: "40px",
-  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
+  boxShadow: "0 8px 48px rgba(0,0,0,0.10)",
+  padding: "24px",
 };
 
 const contentWrapStyle: React.CSSProperties = {
   width: "100%",
-  maxWidth: "320px",
   margin: "0 auto",
 };
 
-const stepPillBg = "#C5D2D9";
+const stepPillBg = "#f0f0f2";
 const stepInactiveColor = "#6B7280";
 const stepActiveBorder = "#374151";
 
@@ -99,8 +84,7 @@ function ProgressDots({ current, total }: { current: number; total: number }): R
         alignItems: "center",
         justifyContent: "center",
         gap: 0,
-        marginBottom: "20px",
-        padding: "7px 14px",
+        padding: "5px 10px",
         borderRadius: "999px",
         backgroundColor: stepPillBg,
       }}
@@ -111,8 +95,8 @@ function ProgressDots({ current, total }: { current: number; total: number }): R
           <React.Fragment key={i}>
             <span
               style={{
-                width: "7px",
-                height: "7px",
+                width: "5px",
+                height: "5px",
                 borderRadius: "50%",
                 backgroundColor: isActive ? "transparent" : stepInactiveColor,
                 border: isActive ? "1px solid #09090b" : "none",
@@ -124,7 +108,7 @@ function ProgressDots({ current, total }: { current: number; total: number }): R
             {i < total - 1 && (
               <span
                 style={{
-                  width: "14px",
+                  width: "10px",
                   height: 0,
                   borderTop: `1px dashed ${stepInactiveColor}`,
                   margin: "0 1px",
@@ -180,11 +164,13 @@ export function GenerateCodeFlowModal({
   const [hoverCodeType, setHoverCodeType] = useState<CodeType | null>(null);
   // Value Embed fields
   const [descriptionTag, setDescriptionTag] = useState("");
-  const [fundingSourceId, setFundingSourceId] = useState("fs-mock-001");
+  const [fundingSourceId, setFundingSourceId] = useState("USBC");
   const [value, setValue] = useState("");
   const [expirationEnabled, setExpirationEnabled] = useState(false);
   const [expiration, setExpiration] = useState("");
   const [quantity, setQuantity] = useState("1");
+  // Bulk items: per-code value + expiration
+  const [bulkItems, setBulkItems] = useState<{ value: string; expiration: string }[]>([]);
   // Self-Titling fields
   const [itemTag, setItemTag] = useState("");
   const [unsName, setUnsName] = useState("");
@@ -196,6 +182,15 @@ export function GenerateCodeFlowModal({
 
   if (!open) return null;
 
+  const parsedQty = Math.max(1, parseInt(quantity, 10) || 1);
+  const isBulk = codeType === "value-embed" && parsedQty > 1;
+  const totalSteps = isBulk ? 5 : 4;
+
+  // Map internal step to visual dot index depending on flow length
+  const visualStep = isBulk
+    ? step // 0=type, 1=config, 2=bulk grid, 3=review, 4=success
+    : step; // 0=type, 1=config, 2=review, 3=success
+
   const resetAndClose = (): void => {
     onClose();
     setStep(0);
@@ -206,6 +201,7 @@ export function GenerateCodeFlowModal({
     setExpiration("");
     setExpirationEnabled(false);
     setQuantity("1");
+    setBulkItems([]);
     setItemTag("");
     setUnsName("");
     setCreatedVE(null);
@@ -216,11 +212,14 @@ export function GenerateCodeFlowModal({
   const validateValueEmbedConfig = (): boolean => {
     const e: Record<string, string> = {};
     const vDesc = validateDescriptionTag(descriptionTag);
-    const vValue = validateValueAmount(value);
     const vQty = validateQuantity(quantity);
     if (!vDesc.valid) e.descriptionTag = vDesc.message!;
-    if (!vValue.valid) e.value = vValue.message!;
     if (!vQty.valid) e.quantity = vQty.message!;
+    // Only validate single value when qty=1
+    if (parsedQty <= 1) {
+      const vValue = validateValueAmount(value);
+      if (!vValue.valid) e.value = vValue.message!;
+    }
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -229,47 +228,116 @@ export function GenerateCodeFlowModal({
     const e: Record<string, string> = {};
     const vItem = validateItemTag(itemTag);
     const vUns = validateUnsName(unsName);
-    const vQty = validateQuantity(quantity);
     if (!vItem.valid) e.itemTag = vItem.message!;
     if (!vUns.valid) e.unsName = vUns.message!;
-    if (!vQty.valid) e.quantity = vQty.message!;
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
+  const initBulkItems = (): void => {
+    const defaultVal = value || "0";
+    const defaultExp = expirationEnabled && expiration ? expiration : "";
+    setBulkItems(
+      Array.from({ length: parsedQty }, () => ({
+        value: defaultVal,
+        expiration: defaultExp,
+      }))
+    );
+  };
+
+  const validateBulkItems = (): boolean => {
+    for (const item of bulkItems) {
+      const n = Number(item.value);
+      if (!item.value || isNaN(n) || n <= 0) return false;
+    }
+    return true;
+  };
+
+  const handleConfigNext = (): void => {
+    if (!validateValueEmbedConfig()) return;
+    if (isBulk) {
+      initBulkItems();
+      setStep(2); // go to bulk grid
+    } else {
+      setStep(2); // go to review (same index, different meaning for non-bulk)
+    }
+  };
+
+  const reviewStep = isBulk ? 3 : 2;
+  const successStep = isBulk ? 4 : 3;
+
   const handleCreate = async (): Promise<void> => {
-    const valid = codeType === "value-embed" ? validateValueEmbedConfig() : validateSelfTitlingConfig();
-    if (!valid) return;
     setLoading(true);
     try {
       if (codeType === "value-embed") {
-        const result = await createValueEmbedCodes({
-          descriptionTag,
-          fundingSourceId,
-          value: Number(value) || 0,
-          expiration: expirationEnabled && expiration ? expiration : undefined,
-          quantity: Math.max(1, parseInt(quantity, 10) || 1),
-        });
-        setCreatedVE(result.codes);
+        if (isBulk) {
+          const items: BulkValueEmbedItem[] = bulkItems.map((b) => ({
+            value: Number(b.value) || 0,
+            expiration: b.expiration || undefined,
+          }));
+          const result = await createValueEmbedCodes({
+            descriptionTag,
+            fundingSourceId,
+            value: 0,
+            bulkItems: items,
+          });
+          setCreatedVE(result.codes);
+        } else {
+          const result = await createValueEmbedCodes({
+            descriptionTag,
+            fundingSourceId,
+            value: Number(value) || 0,
+            expiration: expirationEnabled && expiration ? expiration : undefined,
+            quantity: 1,
+          });
+          setCreatedVE(result.codes);
+        }
       } else {
         const result = await createSelfTitlingCodes({
           itemTag,
           unsName,
-          quantity: Math.max(1, parseInt(quantity, 10) || 1),
+          quantity: 1,
         });
         setCreatedST(result.codes);
       }
-      setStep(3);
+      setStep(successStep);
     } finally {
       setLoading(false);
     }
   };
 
+  const updateBulkItem = (index: number, field: "value" | "expiration", val: string): void => {
+    setBulkItems((prev) => prev.map((item, i) => (i === index ? { ...item, [field]: val } : item)));
+  };
+
+  const applyValueToAll = (): void => {
+    setBulkItems((prev) => prev.map((item) => ({ ...item, value: prev[0]?.value ?? "" })));
+  };
+
+  const applyExpirationToAll = (): void => {
+    setBulkItems((prev) => prev.map((item) => ({ ...item, expiration: prev[0]?.expiration ?? "" })));
+  };
+
   const successList = createdVE ?? createdST ?? [];
+
+  const bulkTotal = bulkItems.reduce((sum, b) => sum + (Number(b.value) || 0), 0);
+  const bulkValues = bulkItems.map((b) => Number(b.value) || 0);
+  const bulkMin = bulkValues.length > 0 ? Math.min(...bulkValues) : 0;
+  const bulkMax = bulkValues.length > 0 ? Math.max(...bulkValues) : 0;
+
+  const dynamicShellStyle: React.CSSProperties = {
+    ...shellStyle,
+    ...(isBulk && step === 2 ? { maxWidth: "640px" } : {}),
+  };
+
+  const dynamicContentWrapStyle: React.CSSProperties = {
+    ...contentWrapStyle,
+    ...(isBulk && step === 2 ? { maxWidth: "100%" } : {}),
+  };
 
   return (
     <div style={overlayStyle} onClick={resetAndClose} role="dialog" aria-modal="true">
-      <div style={shellStyle} onClick={(e) => e.stopPropagation()}>
+      <div style={dynamicShellStyle} onClick={(e) => e.stopPropagation()}>
         <div
           style={{
             display: "flex",
@@ -277,21 +345,20 @@ export function GenerateCodeFlowModal({
             justifyContent: "space-between",
             marginBottom: "8px",
             minHeight: "32px",
+            gap: "8px",
           }}
         >
           <div style={{ flex: 1, minWidth: 0 }} />
-          <ProgressDots current={step} total={TOTAL_STEPS} />
-          <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", minWidth: 0 }}>
+          <ProgressDots current={visualStep} total={totalSteps} />
+          <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", minWidth: 0 }}>
             <CloseButton onClick={resetAndClose} />
           </div>
         </div>
-        <div style={innerCardStyle}>
-          <div style={contentWrapStyle}>
+        <div style={dynamicContentWrapStyle}>
           {/* STEP 0 — Choose code type */}
           {step === 0 && (
             <>
               <h2 style={headingStyle}>What type of code do you want to generate?</h2>
-              <p style={subtitleStyle}>Choose between Value Embed or Self-Titling codes.</p>
 
               <button
                 type="button"
@@ -319,7 +386,7 @@ export function GenerateCodeFlowModal({
                 }}
               >
                 <span style={{ fontSize: "15px", fontWeight: 600, color: "#09090b", display: "block", marginBottom: "4px" }}>
-                  Value Embed Codes
+                  Value Embed
                 </span>
                 <span style={{ fontSize: "13px", fontWeight: 400, color: "#64748b", lineHeight: "1.4" }}>
                   Embed value onto physical objects (coins, cards). Includes funding source, balance check, and redemption via public/private code pair.
@@ -352,7 +419,7 @@ export function GenerateCodeFlowModal({
                 }}
               >
                 <span style={{ fontSize: "15px", fontWeight: 600, color: "#09090b", display: "block", marginBottom: "4px" }}>
-                  Self-Titling Codes
+                  Self-Titling
                 </span>
                 <span style={{ fontSize: "13px", fontWeight: 400, color: "#64748b", lineHeight: "1.4" }}>
                   Enable self-titling of physical objects using stickers. Attached to a UNS name with auto-generated profile page and transferable ownership.
@@ -385,57 +452,85 @@ export function GenerateCodeFlowModal({
                 error={errors.descriptionTag}
                 style={{ border: "1px solid #E0E0E0" }}
               />
-              <Input
-                label="Funding source ID"
-                value={fundingSourceId}
-                onChange={(e) => setFundingSourceId(e.target.value)}
-                style={{ border: "1px solid #E0E0E0" }}
-              />
-              <Input
-                label="Value amount"
-                required
-                type="number"
-                hint="Positive number (e.g. 50)"
-                value={value}
-                onChange={(e) => { setValue(e.target.value); setErrors((prev) => ({ ...prev, value: undefined })); }}
-                placeholder="e.g. 50"
-                error={errors.value}
-                style={{ border: "1px solid #E0E0E0" }}
-              />
               <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#09090b", fontWeight: 500 }}>
-                  <input
-                    type="checkbox"
-                    checked={expirationEnabled}
-                    onChange={(e) => setExpirationEnabled(e.target.checked)}
-                  />
-                  Set expiration
+                <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#09090b", marginBottom: "6px" }}>
+                  Funding source
                 </label>
+                <select
+                  className="select-chevron-right"
+                  value={fundingSourceId}
+                  onChange={(e) => setFundingSourceId(e.target.value)}
+                  style={{
+                    width: "100%",
+                    height: "40px",
+                    fontSize: "14px",
+                    border: "1px solid #E0E0E0",
+                    borderRadius: "12px",
+                    backgroundColor: "#fff",
+                    outline: "none",
+                    color: "#09090b",
+                    fontFamily: "var(--font-family)",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <option value="USBC">USBC</option>
+                  <option value="URT">URT</option>
+                </select>
               </div>
-              {expirationEnabled && (
-                <Input
-                  label="Expiration"
-                  type="datetime-local"
-                  value={expiration}
-                  onChange={(e) => setExpiration(e.target.value)}
-                  style={{ border: "1px solid #E0E0E0" }}
-                />
-              )}
               <Input
                 label="Quantity"
                 required
                 type="number"
                 min={1}
-                hint="At least 1"
+                hint="At least 1. For bulk (>1), you can customize each code's value next."
                 value={quantity}
                 onChange={(e) => { setQuantity(e.target.value); setErrors((prev) => ({ ...prev, quantity: undefined })); }}
                 error={errors.quantity}
                 style={{ border: "1px solid #E0E0E0" }}
               />
-              <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "8px" }}>
+              {parsedQty <= 1 && (
+                <>
+                  <Input
+                    label="Value amount"
+                    required
+                    type="number"
+                    hint="Positive number (e.g. 50)"
+                    value={value}
+                    onChange={(e) => { setValue(e.target.value); setErrors((prev) => ({ ...prev, value: undefined })); }}
+                    placeholder="e.g. 50"
+                    error={errors.value}
+                    style={{ border: "1px solid #E0E0E0" }}
+                  />
+                  <div style={{ marginBottom: "16px" }}>
+                    <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#09090b", fontWeight: 500 }}>
+                      <input
+                        type="checkbox"
+                        checked={expirationEnabled}
+                        onChange={(e) => setExpirationEnabled(e.target.checked)}
+                      />
+                      Set expiration
+                    </label>
+                  </div>
+                  {expirationEnabled && (
+                    <Input
+                      label="Expiration"
+                      type="datetime-local"
+                      value={expiration}
+                      onChange={(e) => setExpiration(e.target.value)}
+                      style={{ border: "1px solid #E0E0E0" }}
+                    />
+                  )}
+                </>
+              )}
+              {parsedQty > 1 && (
+                <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 16px" }}>
+                  You&apos;ll customize individual values and expirations in the next step.
+                </p>
+              )}
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
                 <Button variant="outline" onClick={() => setStep(0)} style={{ width: "120px", height: "44px" }}>Back</Button>
                 <Button
-                  onClick={() => { if (validateValueEmbedConfig()) setStep(2); }}
+                  onClick={handleConfigNext}
                   style={{ width: "120px", height: "44px" }}
                 >
                   Next
@@ -459,7 +554,7 @@ export function GenerateCodeFlowModal({
                 error={errors.itemTag}
                 style={{ border: "1px solid #E0E0E0" }}
               />
-              <Input
+              <SearchInput
                 label="UNS name"
                 required
                 hint={UNS_NAME_HINT}
@@ -467,20 +562,8 @@ export function GenerateCodeFlowModal({
                 onChange={(e) => { setUnsName(e.target.value); setErrors((prev) => ({ ...prev, unsName: undefined })); }}
                 placeholder="e.g. alice.uns"
                 error={errors.unsName}
-                style={{ border: "1px solid #E0E0E0" }}
               />
-              <Input
-                label="Quantity"
-                required
-                type="number"
-                min={1}
-                hint="At least 1"
-                value={quantity}
-                onChange={(e) => { setQuantity(e.target.value); setErrors((prev) => ({ ...prev, quantity: undefined })); }}
-                error={errors.quantity}
-                style={{ border: "1px solid #E0E0E0" }}
-              />
-              <div style={{ display: "flex", justifyContent: "center", gap: "12px", marginTop: "8px" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
                 <Button variant="outline" onClick={() => setStep(0)} style={{ width: "120px", height: "44px" }}>Back</Button>
                 <Button
                   onClick={() => { if (validateSelfTitlingConfig()) setStep(2); }}
@@ -492,11 +575,134 @@ export function GenerateCodeFlowModal({
             </>
           )}
 
-          {/* STEP 2 — Review */}
-          {step === 2 && (
+          {/* STEP 2 (bulk only) — Bulk Grid */}
+          {isBulk && step === 2 && (
+            <>
+              <h2 style={headingStyle}>Customize each code</h2>
+              <p style={subtitleStyle}>Set individual values and expirations for {parsedQty} codes.</p>
+
+              <div
+                style={{
+                  maxHeight: "320px",
+                  overflowY: "auto",
+                  border: "1px solid #e4e4e7",
+                  borderRadius: "12px",
+                  marginBottom: "16px",
+                }}
+              >
+                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+                  <thead>
+                    <tr style={{ backgroundColor: "#f8fafa", position: "sticky", top: 0, zIndex: 1 }}>
+                      <th style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "var(--color-body)", fontSize: "12px", borderBottom: "1px solid #e4e4e7", width: "48px" }}>#</th>
+                      <th style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "var(--color-body)", fontSize: "12px", borderBottom: "1px solid #e4e4e7" }}>Value ($)</th>
+                      <th style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "var(--color-body)", fontSize: "12px", borderBottom: "1px solid #e4e4e7" }}>Expiration</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {bulkItems.map((item, i) => (
+                      <tr key={i} style={{ borderBottom: i < bulkItems.length - 1 ? "1px solid #f0f0f0" : "none" }}>
+                        <td style={{ padding: "8px 12px", color: "#64748b", fontWeight: 500 }}>{i + 1}</td>
+                        <td style={{ padding: "6px 8px" }}>
+                          <input
+                            type="number"
+                            min={0}
+                            step="any"
+                            value={item.value}
+                            onChange={(e) => updateBulkItem(i, "value", e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "6px 10px",
+                              fontSize: "13px",
+                              border: "1px solid #e4e4e7",
+                              borderRadius: "8px",
+                              outline: "none",
+                              backgroundColor: "#fff",
+                              boxSizing: "border-box",
+                            }}
+                          />
+                        </td>
+                        <td style={{ padding: "6px 8px" }}>
+                          <input
+                            type="datetime-local"
+                            value={item.expiration}
+                            onChange={(e) => updateBulkItem(i, "expiration", e.target.value)}
+                            style={{
+                              width: "100%",
+                              padding: "6px 10px",
+                              fontSize: "13px",
+                              border: "1px solid #e4e4e7",
+                              borderRadius: "8px",
+                              outline: "none",
+                              backgroundColor: "#fff",
+                              boxSizing: "border-box",
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
+                <button
+                  type="button"
+                  onClick={applyValueToAll}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    color: "var(--color-primary)",
+                    backgroundColor: "rgba(93, 159, 181, 0.08)",
+                    border: "1px solid rgba(93, 159, 181, 0.2)",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-family)",
+                  }}
+                >
+                  Apply row 1 value to all
+                </button>
+                <button
+                  type="button"
+                  onClick={applyExpirationToAll}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: "12px",
+                    fontWeight: 500,
+                    color: "var(--color-primary)",
+                    backgroundColor: "rgba(93, 159, 181, 0.08)",
+                    border: "1px solid rgba(93, 159, 181, 0.2)",
+                    borderRadius: "8px",
+                    cursor: "pointer",
+                    fontFamily: "var(--font-family)",
+                  }}
+                >
+                  Apply row 1 expiration to all
+                </button>
+              </div>
+
+              <div style={{ fontSize: "13px", color: "#64748b", marginBottom: "16px" }}>
+                Total: <strong style={{ color: "#09090b" }}>${bulkTotal.toLocaleString()}</strong> across {parsedQty} codes
+              </div>
+
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+                <Button variant="outline" onClick={() => setStep(1)} style={{ width: "120px", height: "44px" }}>Back</Button>
+                <Button
+                  onClick={() => { if (validateBulkItems()) setStep(reviewStep); }}
+                  disabled={!validateBulkItems()}
+                  style={{ width: "120px", height: "44px" }}
+                >
+                  Next
+                </Button>
+              </div>
+            </>
+          )}
+
+          {/* STEP 2 or 3 — Review */}
+          {step === reviewStep && (
             <>
               <h2 style={headingStyle}>Review and create</h2>
-              <p style={subtitleStyle}>Confirm your details and generate code.</p>
+              <p style={subtitleStyle}>Confirm your details and generate {isBulk ? "codes" : "code"}.</p>
 
               <div
                 style={{
@@ -509,14 +715,26 @@ export function GenerateCodeFlowModal({
                   lineHeight: "2",
                 }}
               >
-                {codeType === "value-embed" && (
+                {codeType === "value-embed" && !isBulk && (
                   <>
                     <div><span style={{ color: "#64748b" }}>Type:</span> Value Embed</div>
                     <div><span style={{ color: "#64748b" }}>Description:</span> {descriptionTag}</div>
                     <div><span style={{ color: "#64748b" }}>Funding source:</span> {fundingSourceId}</div>
                     <div><span style={{ color: "#64748b" }}>Value:</span> ${value}</div>
                     <div><span style={{ color: "#64748b" }}>Expiration:</span> {expirationEnabled && expiration ? expiration : "None"}</div>
-                    <div><span style={{ color: "#64748b" }}>Quantity:</span> {quantity}</div>
+                  </>
+                )}
+                {codeType === "value-embed" && isBulk && (
+                  <>
+                    <div><span style={{ color: "#64748b" }}>Type:</span> Value Embed (bulk)</div>
+                    <div><span style={{ color: "#64748b" }}>Description:</span> {descriptionTag}</div>
+                    <div><span style={{ color: "#64748b" }}>Funding source:</span> {fundingSourceId}</div>
+                    <div><span style={{ color: "#64748b" }}>Quantity:</span> {parsedQty} codes</div>
+                    <div>
+                      <span style={{ color: "#64748b" }}>Values:</span>{" "}
+                      {bulkMin === bulkMax ? `$${bulkMin} each` : `$${bulkMin}–$${bulkMax}`}
+                    </div>
+                    <div><span style={{ color: "#64748b" }}>Total value:</span> ${bulkTotal.toLocaleString()}</div>
                   </>
                 )}
                 {codeType === "self-titling" && (
@@ -524,22 +742,21 @@ export function GenerateCodeFlowModal({
                     <div><span style={{ color: "#64748b" }}>Type:</span> Self-Titling</div>
                     <div><span style={{ color: "#64748b" }}>Item tag:</span> {itemTag}</div>
                     <div><span style={{ color: "#64748b" }}>UNS name:</span> {unsName}</div>
-                    <div><span style={{ color: "#64748b" }}>Quantity:</span> {quantity}</div>
                   </>
                 )}
               </div>
 
-              <div style={{ display: "flex", justifyContent: "center", gap: "12px" }}>
-                <Button variant="outline" onClick={() => setStep(1)} style={{ width: "120px", height: "44px" }}>Back</Button>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
+                <Button variant="outline" onClick={() => setStep(isBulk ? 2 : 1)} style={{ width: "120px", height: "44px" }}>Back</Button>
                 <Button onClick={handleCreate} disabled={loading} style={{ width: "140px", height: "44px" }}>
-                  {loading ? "Creating…" : "Create code"}
+                  {loading ? "Creating…" : isBulk ? "Create codes" : "Create code"}
                 </Button>
               </div>
             </>
           )}
 
-          {/* STEP 3 — Success */}
-          {step === 3 && successList.length > 0 && (
+          {/* STEP 3 or 4 — Success */}
+          {step === successStep && successList.length > 0 && (
             <>
               <div style={{ textAlign: "center", marginBottom: "8px" }}>
                 <span style={{ fontSize: "40px" }}>✓</span>
@@ -577,7 +794,7 @@ export function GenerateCodeFlowModal({
                 )}
               </div>
 
-              <div style={{ display: "flex", justifyContent: "center", gap: "12px" }}>
+              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
                 <Button
                   variant="outline"
                   onClick={resetAndClose}
@@ -603,7 +820,6 @@ export function GenerateCodeFlowModal({
             </>
           )}
           </div>
-        </div>
       </div>
     </div>
   );

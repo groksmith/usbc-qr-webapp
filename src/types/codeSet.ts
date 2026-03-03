@@ -78,12 +78,19 @@ export interface ItemProfilePublic {
   status: CodeSetStatus;
 }
 
+export interface BulkValueEmbedItem {
+  value: number;
+  expiration?: string;
+}
+
 export interface CreateValueEmbedParams {
   descriptionTag: string;
   fundingSourceId: string;
   value: number;
   expiration?: string;
   quantity?: number;
+  /** Per-code overrides for bulk creation. When provided, length determines quantity. */
+  bulkItems?: BulkValueEmbedItem[];
 }
 
 export interface CreateSelfTitlingParams {
