@@ -58,22 +58,22 @@ export function ViewQRCodeSidebar({
       aria-label={title}
     >
       <div
-        className="w-full max-w-[420px] rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-6 px-7 pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
+        className="w-full max-w-[100%] sm:max-w-[420px] rounded-none sm:rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-4 sm:p-6 sm:px-7 pb-6 sm:pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
         style={{ transform: shellTransform }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="m-0 text-[22px] font-bold text-zinc-950">{title}</h2>
+        <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6">
+          <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">{title}</h2>
           <button
             type="button"
             onClick={handleClose}
-            className="bg-transparent border-0 w-8 h-8 flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0"
+            className="bg-transparent border-0 w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0 touch-manipulation shrink-0"
             aria-label="Close"
           >
             ×
           </button>
         </div>
-        <div className="w-full max-w-[320px] mx-auto flex flex-col items-center text-center">
+        <div className="w-full max-w-[320px] mx-auto flex flex-col items-center text-center min-w-0">
           {label && (
             <p className="m-0 mb-4 text-sm text-muted">{label}</p>
           )}

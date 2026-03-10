@@ -136,13 +136,13 @@ export function CodesDashboardPage(): React.ReactElement {
     `border-b border-[#EEF2F2] ${index % 2 === 0 ? "bg-white" : "bg-[#F8FCFC]"}`;
 
   return (
-    <div>
-      <div className="card bg-white/95 p-8 px-10 pb-10">
-        <div className="flex justify-between items-center flex-wrap gap-4 mb-6">
-          <h1 className="m-0 text-2xl">Codes Dashboard</h1>
-          <div className="flex items-center gap-3 flex-wrap">
+    <div className="min-w-0">
+      <div className="card bg-white/95 p-4 sm:p-6 md:p-8 md:px-10 pb-6 md:pb-10">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
+          <h1 className="m-0 text-xl sm:text-2xl">Codes Dashboard</h1>
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <select
-              className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5"
+              className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5 w-full sm:w-auto min-w-0"
               value={statusFilter}
               onChange={(e) => setStatusFilter((e.target.value || "") as CodeSetStatus | "")}
             >
@@ -153,7 +153,7 @@ export function CodesDashboardPage(): React.ReactElement {
               <option value="cancelled">Cancelled</option>
               <option value="pending_transfer">Pending transfer</option>
             </select>
-            <div className="relative inline-flex items-center">
+            <div className="relative flex-1 sm:flex-initial min-w-0 w-full sm:w-auto sm:min-w-[220px]">
               <span
                 className="absolute left-3 top-1/2 -translate-y-1/2 scale-[0.8] text-gray-400 pointer-events-none flex items-center justify-center"
                 aria-hidden
@@ -168,7 +168,7 @@ export function CodesDashboardPage(): React.ReactElement {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") setSearch(searchInput.trim());
                 }}
-                className="h-11 py-0 pr-3.5 pl-10 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white min-w-[220px]"
+                className="h-11 w-full min-w-0 py-0 pr-3.5 pl-10 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white"
               />
             </div>
             <button
@@ -179,12 +179,12 @@ export function CodesDashboardPage(): React.ReactElement {
               }}
               title="Download CSV"
               aria-label="Download CSV"
-              className="h-11 w-[165px] px-4 rounded-card border border-[#dcdcdc] outline-none bg-white text-[#1e1e1e] text-sm font-semibold font-sans inline-flex items-center justify-center gap-[10px] cursor-pointer box-border"
+              className="h-11 w-full sm:w-[165px] px-4 rounded-card border border-[#dcdcdc] outline-none bg-white text-[#1e1e1e] text-sm font-semibold font-sans inline-flex items-center justify-center gap-[10px] cursor-pointer box-border"
             >
               <img src={csvIcon} alt="" width={18} height={18} className="block flex-shrink-0" />
               <span>Download csv</span>
             </button>
-            <Button onClick={() => setGenerateModalOpen(true)} className="h-11 w-[165px]">
+            <Button onClick={() => setGenerateModalOpen(true)} className="h-11 w-full sm:w-[165px]">
               Generate code
             </Button>
           </div>
@@ -195,7 +195,72 @@ export function CodesDashboardPage(): React.ReactElement {
           {loading ? (
             <p className="p-6 m-0">Loading...</p>
           ) : activeTab === "value-embed" ? (
-            <div className="overflow-x-auto">
+            <div>
+              {/* Mobile: card list */}
+              <div className="md:hidden space-y-3">
+                {paginatedValueEmbedList.map((row) => (
+                  <div
+                    key={row.id}
+                    className="rounded-card border border-[#E8E8E8] bg-white p-4 shadow-soft"
+                  >
+                    <div className="flex flex-col gap-2 text-sm">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="font-semibold text-heading">{row.label}</span>
+                        <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium shrink-0">
+                          {STATUS_LABELS[row.status]}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-1.5 text-muted">
+                        <span><span className="font-medium text-heading">Public code:</span>{" "}
+                          <span className="inline-flex items-center gap-1 font-mono">
+                            {row.publicCode}
+                            <CopyIconButton text={row.publicCode} />
+                          </span>
+                        </span>
+                        <span><span className="font-medium text-heading">Value:</span> {row.value} {row.fundingSourceId}</span>
+                        <span><span className="font-medium text-heading">Created:</span> {formatTableDate(row.createdAt)}</span>
+                        <span><span className="font-medium text-heading">Expiration:</span> {formatTableDate(row.expiration)}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#EEF2F2]">
+                        <button type="button" onClick={() => setViewDetailCodeId(row.id)} className={actionBtnClass}>View</button>
+                        <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
+                        {row.status === "active" && (
+                          <button type="button" className={actionBtnClass}>Cancel</button>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {sortedValueEmbedList.length > 0 && (
+                  <div className="flex items-center justify-between p-4 border-t border-[#EEF2F2] flex-wrap gap-2">
+                    <span className="text-sm text-gray-500">
+                      Showing {(valueEmbedPage - 1) * PAGE_SIZE + 1} to{" "}
+                      {Math.min(valueEmbedPage * PAGE_SIZE, sortedValueEmbedList.length)} of{" "}
+                      {sortedValueEmbedList.length} codes
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${valueEmbedPage <= 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setValueEmbedPage((p) => Math.max(1, p - 1))}
+                        disabled={valueEmbedPage <= 1}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${valueEmbedPage >= valueEmbedTotalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setValueEmbedPage((p) => Math.min(valueEmbedTotalPages, p + 1))}
+                        disabled={valueEmbedPage >= valueEmbedTotalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* Desktop: table */}
+              <div className="hidden md:block overflow-x-auto">
               <div className="overflow-hidden border border-[#E8E8E8] rounded-b-card bg-white shadow-soft">
                 <table className="w-full border-collapse">
                   <thead>
@@ -280,12 +345,75 @@ export function CodesDashboardPage(): React.ReactElement {
                   </div>
                 )}
               </div>
+              </div>
               {valueEmbedList.length === 0 && (
                 <p className="p-6 text-body-text">No Value Embed codes found.</p>
               )}
             </div>
           ) : (
-            <div className="overflow-x-auto">
+            <div>
+              {/* Mobile: card list */}
+              <div className="md:hidden space-y-3">
+                {paginatedSelfTitlingList.map((row) => (
+                  <div
+                    key={row.id}
+                    className="rounded-card border border-[#E8E8E8] bg-white p-4 shadow-soft"
+                  >
+                    <div className="flex flex-col gap-2 text-sm">
+                      <div className="flex justify-between items-start gap-2">
+                        <span className="font-semibold text-heading">{row.itemTag}</span>
+                        <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium shrink-0">
+                          {STATUS_LABELS[row.status]}
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 gap-1.5 text-muted">
+                        <span><span className="font-medium text-heading">Public code:</span>{" "}
+                          <span className="inline-flex items-center gap-1 font-mono">
+                            {row.publicCode}
+                            <CopyIconButton text={row.publicCode} />
+                          </span>
+                        </span>
+                        <span><span className="font-medium text-heading">UNS name:</span> {row.unsName}</span>
+                        <span><span className="font-medium text-heading">Created:</span> {formatTableDate(row.createdAt)}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#EEF2F2]">
+                        <button type="button" onClick={() => setViewDetailSelfTitlingId(row.id)} className={actionBtnClass}>View</button>
+                        <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
+                        <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} className={actionBtnClass}>Transfer</button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {sortedSelfTitlingList.length > 0 && (
+                  <div className="flex items-center justify-between p-4 border-t border-[#EEF2F2] flex-wrap gap-2">
+                    <span className="text-sm text-gray-500">
+                      Showing {(selfTitlingPage - 1) * PAGE_SIZE + 1} to{" "}
+                      {Math.min(selfTitlingPage * PAGE_SIZE, sortedSelfTitlingList.length)} of{" "}
+                      {sortedSelfTitlingList.length} codes
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${selfTitlingPage <= 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setSelfTitlingPage((p) => Math.max(1, p - 1))}
+                        disabled={selfTitlingPage <= 1}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${selfTitlingPage >= selfTitlingTotalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setSelfTitlingPage((p) => Math.min(selfTitlingTotalPages, p + 1))}
+                        disabled={selfTitlingPage >= selfTitlingTotalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {/* Desktop: table */}
+              <div className="hidden md:block overflow-x-auto">
               <div className="overflow-hidden border border-[#E8E8E8] rounded-b-card bg-white shadow-soft">
                 <table className="w-full border-collapse">
                   <thead>
@@ -363,6 +491,7 @@ export function CodesDashboardPage(): React.ReactElement {
                     </div>
                   </div>
                 )}
+              </div>
               </div>
               {selfTitlingList.length === 0 && (
                 <p className="p-6 text-body-text">No Self-Titling codes found.</p>

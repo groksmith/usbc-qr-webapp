@@ -77,13 +77,13 @@ export function SelfTitlingDetailSidebar({
         aria-label="Self-Titling code detail"
       >
         <div
-          className="w-full max-w-[520px] rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-6 px-7 pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
+          className="w-full max-w-[100%] sm:max-w-[520px] rounded-none sm:rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-4 sm:p-6 sm:px-7 pb-6 sm:pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
           style={{ transform: shellTransform }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="m-0 text-[22px] font-bold text-zinc-950">Self-Titling Code</h2>
-            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0" aria-label="Close">
+          <div className="flex items-center justify-between gap-2 mb-4 sm:mb-5">
+            <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">Self-Titling Code</h2>
+            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0 touch-manipulation shrink-0" aria-label="Close">
               ×
             </button>
           </div>

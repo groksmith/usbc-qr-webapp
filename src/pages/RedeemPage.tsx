@@ -41,9 +41,9 @@ export function RedeemPage(): React.ReactElement {
   };
 
   return (
-    <div className="max-w-[560px] mx-auto">
-      <h1>Redeem value</h1>
-      <p>
+    <div className="max-w-[560px] mx-auto px-4 sm:px-0">
+      <h1 className="text-xl sm:text-2xl">Redeem value</h1>
+      <p className="mt-1 text-sm sm:text-base text-body-text">
         Enter the <strong>private code</strong> and your <strong>UNS name</strong> (with bronze
         badge) to redeem. Do not share your private code.
       </p>
@@ -86,7 +86,7 @@ export function RedeemPage(): React.ReactElement {
       </div>
 
       {result && (
-        <div className={`p-6 rounded-[8px] mb-6 ${result.success ? "bg-green-100" : "bg-red-100"}`}>
+        <div className={`p-4 sm:p-6 rounded-[8px] mb-6 ${result.success ? "bg-green-100" : "bg-red-100"}`}>
           {result.success ? (
             <>
               <h2>Redemption complete</h2>
@@ -107,7 +107,7 @@ export function RedeemPage(): React.ReactElement {
         </div>
       )}
 
-      <section className="mt-8 p-4 bg-white/60 rounded-[8px]">
+      <section className="mt-6 sm:mt-8 p-4 sm:p-4 bg-white/60 rounded-[8px]">
         <h2>Instructions</h2>
         <ul>
           <li><strong>Public code</strong> — on the QR or outside sticker; safe to share for balance check.</li>

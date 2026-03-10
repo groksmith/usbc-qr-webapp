@@ -50,7 +50,7 @@ export function TransferTitleModal({
 
   return (
     <Modal open={open} onClose={handleClose} title="Transfer title">
-      <div className="flex flex-col gap-5 min-w-[320px]">
+      <div className="flex flex-col gap-5 w-full min-w-0 sm:min-w-[320px]">
         <div className="p-3 px-4 bg-slate-50 rounded-card text-sm">
           <p className="m-0 mb-1.5 text-muted"><strong>Item tag</strong></p>
           <p className="m-0 text-zinc-950">{itemTag}</p>
@@ -69,11 +69,11 @@ export function TransferTitleModal({
           placeholder="Search or enter e.g. bob.uns"
           error={recipientError}
         />
-        <div className="flex justify-end gap-3 mt-2">
+        <div className="flex flex-col sm:flex-row justify-end gap-2 sm:gap-3 mt-2">
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>
-          <Button onClick={handleTransfer} disabled={transferring}>
+          <Button onClick={handleTransfer} disabled={transferring} className="w-full sm:w-auto">
             {transferring ? "Transferring…" : "Transfer"}
           </Button>
         </div>

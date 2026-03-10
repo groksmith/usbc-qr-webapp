@@ -86,13 +86,13 @@ export function ValueEmbedDetailSidebar({
         aria-label="Value Embed code detail"
       >
         <div
-          className="w-full max-w-[520px] rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-6 px-7 pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
+          className="w-full max-w-[100%] sm:max-w-[520px] rounded-none sm:rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-4 sm:p-6 sm:px-7 pb-6 sm:pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
           style={{ transform: shellTransform }}
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="m-0 text-[22px] font-bold text-zinc-950">Value Embed Code</h2>
-            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0" aria-label="Close">
+          <div className="flex items-center justify-between gap-2 mb-4 sm:mb-5">
+            <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">Value Embed Code</h2>
+            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0 touch-manipulation shrink-0" aria-label="Close">
               ×
             </button>
           </div>
@@ -114,8 +114,8 @@ export function ValueEmbedDetailSidebar({
 
               <section className="mt-5">
                 <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Public code</h3>
-                <div className="flex items-center gap-0">
-                  <code className="font-mono text-sm">{code.publicCode}</code>
+                <div className="flex items-center gap-2 min-w-0 flex-wrap">
+                  <code className="font-mono text-sm break-all">{code.publicCode}</code>
                   <CopyIconButton text={code.publicCode} />
                 </div>
               </section>

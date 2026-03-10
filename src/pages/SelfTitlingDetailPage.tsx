@@ -46,23 +46,23 @@ export function SelfTitlingDetailPage(): React.ReactElement {
   const profileUrl = code ? pathToItemProfile(code.publicCode) : "";
 
   if (loading || !code) {
-    return <div>{loading ? "Loading…" : "Code not found."}</div>;
+    return <div className="py-4 text-body-text">{loading ? "Loading…" : "Code not found."}</div>;
   }
 
   return (
-    <div>
-      <div className="mb-6">
+    <div className="min-w-0">
+      <div className="mb-4 sm:mb-6">
         <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
           Back to dashboard
         </Button>
       </div>
-      <h1>Self-Titling Code</h1>
-      <p><strong>Item tag:</strong> {code.itemTag}</p>
+      <h1 className="text-xl sm:text-2xl">Self-Titling Code</h1>
+      <p className="mt-1"><strong>Item tag:</strong> {code.itemTag}</p>
       <p><strong>UNS name:</strong> {code.unsName}</p>
       <p><Badge status={code.status} /></p>
 
-      <section className="mt-6">
-        <h2>Public profile page</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Public profile page</h2>
         <p>
           <a href={profileUrl} target="_blank" rel="noopener noreferrer">
             Open item profile
@@ -70,26 +70,26 @@ export function SelfTitlingDetailPage(): React.ReactElement {
         </p>
       </section>
 
-      <section className="mt-6">
-        <h2>QR code</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">QR code</h2>
         <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Item profile QR code" />
         <p className="text-sm mt-2">Links to item profile.</p>
       </section>
 
-      <section className="mt-6">
-        <h2>Public code</h2>
-        <div className="flex items-center gap-2">
-          <code className="font-mono text-lg">{code.publicCode}</code>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Public code</h2>
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
+          <code className="font-mono text-base sm:text-lg break-all">{code.publicCode}</code>
           <CopyButton text={code.publicCode} />
         </div>
       </section>
 
-      <section className="mt-6">
-        <h2>Ownership</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Ownership</h2>
         <p>Status: {code.ownershipStatus ?? "owned"}</p>
       </section>
 
-      <section className="mt-6 flex flex-wrap gap-3">
+      <section className="mt-4 sm:mt-6 flex flex-wrap gap-3">
         <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
           Export sticker template
         </Button>
@@ -101,7 +101,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
       </section>
 
       {transferOpen && (
-        <div className="mt-6 p-4 border border-[#e5e7eb] rounded-[8px] max-w-[400px]">
+        <div className="mt-4 sm:mt-6 p-4 border border-[#e5e7eb] rounded-[8px] w-full max-w-[400px]">
           <h3>Transfer title</h3>
           <Input
             label="Recipient (UNS name)"

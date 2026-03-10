@@ -39,9 +39,9 @@ export function CheckBalancePage(): React.ReactElement {
   };
 
   return (
-    <div className="max-w-[560px] mx-auto">
-      <h1>Check balance</h1>
-      <p>Enter the public code to see balance and status. Do not enter your private code here.</p>
+    <div className="max-w-[560px] mx-auto px-4 sm:px-0">
+      <h1 className="text-xl sm:text-2xl">Check balance</h1>
+      <p className="mt-1 text-sm sm:text-base text-body-text">Enter the public code to see balance and status. Do not enter your private code here.</p>
 
       <div className="mb-6">
         <Input
@@ -58,8 +58,12 @@ export function CheckBalancePage(): React.ReactElement {
         </Button>
       </div>
 
+      {searched && !loading && !result && (
+        <p className="text-body-text">No item found for this public code.</p>
+      )}
+
       {searched && !loading && result && (
-        <div className="card p-7 px-8 mb-6">
+        <div className="card p-4 sm:p-7 sm:px-8 mb-6">
           <h2>Result</h2>
           <p><strong>Current balance:</strong> {result.balance}</p>
           <p><strong>Original value:</strong> {result.value}</p>
@@ -79,7 +83,7 @@ export function CheckBalancePage(): React.ReactElement {
         <p className="text-body-text">No item found for this public code.</p>
       )}
 
-      <section className="card mt-8 p-6 px-7">
+      <section className="card mt-6 sm:mt-8 p-4 sm:p-6 sm:px-7">
         <h2>How to redeem</h2>
         <p>You need:</p>
         <ul>

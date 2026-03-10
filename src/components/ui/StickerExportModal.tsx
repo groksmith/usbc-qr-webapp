@@ -78,7 +78,7 @@ export function StickerExportModal({
       <p className="text-sm text-body-text">
         Sticker dimensions and bleed can be configured when the real export is connected.
       </p>
-      <div className="flex gap-3 mt-6">
+      <div className="flex flex-col sm:flex-row gap-3 mt-6">
         <Button onClick={handleDownload}>Download</Button>
         <Button variant="outline" onClick={onClose}>
           Cancel

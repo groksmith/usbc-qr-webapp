@@ -233,8 +233,8 @@ export function GenerateCodeFlowModal({
   const bulkMax = bulkValues.length > 0 ? Math.max(...bulkValues) : 0;
 
   const shellClass = isBulk && step === 2
-    ? "w-full max-w-[640px] rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-6"
-    : "w-full max-w-[420px] rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-6";
+    ? "w-full max-w-[640px] rounded-[16px] sm:rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-4 sm:p-6"
+    : "w-full max-w-[420px] rounded-[16px] sm:rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-4 sm:p-6";
 
   const codeTypeBtnClass = (type: "value-embed" | "self-titling", marginClass: string): string => {
     const selected = codeType === type;
@@ -250,12 +250,12 @@ export function GenerateCodeFlowModal({
 
   return (
     <div
-      className="fixed inset-0 bg-[rgba(147,197,213,0.45)] backdrop-blur-[6px] flex items-center justify-center z-[1000]"
+      className="fixed inset-0 bg-[rgba(147,197,213,0.45)] backdrop-blur-[6px] flex items-center justify-center z-[1000] p-4 sm:p-0 overflow-y-auto"
       onClick={resetAndClose}
       role="dialog"
       aria-modal="true"
     >
-      <div className={shellClass} onClick={(e) => e.stopPropagation()}>
+      <div className={`${shellClass} w-full mx-0 sm:mx-4`} onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-2 min-h-[32px] gap-2">
           <div className="flex-1 min-w-0" />
           <ProgressDots current={visualStep} total={totalSteps} />
@@ -268,7 +268,7 @@ export function GenerateCodeFlowModal({
           {/* STEP 0 — Choose code type */}
           {step === 0 && (
             <>
-              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+              <h2 className="m-0 mb-2 text-lg sm:text-[22px] font-bold text-zinc-950 text-center">
                 What type of code do you want to generate?
               </h2>
 
@@ -391,9 +391,9 @@ export function GenerateCodeFlowModal({
                   You&apos;ll customize individual values and expirations in the next step.
                 </p>
               )}
-              <div className="flex justify-end gap-3 mt-2">
-                <Button variant="outline" onClick={() => setStep(0)} className="w-[120px] h-11">Back</Button>
-                <Button onClick={handleConfigNext} className="w-[120px] h-11">Next</Button>
+              <div className="flex justify-end gap-2 sm:gap-3 mt-2 flex-wrap">
+                <Button variant="outline" onClick={() => setStep(0)} className="w-full sm:w-[120px] h-11">Back</Button>
+                <Button onClick={handleConfigNext} className="w-full sm:w-[120px] h-11">Next</Button>
               </div>
             </>
           )}
@@ -423,11 +423,11 @@ export function GenerateCodeFlowModal({
                 placeholder="e.g. alice.uns"
                 error={errors.unsName}
               />
-              <div className="flex justify-end gap-3 mt-2">
-                <Button variant="outline" onClick={() => setStep(0)} className="w-[120px] h-11">Back</Button>
+              <div className="flex justify-end gap-2 sm:gap-3 mt-2 flex-wrap">
+                <Button variant="outline" onClick={() => setStep(0)} className="w-full sm:w-[120px] h-11">Back</Button>
                 <Button
                   onClick={() => { if (validateSelfTitlingConfig()) setStep(2); }}
-                  className="w-[120px] h-11"
+                  className="w-full sm:w-[120px] h-11"
                 >
                   Next
                 </Button>
@@ -443,8 +443,32 @@ export function GenerateCodeFlowModal({
                 Set individual values and expirations for {parsedQty} codes.
               </p>
 
-              <div className="max-h-[320px] overflow-y-auto border border-[#e4e4e7] rounded-card mb-4">
-                <table className="w-full border-collapse text-sm">
+              <div className="max-h-[280px] sm:max-h-[320px] overflow-y-auto border border-[#e4e4e7] rounded-card mb-4">
+                {/* Mobile: card list for bulk items */}
+                <div className="sm:hidden divide-y divide-[#e4e4e7]">
+                  {bulkItems.map((item, i) => (
+                    <div key={i} className="p-3 flex flex-col gap-2">
+                      <span className="text-xs font-semibold text-muted">#{i + 1}</span>
+                      <input
+                        type="number"
+                        min={0}
+                        step="any"
+                        value={item.value}
+                        onChange={(e) => updateBulkItem(i, "value", e.target.value)}
+                        placeholder="Value ($)"
+                        className="w-full py-2 px-3 text-sm border border-[#e4e4e7] rounded-[8px] outline-none bg-white box-border"
+                      />
+                      <input
+                        type="datetime-local"
+                        value={item.expiration}
+                        onChange={(e) => updateBulkItem(i, "expiration", e.target.value)}
+                        className="w-full py-2 px-3 text-sm border border-[#e4e4e7] rounded-[8px] outline-none bg-white box-border"
+                      />
+                    </div>
+                  ))}
+                </div>
+                {/* Desktop: table */}
+                <table className="w-full border-collapse text-sm hidden sm:table">
                   <thead>
                     <tr className="bg-[#f8fafa] sticky top-0 z-[1]">
                       <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7] w-12">#</th>
@@ -501,12 +525,12 @@ export function GenerateCodeFlowModal({
                 Total: <strong className="text-zinc-950">${bulkTotal.toLocaleString()}</strong> across {parsedQty} codes
               </div>
 
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setStep(1)} className="w-[120px] h-11">Back</Button>
+              <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
+                <Button variant="outline" onClick={() => setStep(1)} className="w-full sm:w-[120px] h-11">Back</Button>
                 <Button
                   onClick={() => { if (validateBulkItems()) setStep(reviewStep); }}
                   disabled={!validateBulkItems()}
-                  className="w-[120px] h-11"
+                  className="w-full sm:w-[120px] h-11"
                 >
                   Next
                 </Button>
@@ -554,9 +578,9 @@ export function GenerateCodeFlowModal({
                 )}
               </div>
 
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={() => setStep(isBulk ? 2 : 1)} className="w-[120px] h-11">Back</Button>
-                <Button onClick={handleCreate} disabled={loading} className="w-[140px] h-11">
+              <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
+                <Button variant="outline" onClick={() => setStep(isBulk ? 2 : 1)} className="w-full sm:w-[120px] h-11">Back</Button>
+                <Button onClick={handleCreate} disabled={loading} className="w-full sm:w-[140px] h-11">
                   {loading ? "Creating…" : isBulk ? "Create codes" : "Create code"}
                 </Button>
               </div>
@@ -592,8 +616,8 @@ export function GenerateCodeFlowModal({
                 )}
               </div>
 
-              <div className="flex justify-end gap-3">
-                <Button variant="outline" onClick={resetAndClose} className="w-[120px] h-11">
+              <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
+                <Button variant="outline" onClick={resetAndClose} className="w-full sm:w-[120px] h-11">
                   Done
                 </Button>
                 <Button
@@ -606,7 +630,7 @@ export function GenerateCodeFlowModal({
                     resetAndClose();
                     navigate(href);
                   }}
-                  className="w-[120px] h-11"
+                  className="w-full sm:w-[120px] h-11"
                 >
                   {successList.length === 1 ? "View code" : "View codes"}
                 </Button>

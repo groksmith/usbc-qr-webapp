@@ -33,41 +33,41 @@ export function ValueEmbedDetailPage(): React.ReactElement {
   };
 
   if (loading || !code) {
-    return <div>{loading ? "Loading…" : "Code not found."}</div>;
+    return <div className="py-4 text-body-text">{loading ? "Loading…" : "Code not found."}</div>;
   }
 
   return (
-    <div>
-      <div className="mb-6">
+    <div className="min-w-0">
+      <div className="mb-4 sm:mb-6">
         <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
           Back to dashboard
         </Button>
       </div>
-      <h1>Value Embed Code</h1>
-      <p><strong>Description tag:</strong> {code.label}</p>
+      <h1 className="text-xl sm:text-2xl">Value Embed Code</h1>
+      <p className="mt-1"><strong>Description tag:</strong> {code.label}</p>
       <p><Badge status={code.status} /></p>
 
-      <section className="mt-6">
-        <h2>QR code</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">QR code</h2>
         <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Value Embed QR code – scan to check balance or redeem" />
-        <p className="text-sm mt-2">
+        <p className="text-sm mt-2 break-all">
           <a href={code.qrUrl} target="_blank" rel="noopener noreferrer">{code.qrUrl}</a>
         </p>
       </section>
 
-      <section className="mt-6">
-        <h2>Public code</h2>
-        <div className="flex items-center gap-2">
-          <code className="font-mono text-lg">{code.publicCode}</code>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Public code</h2>
+        <div className="flex flex-wrap items-center gap-2 min-w-0">
+          <code className="font-mono text-base sm:text-lg break-all">{code.publicCode}</code>
           <CopyButton text={code.publicCode} />
         </div>
       </section>
 
-      <section className="mt-6">
-        <h2>Private code</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Private code</h2>
         {revealPrivate ? (
-          <div className="flex items-center gap-2">
-            <code className="font-mono text-lg">{code.privateCode ?? "—"}</code>
+          <div className="flex flex-wrap items-center gap-2 min-w-0">
+            <code className="font-mono text-base sm:text-lg break-all">{code.privateCode ?? "—"}</code>
             <CopyButton text={code.privateCode ?? ""} />
           </div>
         ) : (
@@ -86,8 +86,8 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         )}
       </section>
 
-      <section className="mt-6">
-        <h2>Value & balance</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Value & balance</h2>
         <p className="mb-2">
           A wallet is generated for this code pair and holds the assigned funds until redemption or return to source.
         </p>
@@ -97,8 +97,8 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         <p>Expiration: {code.expiration ? new Date(code.expiration).toLocaleString() : "None"}</p>
       </section>
 
-      <section className="mt-6">
-        <h2>Status timeline</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">Status timeline</h2>
         <p>Created: {new Date(code.createdAt).toLocaleString()}</p>
         <p>Updated: {new Date(code.updatedAt).toLocaleString()}</p>
         {code.redemptionTimestamp && (
@@ -106,7 +106,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         )}
       </section>
 
-      <section className="mt-6 flex flex-wrap gap-3">
+      <section className="mt-4 sm:mt-6 flex flex-wrap gap-3">
         <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
           Export sticker template (2-sticker combo)
         </Button>
@@ -131,7 +131,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         )}
       </section>
 
-      <div className="mt-4 text-sm flex flex-wrap gap-4">
+      <div className="mt-4 text-sm flex flex-wrap gap-3 sm:gap-4">
         <a href={`${window.location.origin}/check-balance?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
           View public check balance page
         </a>

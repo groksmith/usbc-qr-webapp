@@ -19,23 +19,23 @@ export function ItemProfilePage(): React.ReactElement {
   }, [publicCode]);
 
   if (loading) {
-    return <div>Loading…</div>;
+    return <div className="py-4 text-body-text">Loading…</div>;
   }
 
   if (!profile) {
-    return <div>Item not found.</div>;
+    return <div className="py-4 text-body-text">Item not found.</div>;
   }
 
   return (
-    <div className="max-w-[560px] mx-auto">
-      <h1>Item profile</h1>
+    <div className="max-w-[560px] mx-auto px-4 sm:px-0">
+      <h1 className="text-xl sm:text-2xl">Item profile</h1>
       <p><strong>Item tag:</strong> {profile.itemTag}</p>
       <p><strong>UNS name:</strong> {profile.unsName}</p>
       <p><strong>Ownership:</strong> Owned by {profile.ownerDisplay}</p>
       <p><Badge status={profile.status} /> ({STATUS_LABELS[profile.status]})</p>
 
-      <section className="mt-6">
-        <h2>QR code</h2>
+      <section className="mt-4 sm:mt-6">
+        <h2 className="text-lg font-semibold">QR code</h2>
         <div className="w-40 h-40 bg-gray-100 flex items-center justify-center rounded-[8px] font-mono text-xs">
           QR placeholder
         </div>
