@@ -4,72 +4,6 @@ import { CopyButton } from "./CopyButton";
 
 const SIDEBAR_TRANSITION_MS = 300;
 
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(147, 197, 213, 0.45)",
-  backdropFilter: "blur(6px)",
-  WebkitBackdropFilter: "blur(6px)",
-  display: "flex",
-  alignItems: "stretch",
-  justifyContent: "flex-end",
-  zIndex: 1001,
-};
-
-const shellStyleBase: React.CSSProperties = {
-  width: "100%",
-  maxWidth: "420px",
-  borderRadius: "24px 0 0 24px",
-  background: "#FFFFFF",
-  border: "none",
-  outline: "none",
-  boxShadow: "-4px 0 48px rgba(0,0,0,0.10)",
-  padding: "24px 28px 28px",
-  display: "flex",
-  flexDirection: "column",
-  overflow: "auto",
-  transition: `transform ${SIDEBAR_TRANSITION_MS}ms ease-out`,
-};
-
-const headerRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: "24px",
-};
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: "22px",
-  fontWeight: 700,
-  color: "#09090b",
-};
-
-const closeBtnStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  width: "32px",
-  height: "32px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  color: "#64748b",
-  fontSize: "24px",
-  lineHeight: 1,
-  padding: 0,
-};
-
-const contentWrapStyle: React.CSSProperties = {
-  width: "100%",
-  maxWidth: "320px",
-  margin: "0 auto",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  textAlign: "center",
-};
-
 export interface ViewQRCodeSidebarProps {
   open: boolean;
   onClose: () => void;
@@ -117,47 +51,44 @@ export function ViewQRCodeSidebar({
 
   return (
     <div
-      style={overlayStyle}
+      className="fixed inset-0 bg-[rgba(147,197,213,0.45)] backdrop-blur-[6px] flex items-stretch justify-end z-[1001]"
       onClick={handleClose}
       role="dialog"
       aria-modal="true"
       aria-label={title}
     >
       <div
-        style={{ ...shellStyleBase, transform: shellTransform }}
+        className="w-full max-w-[420px] rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-6 px-7 pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
+        style={{ transform: shellTransform }}
         onClick={(e) => e.stopPropagation()}
       >
-        <div style={headerRowStyle}>
-          <h2 style={titleStyle}>{title}</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="m-0 text-[22px] font-bold text-zinc-950">{title}</h2>
           <button
             type="button"
             onClick={handleClose}
-            style={closeBtnStyle}
+            className="bg-transparent border-0 w-8 h-8 flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0"
             aria-label="Close"
           >
             ×
           </button>
         </div>
-        <div style={contentWrapStyle}>
+        <div className="w-full max-w-[320px] mx-auto flex flex-col items-center text-center">
           {label && (
-            <p style={{ margin: "0 0 16px", fontSize: "14px", color: "#64748b" }}>
-              {label}
-            </p>
+            <p className="m-0 mb-4 text-sm text-muted">{label}</p>
           )}
           <QRCodeDisplay value={qrUrl} size={200} linkToUrl alt={`QR code – ${title}`} />
-          <p style={{ fontSize: "14px", marginTop: "16px", color: "#64748b", wordBreak: "break-all" }}>
+          <p className="text-sm mt-4 text-muted break-all">
             Links to:{" "}
-            <a href={qrUrl} target="_blank" rel="noopener noreferrer" style={{ color: "var(--color-primary)" }}>
+            <a href={qrUrl} target="_blank" rel="noopener noreferrer" className="text-primary">
               {qrUrl}
             </a>
           </p>
           {publicCode && (
-            <div style={{ marginTop: "20px", width: "100%", textAlign: "center" }}>
-              <p style={{ margin: "0 0 8px", fontSize: "14px", fontWeight: 500, color: "#09090b" }}>
-                Public code
-              </p>
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px" }}>
-                <code style={{ fontFamily: "monospace", fontSize: "16px" }}>{publicCode}</code>
+            <div className="mt-5 w-full text-center">
+              <p className="m-0 mb-2 text-sm font-medium text-zinc-950">Public code</p>
+              <div className="flex items-center justify-center gap-2">
+                <code className="font-mono text-base">{publicCode}</code>
                 <CopyButton text={publicCode} />
               </div>
             </div>

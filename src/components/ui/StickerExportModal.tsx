@@ -75,10 +75,10 @@ export function StickerExportModal({
           ? "Print preview: outside sticker (QR + public code) and inside sticker (private code)."
           : "Print preview: single QR sticker for item profile."}
       </p>
-      <p style={{ fontSize: "14px", color: "var(--color-body)" }}>
+      <p className="text-sm text-body-text">
         Sticker dimensions and bleed can be configured when the real export is connected.
       </p>
-      <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+      <div className="flex gap-3 mt-6">
         <Button onClick={handleDownload}>Download</Button>
         <Button variant="outline" onClick={onClose}>
           Cancel

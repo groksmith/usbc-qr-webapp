@@ -12,15 +12,8 @@ export function Badge({ status, label }: BadgeProps): React.ReactElement {
   const text = label ?? STATUS_LABELS[status];
   return (
     <span
-      style={{
-        display: "inline-block",
-        padding: "4px 10px",
-        borderRadius: "999px",
-        fontSize: "14px",
-        fontWeight: 600,
-        backgroundColor: `${color}20`,
-        color,
-      }}
+      className="inline-block py-1 px-[10px] rounded-full text-sm font-semibold"
+      style={{ backgroundColor: `${color}20`, color }}
     >
       {text}
     </span>

@@ -40,16 +40,16 @@ export function ValueEmbedNewPage(): React.ReactElement {
       <div>
         <h1>Value Embed code created</h1>
         <p>{created.length === 1 ? "Code set created." : `Created ${created.length} code sets.`}</p>
-        <ul style={{ marginBottom: "24px" }}>
+        <ul className="mb-6">
           {created.map((c) => (
             <li key={c.id}>
-              <a href={pathToValueEmbedDetail(c.id)} style={{ color: "var(--color-primary)" }}>
+              <a href={pathToValueEmbedDetail(c.id)} className="text-primary">
                 {c.label} — {c.publicCode}
               </a>
             </li>
           ))}
         </ul>
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div className="flex gap-3">
           <Button onClick={() => navigate(ROUTES.CODES)}>Done</Button>
           <Button variant="outline">Export stickers</Button>
         </div>
@@ -58,9 +58,9 @@ export function ValueEmbedNewPage(): React.ReactElement {
   }
 
   return (
-    <div style={{ maxWidth: "560px" }}>
+    <div className="max-w-[560px]">
       <h1>Generate Value Embed Code</h1>
-      <p style={{ marginBottom: "24px" }}>
+      <p className="mb-6">
         Step {step + 1} of {STEPS.length}: {STEPS[step]}
       </p>
 
@@ -79,26 +79,14 @@ export function ValueEmbedNewPage(): React.ReactElement {
             onChange={(e) => setDescriptionTag(e.target.value)}
             placeholder="e.g. Holiday promo 2024"
           />
-          <div style={{ marginBottom: "16px" }}>
-            <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#09090b", marginBottom: "6px" }}>
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-zinc-950 mb-1.5">
               Funding source
             </label>
             <select
-              className="select-chevron-right"
+              className="select-chevron-right w-full h-10 text-sm border border-[#E0E0E0] rounded-card bg-white outline-none text-zinc-950 font-sans box-border px-3.5"
               value={fundingSourceId}
               onChange={(e) => setFundingSourceId(e.target.value)}
-              style={{
-                width: "100%",
-                height: "40px",
-                fontSize: "14px",
-                border: "1px solid #E0E0E0",
-                borderRadius: "12px",
-                backgroundColor: "#fff",
-                outline: "none",
-                color: "#09090b",
-                fontFamily: "var(--font-family)",
-                boxSizing: "border-box",
-              }}
             >
               <option value="USBC">USBC</option>
               <option value="URT">URT</option>
@@ -111,8 +99,8 @@ export function ValueEmbedNewPage(): React.ReactElement {
             onChange={(e) => setValue(e.target.value)}
             placeholder="e.g. 50"
           />
-          <div style={{ marginBottom: "16px" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", fontWeight: 500 }}>
+          <div className="mb-4">
+            <label className="flex items-center gap-2 text-sm font-medium">
               <input
                 type="checkbox"
                 checked={expirationEnabled}
@@ -136,14 +124,9 @@ export function ValueEmbedNewPage(): React.ReactElement {
             value={quantity}
             onChange={(e) => setQuantity(e.target.value)}
           />
-          <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+          <div className="flex gap-3 mt-6">
             <Button variant="outline" onClick={() => setStep(0)}>Back</Button>
-            <Button
-              onClick={() => setStep(2)}
-              disabled={!descriptionTag.trim() || !value}
-            >
-              Next
-            </Button>
+            <Button onClick={() => setStep(2)} disabled={!descriptionTag.trim() || !value}>Next</Button>
           </div>
         </div>
       )}
@@ -155,7 +138,7 @@ export function ValueEmbedNewPage(): React.ReactElement {
           <p><strong>Value:</strong> {value}</p>
           <p><strong>Expiration:</strong> {expirationEnabled && expiration ? expiration : "None"}</p>
           <p><strong>Quantity:</strong> {quantity}</p>
-          <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+          <div className="flex gap-3 mt-6">
             <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
             <Button onClick={handleCreate} disabled={loading}>
               {loading ? "Creating…" : "Create"}
@@ -164,7 +147,7 @@ export function ValueEmbedNewPage(): React.ReactElement {
         </div>
       )}
 
-      <div style={{ marginTop: "24px" }}>
+      <div className="mt-6">
         <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
           Cancel
         </Button>

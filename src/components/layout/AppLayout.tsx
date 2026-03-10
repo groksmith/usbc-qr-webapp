@@ -4,9 +4,9 @@ import { AppHeader } from "./AppHeader";
 
 export function AppLayout(): React.ReactElement {
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
+    <div className="min-h-screen flex flex-col">
       <AppHeader />
-      <main style={{ flex: 1, padding: "28px 32px" }}>
+      <main className="flex-1 px-8 pb-7 pt-[calc(28px+72px)]">
         <Outlet />
       </main>
     </div>

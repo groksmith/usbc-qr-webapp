@@ -20,6 +20,12 @@ type ValueEmbedSortColumn = "label" | "publicCode" | "value" | "status" | "creat
 type SelfTitlingSortColumn = "itemTag" | "unsName" | "publicCode" | "status" | "createdAt";
 type SortDirection = "asc" | "desc";
 
+const thClass = "p-4 px-5 text-left bg-[#F8FAFA] text-muted font-semibold text-sm border-b border-[#EEF2F2]";
+const sortableThClass = `${thClass} cursor-pointer select-none`;
+const tdClass = "p-4 px-5 text-sm text-heading";
+const actionBtnClass = "bg-transparent border-0 text-zinc-950 cursor-pointer p-0 font-sans text-sm";
+const paginationBtnClass = "py-1.5 px-3.5 text-sm rounded-[8px] border border-[#d1d5db] bg-[#f3f4f6] cursor-pointer text-[#4b5563]";
+
 export function CodesDashboardPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<DashboardTab>("value-embed");
   const [valueEmbedList, setValueEmbedList] = useState<ValueEmbedCodeSet[]>([]);
@@ -126,86 +132,19 @@ export function CodesDashboardPage(): React.ReactElement {
     { id: "self-titling" as const, label: "Self-Titling" },
   ];
 
-  const cardStyle: React.CSSProperties = {
-    backgroundColor: "rgba(255, 255, 255, 0.95)",
-    borderRadius: "12px",
-    boxShadow: "var(--shadow-card)",
-    padding: "32px 40px 40px",
-  };
-
-  const tableWrapStyle: React.CSSProperties = {
-    overflow: "hidden",
-    border: "1px solid #E8E8E8",
-    borderRadius: "0 0 12px 12px",
-    backgroundColor: "#FFFFFF",
-    boxShadow: "var(--shadow-soft)",
-  };
-
-  const thStyle: React.CSSProperties = {
-    padding: "16px 20px",
-    textAlign: "left",
-    backgroundColor: "#F8FAFA",
-    color: "#64748b",
-    fontWeight: 600,
-    fontSize: "14px",
-    borderBottom: "1px solid #EEF2F2",
-  };
-
-  const sortableThStyle: React.CSSProperties = {
-    ...thStyle,
-    cursor: "pointer",
-    userSelect: "none",
-  };
-
-  const getRowStyle = (index: number): React.CSSProperties => ({
-    backgroundColor: index % 2 === 0 ? "#FFFFFF" : "#F8FCFC",
-    borderBottom: "1px solid #EEF2F2",
-  });
-
-  const tdStyle: React.CSSProperties = {
-    padding: "16px 20px",
-    fontSize: "14px",
-    color: "var(--color-heading)",
-  };
-
-  const paginationStyle: React.CSSProperties = {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: "16px 20px",
-    borderTop: "1px solid #EEF2F2",
-  };
-
-  const paginationBtnStyle: React.CSSProperties = {
-    padding: "6px 14px",
-    fontSize: "14px",
-    borderRadius: "8px",
-    border: "1px solid #d1d5db",
-    backgroundColor: "#f3f4f6",
-    cursor: "pointer",
-    color: "#4b5563",
-  };
+  const getRowClass = (index: number): string =>
+    `border-b border-[#EEF2F2] ${index % 2 === 0 ? "bg-white" : "bg-[#F8FCFC]"}`;
 
   return (
     <div>
-      <div className="card" style={cardStyle}>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: "16px",
-            marginBottom: "24px",
-          }}
-        >
-          <h1 style={{ margin: 0, fontSize: "24px" }}>Codes Dashboard</h1>
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+      <div className="card bg-white/95 p-8 px-10 pb-10">
+        <div className="flex justify-between items-center flex-wrap gap-4 mb-6">
+          <h1 className="m-0 text-2xl">Codes Dashboard</h1>
+          <div className="flex items-center gap-3 flex-wrap">
             <select
-              className="select-chevron-right"
+              className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5"
               value={statusFilter}
               onChange={(e) => setStatusFilter((e.target.value || "") as CodeSetStatus | "")}
-              style={{ height: "44px", boxSizing: "border-box", fontSize: "14px", borderRadius: "12px", border: "1px solid #E0E0E0", outline: "none", backgroundColor: "#FFFFFF" }}
             >
               <option value="">All statuses</option>
               <option value="active">Active</option>
@@ -214,19 +153,9 @@ export function CodesDashboardPage(): React.ReactElement {
               <option value="cancelled">Cancelled</option>
               <option value="pending_transfer">Pending transfer</option>
             </select>
-            <div style={{ position: "relative", display: "inline-flex", alignItems: "center" }}>
+            <div className="relative inline-flex items-center">
               <span
-                style={{
-                  position: "absolute",
-                  left: "12px",
-                  top: "50%",
-                  transform: "translateY(-50%) scale(0.8)",
-                  color: "#9ca3af",
-                  pointerEvents: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
+                className="absolute left-3 top-1/2 -translate-y-1/2 scale-[0.8] text-gray-400 pointer-events-none flex items-center justify-center"
                 aria-hidden
               >
                 <SearchIcon />
@@ -239,17 +168,7 @@ export function CodesDashboardPage(): React.ReactElement {
                 onKeyDown={(e) => {
                   if (e.key === "Enter") setSearch(searchInput.trim());
                 }}
-                style={{
-                  height: "44px",
-                  padding: "0 14px 0 40px",
-                  boxSizing: "border-box",
-                  fontSize: "14px",
-                  borderRadius: "12px",
-                  border: "1px solid #E0E0E0",
-                  outline: "none",
-                  backgroundColor: "#FFFFFF",
-                  minWidth: "220px",
-                }}
+                className="h-11 py-0 pr-3.5 pl-10 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white min-w-[220px]"
               />
             </div>
             <button
@@ -260,222 +179,197 @@ export function CodesDashboardPage(): React.ReactElement {
               }}
               title="Download CSV"
               aria-label="Download CSV"
-              style={{
-                height: "44px",
-                width: "165px",
-                padding: "0 16px 0 14px",
-                borderRadius: "12px",
-                border: "1px solid #dcdcdc",
-                outline: "none",
-                backgroundColor: "#ffffff",
-                color: "#1e1e1e",
-                fontSize: "14px",
-                fontWeight: 600,
-                fontFamily: "var(--font-family)",
-                display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-                cursor: "pointer",
-                boxSizing: "border-box",
-              }}
+              className="h-11 w-[165px] px-4 rounded-card border border-[#dcdcdc] outline-none bg-white text-[#1e1e1e] text-sm font-semibold font-sans inline-flex items-center justify-center gap-[10px] cursor-pointer box-border"
             >
-              <img src={csvIcon} alt="" width={18} height={18} style={{ display: "block", flexShrink: 0 }} />
+              <img src={csvIcon} alt="" width={18} height={18} className="block flex-shrink-0" />
               <span>Download csv</span>
             </button>
-            <Button onClick={() => setGenerateModalOpen(true)} style={{ height: "44px", width: "165px" }}>
+            <Button onClick={() => setGenerateModalOpen(true)} className="h-11 w-[165px]">
               Generate code
             </Button>
           </div>
         </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
-        <Tabs tabs={tabs} activeId={activeTab} onChange={(id) => setActiveTab(id as DashboardTab)} variant="dashboard" />
-      {loading ? (
-        <p style={{ padding: "24px", margin: 0 }}>Loading...</p>
-      ) : activeTab === "value-embed" ? (
-        <div style={{ overflowX: "auto" }}>
-          <div style={tableWrapStyle}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("label")} aria-sort={valueEmbedSort.column === "label" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Description tag
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("publicCode")} aria-sort={valueEmbedSort.column === "publicCode" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Public code
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("value")} aria-sort={valueEmbedSort.column === "value" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Value
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("status")} aria-sort={valueEmbedSort.column === "status" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Status
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("createdAt")} aria-sort={valueEmbedSort.column === "createdAt" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Created
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleValueEmbedSort("expiration")} aria-sort={valueEmbedSort.column === "expiration" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Expiration
-                  </th>
-                  <th style={thStyle}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedValueEmbedList.map((row, index) => (
-                  <tr key={row.id} style={getRowStyle(index)}>
-                    <td style={tdStyle}>{row.label}</td>
-                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>
-                      <span style={{ display: "inline-flex", alignItems: "center" }}>
-                        {row.publicCode}
-                        <CopyIconButton text={row.publicCode} />
-                      </span>
-                    </td>
-                    <td style={tdStyle}>{row.value} {row.fundingSourceId}</td>
-                    <td style={tdStyle}>
-                      <span style={{ color: STATUS_COLORS[row.status], fontWeight: 500 }}>
-                        {STATUS_LABELS[row.status]}
-                      </span>
-                    </td>
-                    <td style={tdStyle}>
-                      {formatTableDate(row.createdAt)}
-                    </td>
-                    <td style={tdStyle}>
-                      {formatTableDate(row.expiration)}
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                        <button type="button" onClick={() => setViewDetailCodeId(row.id)} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>View</button>
-                        <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Export</button>
-                        {row.status === "active" && (
-                          <button type="button" style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Cancel</button>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {sortedValueEmbedList.length > 0 && (
-              <div style={paginationStyle}>
-                <span style={{ fontSize: "14px", color: "#6b7280" }}>
-                  Showing {(valueEmbedPage - 1) * PAGE_SIZE + 1} to{" "}
-                  {Math.min(valueEmbedPage * PAGE_SIZE, sortedValueEmbedList.length)} of{" "}
-                  {sortedValueEmbedList.length} codes
-                </span>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button
-                    type="button"
-                    style={{ ...paginationBtnStyle, ...(valueEmbedPage <= 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
-                    onClick={() => setValueEmbedPage((p) => Math.max(1, p - 1))}
-                    disabled={valueEmbedPage <= 1}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    style={{ ...paginationBtnStyle, ...(valueEmbedPage >= valueEmbedTotalPages ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
-                    onClick={() => setValueEmbedPage((p) => Math.min(valueEmbedTotalPages, p + 1))}
-                    disabled={valueEmbedPage >= valueEmbedTotalPages}
-                  >
-                    Next
-                  </button>
-                </div>
+        <div className="flex flex-col gap-0">
+          <Tabs tabs={tabs} activeId={activeTab} onChange={(id) => setActiveTab(id as DashboardTab)} variant="dashboard" />
+          {loading ? (
+            <p className="p-6 m-0">Loading...</p>
+          ) : activeTab === "value-embed" ? (
+            <div className="overflow-x-auto">
+              <div className="overflow-hidden border border-[#E8E8E8] rounded-b-card bg-white shadow-soft">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className={sortableThClass} onClick={() => handleValueEmbedSort("label")} aria-sort={valueEmbedSort.column === "label" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Description tag
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleValueEmbedSort("publicCode")} aria-sort={valueEmbedSort.column === "publicCode" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Public code
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleValueEmbedSort("value")} aria-sort={valueEmbedSort.column === "value" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Value
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleValueEmbedSort("status")} aria-sort={valueEmbedSort.column === "status" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Status
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleValueEmbedSort("createdAt")} aria-sort={valueEmbedSort.column === "createdAt" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Created
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleValueEmbedSort("expiration")} aria-sort={valueEmbedSort.column === "expiration" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Expiration
+                      </th>
+                      <th className={thClass}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedValueEmbedList.map((row, index) => (
+                      <tr key={row.id} className={getRowClass(index)}>
+                        <td className={tdClass}>{row.label}</td>
+                        <td className={`${tdClass} font-mono`}>
+                          <span className="inline-flex items-center">
+                            {row.publicCode}
+                            <CopyIconButton text={row.publicCode} />
+                          </span>
+                        </td>
+                        <td className={tdClass}>{row.value} {row.fundingSourceId}</td>
+                        <td className={tdClass}>
+                          <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium">
+                            {STATUS_LABELS[row.status]}
+                          </span>
+                        </td>
+                        <td className={tdClass}>{formatTableDate(row.createdAt)}</td>
+                        <td className={tdClass}>{formatTableDate(row.expiration)}</td>
+                        <td className={tdClass}>
+                          <div className="flex justify-start items-center gap-3 flex-wrap">
+                            <button type="button" onClick={() => setViewDetailCodeId(row.id)} className={actionBtnClass}>View</button>
+                            <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
+                            {row.status === "active" && (
+                              <button type="button" className={actionBtnClass}>Cancel</button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {sortedValueEmbedList.length > 0 && (
+                  <div className="flex items-center justify-between p-4 px-5 border-t border-[#EEF2F2]">
+                    <span className="text-sm text-gray-500">
+                      Showing {(valueEmbedPage - 1) * PAGE_SIZE + 1} to{" "}
+                      {Math.min(valueEmbedPage * PAGE_SIZE, sortedValueEmbedList.length)} of{" "}
+                      {sortedValueEmbedList.length} codes
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${valueEmbedPage <= 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setValueEmbedPage((p) => Math.max(1, p - 1))}
+                        disabled={valueEmbedPage <= 1}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${valueEmbedPage >= valueEmbedTotalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setValueEmbedPage((p) => Math.min(valueEmbedTotalPages, p + 1))}
+                        disabled={valueEmbedPage >= valueEmbedTotalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-          {valueEmbedList.length === 0 && (
-            <p style={{ padding: "24px", color: "var(--color-body)" }}>No Value Embed codes found.</p>
+              {valueEmbedList.length === 0 && (
+                <p className="p-6 text-body-text">No Value Embed codes found.</p>
+              )}
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <div className="overflow-hidden border border-[#E8E8E8] rounded-b-card bg-white shadow-soft">
+                <table className="w-full border-collapse">
+                  <thead>
+                    <tr>
+                      <th className={sortableThClass} onClick={() => handleSelfTitlingSort("itemTag")} aria-sort={selfTitlingSort.column === "itemTag" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Item tag
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleSelfTitlingSort("publicCode")} aria-sort={selfTitlingSort.column === "publicCode" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Public code
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleSelfTitlingSort("unsName")} aria-sort={selfTitlingSort.column === "unsName" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        UNS name
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleSelfTitlingSort("status")} aria-sort={selfTitlingSort.column === "status" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Status
+                      </th>
+                      <th className={sortableThClass} onClick={() => handleSelfTitlingSort("createdAt")} aria-sort={selfTitlingSort.column === "createdAt" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
+                        Created
+                      </th>
+                      <th className={thClass}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedSelfTitlingList.map((row, index) => (
+                      <tr key={row.id} className={getRowClass(index)}>
+                        <td className={tdClass}>{row.itemTag}</td>
+                        <td className={`${tdClass} font-mono`}>
+                          <span className="inline-flex items-center">
+                            {row.publicCode}
+                            <CopyIconButton text={row.publicCode} />
+                          </span>
+                        </td>
+                        <td className={tdClass}>{row.unsName}</td>
+                        <td className={tdClass}>
+                          <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium">
+                            {STATUS_LABELS[row.status]}
+                          </span>
+                        </td>
+                        <td className={tdClass}>{formatTableDate(row.createdAt)}</td>
+                        <td className={tdClass}>
+                          <div className="flex justify-start items-center gap-3 flex-wrap">
+                            <button type="button" onClick={() => setViewDetailSelfTitlingId(row.id)} className={actionBtnClass}>View</button>
+                            <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
+                            <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} className={actionBtnClass}>Transfer</button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {sortedSelfTitlingList.length > 0 && (
+                  <div className="flex items-center justify-between p-4 px-5 border-t border-[#EEF2F2]">
+                    <span className="text-sm text-gray-500">
+                      Showing {(selfTitlingPage - 1) * PAGE_SIZE + 1} to{" "}
+                      {Math.min(selfTitlingPage * PAGE_SIZE, sortedSelfTitlingList.length)} of{" "}
+                      {sortedSelfTitlingList.length} codes
+                    </span>
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${selfTitlingPage <= 1 ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setSelfTitlingPage((p) => Math.max(1, p - 1))}
+                        disabled={selfTitlingPage <= 1}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        type="button"
+                        className={`${paginationBtnClass} ${selfTitlingPage >= selfTitlingTotalPages ? "opacity-50 cursor-not-allowed" : ""}`}
+                        onClick={() => setSelfTitlingPage((p) => Math.min(selfTitlingTotalPages, p + 1))}
+                        disabled={selfTitlingPage >= selfTitlingTotalPages}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+              {selfTitlingList.length === 0 && (
+                <p className="p-6 text-body-text">No Self-Titling codes found.</p>
+              )}
+            </div>
           )}
         </div>
-      ) : (
-        <div style={{ overflowX: "auto" }}>
-          <div style={tableWrapStyle}>
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
-              <thead>
-                <tr>
-                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("itemTag")} aria-sort={selfTitlingSort.column === "itemTag" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Item tag
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("publicCode")} aria-sort={selfTitlingSort.column === "publicCode" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Public code
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("unsName")} aria-sort={selfTitlingSort.column === "unsName" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    UNS name
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("status")} aria-sort={selfTitlingSort.column === "status" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Status
-                  </th>
-                  <th style={sortableThStyle} onClick={() => handleSelfTitlingSort("createdAt")} aria-sort={selfTitlingSort.column === "createdAt" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
-                    Created
-                  </th>
-                  <th style={thStyle}>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {paginatedSelfTitlingList.map((row, index) => (
-                  <tr key={row.id} style={getRowStyle(index)}>
-                    <td style={tdStyle}>{row.itemTag}</td>
-                    <td style={{ ...tdStyle, fontFamily: "monospace" }}>
-                      <span style={{ display: "inline-flex", alignItems: "center" }}>
-                        {row.publicCode}
-                        <CopyIconButton text={row.publicCode} />
-                      </span>
-                    </td>
-                    <td style={tdStyle}>{row.unsName}</td>
-                    <td style={tdStyle}>
-                      <span style={{ color: STATUS_COLORS[row.status], fontWeight: 500 }}>
-                        {STATUS_LABELS[row.status]}
-                      </span>
-                    </td>
-                    <td style={tdStyle}>
-                      {formatTableDate(row.createdAt)}
-                    </td>
-                    <td style={tdStyle}>
-                      <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
-                        <button type="button" onClick={() => setViewDetailSelfTitlingId(row.id)} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer", padding: 0, font: "inherit", textDecoration: "none" }}>View</button>
-                        <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Export</button>
-                        <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} style={{ background: "none", border: "none", color: "#09090b", cursor: "pointer" }}>Transfer</button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-            {sortedSelfTitlingList.length > 0 && (
-              <div style={paginationStyle}>
-                <span style={{ fontSize: "14px", color: "#6b7280" }}>
-                  Showing {(selfTitlingPage - 1) * PAGE_SIZE + 1} to{" "}
-                  {Math.min(selfTitlingPage * PAGE_SIZE, sortedSelfTitlingList.length)} of{" "}
-                  {sortedSelfTitlingList.length} codes
-                </span>
-                <div style={{ display: "flex", gap: "8px" }}>
-                  <button
-                    type="button"
-                    style={{ ...paginationBtnStyle, ...(selfTitlingPage <= 1 ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
-                    onClick={() => setSelfTitlingPage((p) => Math.max(1, p - 1))}
-                    disabled={selfTitlingPage <= 1}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    type="button"
-                    style={{ ...paginationBtnStyle, ...(selfTitlingPage >= selfTitlingTotalPages ? { opacity: 0.5, cursor: "not-allowed" } : {}) }}
-                    onClick={() => setSelfTitlingPage((p) => Math.min(selfTitlingTotalPages, p + 1))}
-                    disabled={selfTitlingPage >= selfTitlingTotalPages}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-          {selfTitlingList.length === 0 && (
-            <p style={{ padding: "24px", color: "var(--color-body)" }}>No Self-Titling codes found.</p>
-          )}
-        </div>
-      )}
-      </div>
-
       </div>
 
       <StickerExportModal

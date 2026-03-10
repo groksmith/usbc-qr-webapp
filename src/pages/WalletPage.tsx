@@ -44,32 +44,28 @@ export function WalletPage(): React.ReactElement {
       {loading ? (
         <p>Loading...</p>
       ) : activeTab === "value-embed" ? (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
             <thead>
-              <tr style={{ borderBottom: "2px solid var(--color-body)", textAlign: "left" }}>
-                <th style={{ padding: "12px 8px" }}>Description</th>
-                <th style={{ padding: "12px 8px" }}>Value</th>
-                <th style={{ padding: "12px 8px" }}>Balance</th>
-                <th style={{ padding: "12px 8px" }}>Expiration</th>
-                <th style={{ padding: "12px 8px" }}>Status</th>
-                <th style={{ padding: "12px 8px" }}>Actions</th>
+              <tr className="border-b-2 border-body-text text-left">
+                <th className="p-3 px-2">Description</th>
+                <th className="p-3 px-2">Value</th>
+                <th className="p-3 px-2">Balance</th>
+                <th className="p-3 px-2">Expiration</th>
+                <th className="p-3 px-2">Status</th>
+                <th className="p-3 px-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {valueEmbedItems.map((row) => (
-                <tr key={row.id} style={{ borderBottom: "1px solid #e5e7eb" }}>
-                  <td style={{ padding: "12px 8px" }}>{row.label}</td>
-                  <td style={{ padding: "12px 8px" }}>{row.value}</td>
-                  <td style={{ padding: "12px 8px" }}>{row.balance}</td>
-                  <td style={{ padding: "12px 8px" }}>
-                    {formatTableDate(row.expiration)}
-                  </td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <Badge status={row.status} />
-                  </td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+                <tr key={row.id} className="border-b border-[#e5e7eb]">
+                  <td className="p-3 px-2">{row.label}</td>
+                  <td className="p-3 px-2">{row.value}</td>
+                  <td className="p-3 px-2">{row.balance}</td>
+                  <td className="p-3 px-2">{formatTableDate(row.expiration)}</td>
+                  <td className="p-3 px-2"><Badge status={row.status} /></td>
+                  <td className="p-3 px-2">
+                    <div className="flex gap-2 flex-wrap">
                       <Link to={pathToValueEmbedDetail(row.id)}>
                         <Button variant="outline">View details</Button>
                       </Link>
@@ -84,37 +80,29 @@ export function WalletPage(): React.ReactElement {
             </tbody>
           </table>
           {valueEmbedItems.length === 0 && (
-            <p style={{ padding: "24px", color: "var(--color-body)" }}>
-              No Value Embed tokens in wallet.
-            </p>
+            <p className="p-6 text-body-text">No Value Embed tokens in wallet.</p>
           )}
         </div>
       ) : (
-        <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+        <div className="overflow-x-auto">
+          <table className="w-full border-collapse">
             <thead>
-              <tr style={{ borderBottom: "2px solid var(--color-body)", textAlign: "left" }}>
-                <th style={{ padding: "12px 8px" }}>Item tag</th>
-                <th style={{ padding: "12px 8px" }}>UNS name</th>
-                <th style={{ padding: "12px 8px" }}>Status</th>
-                <th style={{ padding: "12px 8px" }}>Actions</th>
+              <tr className="border-b-2 border-body-text text-left">
+                <th className="p-3 px-2">Item tag</th>
+                <th className="p-3 px-2">UNS name</th>
+                <th className="p-3 px-2">Status</th>
+                <th className="p-3 px-2">Actions</th>
               </tr>
             </thead>
             <tbody>
               {selfTitlingItems.map((row) => (
-                <tr key={row.id} style={{ borderBottom: "1px solid #e5e7eb" }}>
-                  <td style={{ padding: "12px 8px" }}>{row.itemTag}</td>
-                  <td style={{ padding: "12px 8px" }}>{row.unsName}</td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <Badge status={row.status} />
-                  </td>
-                  <td style={{ padding: "12px 8px" }}>
-                    <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                      <a
-                        href={pathToItemProfile(row.publicCode)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
+                <tr key={row.id} className="border-b border-[#e5e7eb]">
+                  <td className="p-3 px-2">{row.itemTag}</td>
+                  <td className="p-3 px-2">{row.unsName}</td>
+                  <td className="p-3 px-2"><Badge status={row.status} /></td>
+                  <td className="p-3 px-2">
+                    <div className="flex gap-2 flex-wrap">
+                      <a href={pathToItemProfile(row.publicCode)} target="_blank" rel="noopener noreferrer">
                         <Button variant="outline">View item profile</Button>
                       </a>
                       <Link to={pathToSelfTitlingDetail(row.id)}>
@@ -128,9 +116,7 @@ export function WalletPage(): React.ReactElement {
             </tbody>
           </table>
           {selfTitlingItems.length === 0 && (
-            <p style={{ padding: "24px", color: "var(--color-body)" }}>
-              No Self-Titling objects in wallet.
-            </p>
+            <p className="p-6 text-body-text">No Self-Titling objects in wallet.</p>
           )}
         </div>
       )}

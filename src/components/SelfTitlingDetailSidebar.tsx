@@ -12,74 +12,7 @@ import { TransferTitleModal } from "./TransferTitleModal";
 import { formatTableDate } from "../utils/date";
 import { pathToItemProfile } from "../constants/routes";
 
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(147, 197, 213, 0.45)",
-  backdropFilter: "blur(6px)",
-  WebkitBackdropFilter: "blur(6px)",
-  display: "flex",
-  alignItems: "stretch",
-  justifyContent: "flex-end",
-  zIndex: 1000,
-};
-
 const SIDEBAR_TRANSITION_MS = 300;
-
-const shellStyleBase: React.CSSProperties = {
-  width: "100%",
-  maxWidth: "520px",
-  borderRadius: "24px 0 0 24px",
-  background: "#FFFFFF",
-  border: "none",
-  outline: "none",
-  boxShadow: "-4px 0 48px rgba(0,0,0,0.10)",
-  padding: "24px 28px 28px",
-  display: "flex",
-  flexDirection: "column",
-  overflow: "auto",
-  transition: `transform ${SIDEBAR_TRANSITION_MS}ms ease-out`,
-};
-
-const headerRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: "20px",
-};
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: "22px",
-  fontWeight: 700,
-  color: "#09090b",
-};
-
-const closeBtnStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  width: "32px",
-  height: "32px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  color: "#64748b",
-  fontSize: "24px",
-  lineHeight: 1,
-  padding: 0,
-};
-
-const sectionStyle: React.CSSProperties = {
-  marginTop: "20px",
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: "16px",
-  fontWeight: 600,
-  color: "#09090b",
-  margin: "0 0 8px",
-};
 
 export interface SelfTitlingDetailSidebarProps {
   open: boolean;
@@ -136,61 +69,67 @@ export function SelfTitlingDetailSidebar({
 
   return (
     <>
-      <div style={overlayStyle} onClick={handleClose} role="dialog" aria-modal="true" aria-label="Self-Titling code detail">
-        <div style={{ ...shellStyleBase, transform: shellTransform }} onClick={(e) => e.stopPropagation()}>
-          <div style={headerRowStyle}>
-            <h2 style={titleStyle}>Self-Titling Code</h2>
-            <button type="button" onClick={handleClose} style={closeBtnStyle} aria-label="Close">
+      <div
+        className="fixed inset-0 bg-[rgba(147,197,213,0.45)] backdrop-blur-[6px] flex items-stretch justify-end z-[1000]"
+        onClick={handleClose}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Self-Titling code detail"
+      >
+        <div
+          className="w-full max-w-[520px] rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-6 px-7 pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
+          style={{ transform: shellTransform }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="m-0 text-[22px] font-bold text-zinc-950">Self-Titling Code</h2>
+            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0" aria-label="Close">
               ×
             </button>
           </div>
 
-          {loading && <p style={{ color: "#64748b" }}>Loading…</p>}
-          {!loading && !code && <p style={{ color: "#64748b" }}>Code not found.</p>}
+          {loading && <p className="text-muted">Loading…</p>}
+          {!loading && !code && <p className="text-muted">Code not found.</p>}
           {!loading && code && (
             <>
-              <p style={{ margin: "0 0 4px", fontSize: "14px", color: "#64748b" }}>
-                <strong>Item tag:</strong> {code.itemTag}
-              </p>
-              <p style={{ margin: "0 0 4px", fontSize: "14px", color: "#64748b" }}>
-                <strong>UNS name:</strong> {code.unsName}
-              </p>
-              <p style={{ margin: 0 }}><Badge status={code.status} /></p>
+              <p className="m-0 mb-1 text-sm text-muted"><strong>Item tag:</strong> {code.itemTag}</p>
+              <p className="m-0 mb-1 text-sm text-muted"><strong>UNS name:</strong> {code.unsName}</p>
+              <p className="m-0"><Badge status={code.status} /></p>
 
-              <section style={sectionStyle}>
-                <h3 style={sectionTitleStyle}>Public profile page</h3>
-                <p style={{ fontSize: "14px", margin: 0 }}>
-                  <a href={profileUrl} target="_blank" rel="noopener noreferrer" style={{ wordBreak: "break-all" }}>
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Public profile page</h3>
+                <p className="text-sm m-0">
+                  <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="break-all">
                     Open item profile
                   </a>
                 </p>
               </section>
 
-              <section style={sectionStyle}>
-                <h3 style={sectionTitleStyle}>QR code</h3>
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">QR code</h3>
                 <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Item profile QR code" />
-                <p style={{ fontSize: "14px", marginTop: "8px" }}>Links to item profile.</p>
+                <p className="text-sm mt-2">Links to item profile.</p>
               </section>
 
-              <section style={sectionStyle}>
-                <h3 style={sectionTitleStyle}>Public code</h3>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <code style={{ fontFamily: "monospace", fontSize: "14px" }}>{code.publicCode}</code>
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Public code</h3>
+                <div className="flex items-center gap-2">
+                  <code className="font-mono text-sm">{code.publicCode}</code>
                   <CopyIconButton text={code.publicCode} />
                 </div>
               </section>
 
-              <section style={sectionStyle}>
-                <h3 style={sectionTitleStyle}>Ownership</h3>
-                <p style={{ margin: 0, fontSize: "14px" }}>Status: {code.ownershipStatus ?? "owned"}</p>
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Ownership</h3>
+                <p className="m-0 text-sm">Status: {code.ownershipStatus ?? "owned"}</p>
               </section>
 
-              <section style={sectionStyle}>
-                <h3 style={sectionTitleStyle}>Created</h3>
-                <p style={{ margin: 0, fontSize: "14px" }}>{formatTableDate(code.createdAt)}</p>
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Created</h3>
+                <p className="m-0 text-sm">{formatTableDate(code.createdAt)}</p>
               </section>
 
-              <section style={{ ...sectionStyle, display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              <section className="mt-5 flex flex-wrap gap-2">
                 <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
                   Export sticker template
                 </Button>

@@ -38,7 +38,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
 
   return (
     <div>
-      <div style={{ marginBottom: "24px" }}>
+      <div className="mb-6">
         <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
           Back to dashboard
         </Button>
@@ -47,29 +47,27 @@ export function ValueEmbedDetailPage(): React.ReactElement {
       <p><strong>Description tag:</strong> {code.label}</p>
       <p><Badge status={code.status} /></p>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>QR code</h2>
         <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Value Embed QR code – scan to check balance or redeem" />
-        <p style={{ fontSize: "14px", marginTop: "8px" }}>
+        <p className="text-sm mt-2">
           <a href={code.qrUrl} target="_blank" rel="noopener noreferrer">{code.qrUrl}</a>
         </p>
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Public code</h2>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <code style={{ fontFamily: "monospace", fontSize: "18px" }}>{code.publicCode}</code>
+        <div className="flex items-center gap-2">
+          <code className="font-mono text-lg">{code.publicCode}</code>
           <CopyButton text={code.publicCode} />
         </div>
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Private code</h2>
         {revealPrivate ? (
-          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <code style={{ fontFamily: "monospace", fontSize: "18px" }}>
-              {code.privateCode ?? "—"}
-            </code>
+          <div className="flex items-center gap-2">
+            <code className="font-mono text-lg">{code.privateCode ?? "—"}</code>
             <CopyButton text={code.privateCode ?? ""} />
           </div>
         ) : (
@@ -88,9 +86,9 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         )}
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Value & balance</h2>
-        <p style={{ marginBottom: "8px" }}>
+        <p className="mb-2">
           A wallet is generated for this code pair and holds the assigned funds until redemption or return to source.
         </p>
         <p>Value assigned: {code.value}</p>
@@ -99,7 +97,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         <p>Expiration: {code.expiration ? new Date(code.expiration).toLocaleString() : "None"}</p>
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Status timeline</h2>
         <p>Created: {new Date(code.createdAt).toLocaleString()}</p>
         <p>Updated: {new Date(code.updatedAt).toLocaleString()}</p>
@@ -108,17 +106,14 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         )}
       </section>
 
-      <section style={{ marginTop: "24px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
+      <section className="mt-6 flex flex-wrap gap-3">
         <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
           Export sticker template (2-sticker combo)
         </Button>
         {code.status === "active" && (
           <>
             {!cancelConfirm ? (
-              <Button
-                variant="secondary"
-                onClick={() => setCancelConfirm(true)}
-              >
+              <Button variant="secondary" onClick={() => setCancelConfirm(true)}>
                 Cancel code
               </Button>
             ) : (
@@ -136,7 +131,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         )}
       </section>
 
-      <p style={{ marginTop: "16px", fontSize: "14px", display: "flex", gap: "16px", flexWrap: "wrap" }}>
+      <div className="mt-4 text-sm flex flex-wrap gap-4">
         <a href={`${window.location.origin}/check-balance?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
           View public check balance page
         </a>
@@ -145,7 +140,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
             Redeem (private code required)
           </a>
         )}
-      </p>
+      </div>
 
       <StickerExportModal
         open={stickerModalOpen}

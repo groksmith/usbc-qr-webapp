@@ -41,14 +41,14 @@ export function RedeemPage(): React.ReactElement {
   };
 
   return (
-    <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+    <div className="max-w-[560px] mx-auto">
       <h1>Redeem value</h1>
       <p>
         Enter the <strong>private code</strong> and your <strong>UNS name</strong> (with bronze
         badge) to redeem. Do not share your private code.
       </p>
 
-      <div style={{ marginBottom: "24px" }}>
+      <div className="mb-6">
         <Input
           label="Public code"
           required
@@ -86,14 +86,7 @@ export function RedeemPage(): React.ReactElement {
       </div>
 
       {result && (
-        <div
-          style={{
-            padding: "24px",
-            backgroundColor: result.success ? "#dcfce7" : "#fee2e2",
-            borderRadius: "8px",
-            marginBottom: "24px",
-          }}
-        >
+        <div className={`p-6 rounded-[8px] mb-6 ${result.success ? "bg-green-100" : "bg-red-100"}`}>
           {result.success ? (
             <>
               <h2>Redemption complete</h2>
@@ -105,7 +98,7 @@ export function RedeemPage(): React.ReactElement {
             <>
               <h2>Redemption failed</h2>
               <p>{result.error ?? "Unknown error."}</p>
-              <p style={{ fontSize: "14px", marginTop: "8px" }}>
+              <p className="text-sm mt-2">
                 Possible reasons: invalid code, already redeemed, expired, cancelled, or UNS name
                 not valid / not bronze badge.
               </p>
@@ -114,14 +107,7 @@ export function RedeemPage(): React.ReactElement {
         </div>
       )}
 
-      <section
-        style={{
-          marginTop: "32px",
-          padding: "16px",
-          backgroundColor: "rgba(255,255,255,0.6)",
-          borderRadius: "8px",
-        }}
-      >
+      <section className="mt-8 p-4 bg-white/60 rounded-[8px]">
         <h2>Instructions</h2>
         <ul>
           <li><strong>Public code</strong> — on the QR or outside sticker; safe to share for balance check.</li>
@@ -129,7 +115,7 @@ export function RedeemPage(): React.ReactElement {
           <li><strong>Bronze badge</strong> — required to receive redeemed value; get it via the app.</li>
         </ul>
         <p>
-          <Link to={ROUTES.CHECK_BALANCE} style={{ color: "var(--color-primary)", fontWeight: 600 }}>
+          <Link to={ROUTES.CHECK_BALANCE} className="text-primary font-semibold">
             Check balance first
           </Link>
         </p>

@@ -50,13 +50,13 @@ export function TransferTitleModal({
 
   return (
     <Modal open={open} onClose={handleClose} title="Transfer title">
-      <div style={{ display: "flex", flexDirection: "column", gap: "20px", minWidth: "320px" }}>
-        <div style={{ padding: "12px 16px", backgroundColor: "#f8fafc", borderRadius: "12px", fontSize: "14px" }}>
-          <p style={{ margin: "0 0 6px", color: "#64748b" }}><strong>Item tag</strong></p>
-          <p style={{ margin: 0, color: "#09090b" }}>{itemTag}</p>
-          <p style={{ margin: "12px 0 0", color: "#64748b" }}><strong>Public code</strong></p>
-          <div style={{ display: "flex", alignItems: "center", gap: "0", marginTop: "4px" }}>
-            <code style={{ fontFamily: "monospace", fontSize: "14px", color: "#09090b" }}>{publicCode}</code>
+      <div className="flex flex-col gap-5 min-w-[320px]">
+        <div className="p-3 px-4 bg-slate-50 rounded-card text-sm">
+          <p className="m-0 mb-1.5 text-muted"><strong>Item tag</strong></p>
+          <p className="m-0 text-zinc-950">{itemTag}</p>
+          <p className="mt-3 mb-0 text-muted"><strong>Public code</strong></p>
+          <div className="flex items-center gap-0 mt-1">
+            <code className="font-mono text-sm text-zinc-950">{publicCode}</code>
             <CopyIconButton text={publicCode} />
           </div>
         </div>
@@ -69,7 +69,7 @@ export function TransferTitleModal({
           placeholder="Search or enter e.g. bob.uns"
           error={recipientError}
         />
-        <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
+        <div className="flex justify-end gap-3 mt-2">
           <Button variant="outline" onClick={handleClose}>
             Cancel
           </Button>

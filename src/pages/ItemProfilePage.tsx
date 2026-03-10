@@ -27,36 +27,24 @@ export function ItemProfilePage(): React.ReactElement {
   }
 
   return (
-    <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+    <div className="max-w-[560px] mx-auto">
       <h1>Item profile</h1>
       <p><strong>Item tag:</strong> {profile.itemTag}</p>
       <p><strong>UNS name:</strong> {profile.unsName}</p>
       <p><strong>Ownership:</strong> Owned by {profile.ownerDisplay}</p>
       <p><Badge status={profile.status} /> ({STATUS_LABELS[profile.status]})</p>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>QR code</h2>
-        <div
-          style={{
-            width: "160px",
-            height: "160px",
-            backgroundColor: "#f3f4f6",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            borderRadius: "8px",
-            fontFamily: "monospace",
-            fontSize: "12px",
-          }}
-        >
+        <div className="w-40 h-40 bg-gray-100 flex items-center justify-center rounded-[8px] font-mono text-xs">
           QR placeholder
         </div>
-        <p style={{ fontSize: "14px", marginTop: "8px" }}>
+        <p className="text-sm mt-2">
           Public code: <code>{profile.publicCode}</code>
         </p>
       </section>
 
-      <p style={{ marginTop: "24px", fontSize: "14px", color: "var(--color-body)" }}>
+      <p className="mt-6 text-sm text-body-text">
         This is the public item profile. Transfer history and ownership changes may be shown here
         when supported.
       </p>

@@ -21,99 +21,22 @@ interface GenerateCodeFlowModalProps {
   defaultCodeType: "value-embed" | "self-titling";
 }
 
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(147, 197, 213, 0.45)",
-  backdropFilter: "blur(6px)",
-  WebkitBackdropFilter: "blur(6px)",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  zIndex: 1000,
-};
-
-const shellStyle: React.CSSProperties = {
-  width: "100%",
-  maxWidth: "420px",
-  borderRadius: "20px",
-  background: "#FFFFFF",
-  border: "none",
-  outline: "none",
-  boxShadow: "0 8px 48px rgba(0,0,0,0.10)",
-  padding: "24px",
-};
-
-const contentWrapStyle: React.CSSProperties = {
-  width: "100%",
-  margin: "0 auto",
-};
-
-const stepPillBg = "#f0f0f2";
-const stepInactiveColor = "#6B7280";
-const stepActiveBorder = "#374151";
-
-const headingStyle: React.CSSProperties = {
-  margin: "0 0 8px",
-  fontSize: "22px",
-  fontWeight: 700,
-  color: "#09090b",
-  textAlign: "center",
-};
-
-const subtitleStyle: React.CSSProperties = {
-  margin: "0 0 28px",
-  fontSize: "14px",
-  color: "#64748b",
-  fontWeight: 400,
-  textAlign: "center",
-};
-
-const fullWidthBtnStyle: React.CSSProperties = {
-  width: "100%",
-  height: "44px",
-  fontSize: "14px",
-  fontWeight: 600,
-};
-
 function ProgressDots({ current, total }: { current: number; total: number }): React.ReactElement {
   return (
-    <div
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        gap: 0,
-        padding: "5px 10px",
-        borderRadius: "999px",
-        backgroundColor: stepPillBg,
-      }}
-    >
+    <div className="inline-flex items-center justify-center py-[5px] px-[10px] rounded-full bg-[#f0f0f2]">
       {Array.from({ length: total }, (_, i) => {
         const isActive = i === current;
         return (
           <React.Fragment key={i}>
             <span
-              style={{
-                width: "5px",
-                height: "5px",
-                borderRadius: "50%",
-                backgroundColor: isActive ? "transparent" : stepInactiveColor,
-                border: isActive ? "1px solid #09090b" : "none",
-                flexShrink: 0,
-                transition: "all 0.2s",
-              }}
+              className={`w-[5px] h-[5px] rounded-full flex-shrink-0 transition-all duration-200 ${
+                isActive ? "bg-transparent border border-[#09090b]" : "bg-[#6B7280] border-0"
+              }`}
               aria-hidden
             />
             {i < total - 1 && (
               <span
-                style={{
-                  width: "10px",
-                  height: 0,
-                  borderTop: `1px dashed ${stepInactiveColor}`,
-                  margin: "0 1px",
-                  flexShrink: 0,
-                }}
+                className="w-[10px] h-0 border-t border-dashed border-[#6B7280] mx-px flex-shrink-0"
                 aria-hidden
               />
             )}
@@ -129,23 +52,7 @@ function CloseButton({ onClick }: { onClick: () => void }): React.ReactElement {
     <button
       type="button"
       onClick={onClick}
-      style={{
-        width: "32px",
-        height: "32px",
-        minWidth: "32px",
-        minHeight: "32px",
-        padding: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        background: "none",
-        border: "none",
-        fontSize: "32px",
-        lineHeight: 1,
-        color: "#94a3b8",
-        cursor: "pointer",
-        flexShrink: 0,
-      }}
+      className="w-8 h-8 min-w-[32px] min-h-[32px] p-0 flex items-center justify-center bg-transparent border-0 text-[32px] leading-none text-slate-400 cursor-pointer flex-shrink-0"
       aria-label="Close"
     >
       ×
@@ -325,70 +232,57 @@ export function GenerateCodeFlowModal({
   const bulkMin = bulkValues.length > 0 ? Math.min(...bulkValues) : 0;
   const bulkMax = bulkValues.length > 0 ? Math.max(...bulkValues) : 0;
 
-  const dynamicShellStyle: React.CSSProperties = {
-    ...shellStyle,
-    ...(isBulk && step === 2 ? { maxWidth: "640px" } : {}),
-  };
+  const shellClass = isBulk && step === 2
+    ? "w-full max-w-[640px] rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-6"
+    : "w-full max-w-[420px] rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-6";
 
-  const dynamicContentWrapStyle: React.CSSProperties = {
-    ...contentWrapStyle,
-    ...(isBulk && step === 2 ? { maxWidth: "100%" } : {}),
+  const codeTypeBtnClass = (type: "value-embed" | "self-titling", marginClass: string): string => {
+    const selected = codeType === type;
+    const hovered = hoverCodeType === type;
+    return `w-full p-4 px-5 ${marginClass} rounded-card text-left cursor-pointer transition-[border-color,background-color] duration-150 ${
+      selected
+        ? "border-2 border-primary bg-primary/[0.06]"
+        : hovered
+        ? "border-2 border-primary/50 bg-primary/[0.04]"
+        : "border border-[#E0E0E0] bg-white"
+    }`;
   };
 
   return (
-    <div style={overlayStyle} onClick={resetAndClose} role="dialog" aria-modal="true">
-      <div style={dynamicShellStyle} onClick={(e) => e.stopPropagation()}>
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginBottom: "8px",
-            minHeight: "32px",
-            gap: "8px",
-          }}
-        >
-          <div style={{ flex: 1, minWidth: 0 }} />
+    <div
+      className="fixed inset-0 bg-[rgba(147,197,213,0.45)] backdrop-blur-[6px] flex items-center justify-center z-[1000]"
+      onClick={resetAndClose}
+      role="dialog"
+      aria-modal="true"
+    >
+      <div className={shellClass} onClick={(e) => e.stopPropagation()}>
+        <div className="flex items-center justify-between mb-2 min-h-[32px] gap-2">
+          <div className="flex-1 min-w-0" />
           <ProgressDots current={visualStep} total={totalSteps} />
-          <div style={{ flex: 1, display: "flex", justifyContent: "flex-end", alignItems: "center", minWidth: 0 }}>
+          <div className="flex-1 flex justify-end items-center min-w-0">
             <CloseButton onClick={resetAndClose} />
           </div>
         </div>
-        <div style={dynamicContentWrapStyle}>
+
+        <div className={isBulk && step === 2 ? "w-full" : "w-full mx-auto"}>
           {/* STEP 0 — Choose code type */}
           {step === 0 && (
             <>
-              <h2 style={headingStyle}>What type of code do you want to generate?</h2>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+                What type of code do you want to generate?
+              </h2>
 
               <button
                 type="button"
                 onClick={() => setCodeType("value-embed")}
                 onMouseEnter={() => setHoverCodeType("value-embed")}
                 onMouseLeave={() => setHoverCodeType(null)}
-                style={{
-                  width: "100%",
-                  padding: "16px 20px",
-                  marginBottom: "12px",
-                  borderRadius: "12px",
-                  border: codeType === "value-embed"
-                    ? "2px solid var(--color-primary)"
-                    : hoverCodeType === "value-embed"
-                      ? "2px solid rgba(93, 159, 181, 0.5)"
-                      : "1px solid #E0E0E0",
-                  background: codeType === "value-embed"
-                    ? "rgba(93, 159, 181, 0.06)"
-                    : hoverCodeType === "value-embed"
-                      ? "rgba(93, 159, 181, 0.04)"
-                      : "#FFFFFF",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  transition: "border-color 0.15s ease, background-color 0.15s ease",
-                }}
+                className={codeTypeBtnClass("value-embed", "mb-3")}
               >
-                <span style={{ fontSize: "15px", fontWeight: 600, color: "#09090b", display: "block", marginBottom: "4px" }}>
+                <span className="text-[15px] font-semibold text-zinc-950 block mb-1">
                   Value Embed
                 </span>
-                <span style={{ fontSize: "13px", fontWeight: 400, color: "#64748b", lineHeight: "1.4" }}>
+                <span className="text-[13px] font-normal text-muted leading-[1.4]">
                   Embed value onto physical objects (coins, cards). Includes funding source, balance check, and redemption via public/private code pair.
                 </span>
               </button>
@@ -398,30 +292,12 @@ export function GenerateCodeFlowModal({
                 onClick={() => setCodeType("self-titling")}
                 onMouseEnter={() => setHoverCodeType("self-titling")}
                 onMouseLeave={() => setHoverCodeType(null)}
-                style={{
-                  width: "100%",
-                  padding: "16px 20px",
-                  marginBottom: "28px",
-                  borderRadius: "12px",
-                  border: codeType === "self-titling"
-                    ? "2px solid var(--color-primary)"
-                    : hoverCodeType === "self-titling"
-                      ? "2px solid rgba(93, 159, 181, 0.5)"
-                      : "1px solid #E0E0E0",
-                  background: codeType === "self-titling"
-                    ? "rgba(93, 159, 181, 0.06)"
-                    : hoverCodeType === "self-titling"
-                      ? "rgba(93, 159, 181, 0.04)"
-                      : "#FFFFFF",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  transition: "border-color 0.15s ease, background-color 0.15s ease",
-                }}
+                className={codeTypeBtnClass("self-titling", "mb-7")}
               >
-                <span style={{ fontSize: "15px", fontWeight: 600, color: "#09090b", display: "block", marginBottom: "4px" }}>
+                <span className="text-[15px] font-semibold text-zinc-950 block mb-1">
                   Self-Titling
                 </span>
-                <span style={{ fontSize: "13px", fontWeight: 400, color: "#64748b", lineHeight: "1.4" }}>
+                <span className="text-[13px] font-normal text-muted leading-[1.4]">
                   Enable self-titling of physical objects using stickers. Attached to a UNS name with auto-generated profile page and transferable ownership.
                 </span>
               </button>
@@ -429,18 +305,18 @@ export function GenerateCodeFlowModal({
               <Button
                 onClick={() => { if (codeType) setStep(1); }}
                 disabled={!codeType}
-                style={fullWidthBtnStyle}
+                className="w-full h-11 text-sm font-semibold"
               >
                 Continue
               </Button>
             </>
           )}
 
-          {/* STEP 1 — Configuration */}
+          {/* STEP 1 — Configuration (Value Embed) */}
           {step === 1 && codeType === "value-embed" && (
             <>
-              <h2 style={headingStyle}>Configure Value Embed Code</h2>
-              <p style={subtitleStyle}>Set up your code parameters.</p>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Configure Value Embed Code</h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">Set up your code parameters.</p>
 
               <Input
                 label="Description tag"
@@ -452,26 +328,14 @@ export function GenerateCodeFlowModal({
                 error={errors.descriptionTag}
                 style={{ border: "1px solid #E0E0E0" }}
               />
-              <div style={{ marginBottom: "16px" }}>
-                <label style={{ display: "block", fontSize: "14px", fontWeight: 500, color: "#09090b", marginBottom: "6px" }}>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-zinc-950 mb-1.5">
                   Funding source
                 </label>
                 <select
-                  className="select-chevron-right"
+                  className="select-chevron-right w-full h-10 text-sm border border-[#E0E0E0] rounded-card bg-white outline-none text-zinc-950 font-sans box-border px-3.5"
                   value={fundingSourceId}
                   onChange={(e) => setFundingSourceId(e.target.value)}
-                  style={{
-                    width: "100%",
-                    height: "40px",
-                    fontSize: "14px",
-                    border: "1px solid #E0E0E0",
-                    borderRadius: "12px",
-                    backgroundColor: "#fff",
-                    outline: "none",
-                    color: "#09090b",
-                    fontFamily: "var(--font-family)",
-                    boxSizing: "border-box",
-                  }}
                 >
                   <option value="USBC">USBC</option>
                   <option value="URT">URT</option>
@@ -501,8 +365,8 @@ export function GenerateCodeFlowModal({
                     error={errors.value}
                     style={{ border: "1px solid #E0E0E0" }}
                   />
-                  <div style={{ marginBottom: "16px" }}>
-                    <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "14px", color: "#09090b", fontWeight: 500 }}>
+                  <div className="mb-4">
+                    <label className="flex items-center gap-2 text-sm text-zinc-950 font-medium">
                       <input
                         type="checkbox"
                         checked={expirationEnabled}
@@ -523,26 +387,22 @@ export function GenerateCodeFlowModal({
                 </>
               )}
               {parsedQty > 1 && (
-                <p style={{ fontSize: "13px", color: "#64748b", margin: "0 0 16px" }}>
+                <p className="text-[13px] text-muted m-0 mb-4">
                   You&apos;ll customize individual values and expirations in the next step.
                 </p>
               )}
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
-                <Button variant="outline" onClick={() => setStep(0)} style={{ width: "120px", height: "44px" }}>Back</Button>
-                <Button
-                  onClick={handleConfigNext}
-                  style={{ width: "120px", height: "44px" }}
-                >
-                  Next
-                </Button>
+              <div className="flex justify-end gap-3 mt-2">
+                <Button variant="outline" onClick={() => setStep(0)} className="w-[120px] h-11">Back</Button>
+                <Button onClick={handleConfigNext} className="w-[120px] h-11">Next</Button>
               </div>
             </>
           )}
 
+          {/* STEP 1 — Configuration (Self-Titling) */}
           {step === 1 && codeType === "self-titling" && (
             <>
-              <h2 style={headingStyle}>Configure Self-Titling Code</h2>
-              <p style={subtitleStyle}>Set up your code parameters.</p>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Configure Self-Titling Code</h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">Set up your code parameters.</p>
 
               <Input
                 label="Item tag"
@@ -563,11 +423,11 @@ export function GenerateCodeFlowModal({
                 placeholder="e.g. alice.uns"
                 error={errors.unsName}
               />
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px", marginTop: "8px" }}>
-                <Button variant="outline" onClick={() => setStep(0)} style={{ width: "120px", height: "44px" }}>Back</Button>
+              <div className="flex justify-end gap-3 mt-2">
+                <Button variant="outline" onClick={() => setStep(0)} className="w-[120px] h-11">Back</Button>
                 <Button
                   onClick={() => { if (validateSelfTitlingConfig()) setStep(2); }}
-                  style={{ width: "120px", height: "44px" }}
+                  className="w-[120px] h-11"
                 >
                   Next
                 </Button>
@@ -578,64 +438,40 @@ export function GenerateCodeFlowModal({
           {/* STEP 2 (bulk only) — Bulk Grid */}
           {isBulk && step === 2 && (
             <>
-              <h2 style={headingStyle}>Customize each code</h2>
-              <p style={subtitleStyle}>Set individual values and expirations for {parsedQty} codes.</p>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Customize each code</h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
+                Set individual values and expirations for {parsedQty} codes.
+              </p>
 
-              <div
-                style={{
-                  maxHeight: "320px",
-                  overflowY: "auto",
-                  border: "1px solid #e4e4e7",
-                  borderRadius: "12px",
-                  marginBottom: "16px",
-                }}
-              >
-                <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+              <div className="max-h-[320px] overflow-y-auto border border-[#e4e4e7] rounded-card mb-4">
+                <table className="w-full border-collapse text-sm">
                   <thead>
-                    <tr style={{ backgroundColor: "#f8fafa", position: "sticky", top: 0, zIndex: 1 }}>
-                      <th style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "var(--color-body)", fontSize: "12px", borderBottom: "1px solid #e4e4e7", width: "48px" }}>#</th>
-                      <th style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "var(--color-body)", fontSize: "12px", borderBottom: "1px solid #e4e4e7" }}>Value ($)</th>
-                      <th style={{ padding: "10px 12px", textAlign: "left", fontWeight: 600, color: "var(--color-body)", fontSize: "12px", borderBottom: "1px solid #e4e4e7" }}>Expiration</th>
+                    <tr className="bg-[#f8fafa] sticky top-0 z-[1]">
+                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7] w-12">#</th>
+                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7]">Value ($)</th>
+                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7]">Expiration</th>
                     </tr>
                   </thead>
                   <tbody>
                     {bulkItems.map((item, i) => (
-                      <tr key={i} style={{ borderBottom: i < bulkItems.length - 1 ? "1px solid #f0f0f0" : "none" }}>
-                        <td style={{ padding: "8px 12px", color: "#64748b", fontWeight: 500 }}>{i + 1}</td>
-                        <td style={{ padding: "6px 8px" }}>
+                      <tr key={i} className={i < bulkItems.length - 1 ? "border-b border-[#f0f0f0]" : ""}>
+                        <td className="p-[8px_12px] text-muted font-medium">{i + 1}</td>
+                        <td className="p-[6px_8px]">
                           <input
                             type="number"
                             min={0}
                             step="any"
                             value={item.value}
                             onChange={(e) => updateBulkItem(i, "value", e.target.value)}
-                            style={{
-                              width: "100%",
-                              padding: "6px 10px",
-                              fontSize: "13px",
-                              border: "1px solid #e4e4e7",
-                              borderRadius: "8px",
-                              outline: "none",
-                              backgroundColor: "#fff",
-                              boxSizing: "border-box",
-                            }}
+                            className="w-full py-1.5 px-2.5 text-[13px] border border-[#e4e4e7] rounded-[8px] outline-none bg-white box-border"
                           />
                         </td>
-                        <td style={{ padding: "6px 8px" }}>
+                        <td className="p-[6px_8px]">
                           <input
                             type="datetime-local"
                             value={item.expiration}
                             onChange={(e) => updateBulkItem(i, "expiration", e.target.value)}
-                            style={{
-                              width: "100%",
-                              padding: "6px 10px",
-                              fontSize: "13px",
-                              border: "1px solid #e4e4e7",
-                              borderRadius: "8px",
-                              outline: "none",
-                              backgroundColor: "#fff",
-                              boxSizing: "border-box",
-                            }}
+                            className="w-full py-1.5 px-2.5 text-[13px] border border-[#e4e4e7] rounded-[8px] outline-none bg-white box-border"
                           />
                         </td>
                       </tr>
@@ -644,53 +480,33 @@ export function GenerateCodeFlowModal({
                 </table>
               </div>
 
-              <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
+              <div className="flex gap-2 mb-4 flex-wrap">
                 <button
                   type="button"
                   onClick={applyValueToAll}
-                  style={{
-                    padding: "6px 12px",
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    color: "var(--color-primary)",
-                    backgroundColor: "rgba(93, 159, 181, 0.08)",
-                    border: "1px solid rgba(93, 159, 181, 0.2)",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-family)",
-                  }}
+                  className="py-1.5 px-3 text-xs font-medium text-primary bg-primary/[0.08] border border-primary/20 rounded-[8px] cursor-pointer font-sans"
                 >
                   Apply row 1 value to all
                 </button>
                 <button
                   type="button"
                   onClick={applyExpirationToAll}
-                  style={{
-                    padding: "6px 12px",
-                    fontSize: "12px",
-                    fontWeight: 500,
-                    color: "var(--color-primary)",
-                    backgroundColor: "rgba(93, 159, 181, 0.08)",
-                    border: "1px solid rgba(93, 159, 181, 0.2)",
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    fontFamily: "var(--font-family)",
-                  }}
+                  className="py-1.5 px-3 text-xs font-medium text-primary bg-primary/[0.08] border border-primary/20 rounded-[8px] cursor-pointer font-sans"
                 >
                   Apply row 1 expiration to all
                 </button>
               </div>
 
-              <div style={{ fontSize: "13px", color: "#64748b", marginBottom: "16px" }}>
-                Total: <strong style={{ color: "#09090b" }}>${bulkTotal.toLocaleString()}</strong> across {parsedQty} codes
+              <div className="text-[13px] text-muted mb-4">
+                Total: <strong className="text-zinc-950">${bulkTotal.toLocaleString()}</strong> across {parsedQty} codes
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-                <Button variant="outline" onClick={() => setStep(1)} style={{ width: "120px", height: "44px" }}>Back</Button>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setStep(1)} className="w-[120px] h-11">Back</Button>
                 <Button
                   onClick={() => { if (validateBulkItems()) setStep(reviewStep); }}
                   disabled={!validateBulkItems()}
-                  style={{ width: "120px", height: "44px" }}
+                  className="w-[120px] h-11"
                 >
                   Next
                 </Button>
@@ -701,54 +517,46 @@ export function GenerateCodeFlowModal({
           {/* STEP 2 or 3 — Review */}
           {step === reviewStep && (
             <>
-              <h2 style={headingStyle}>Review and create</h2>
-              <p style={subtitleStyle}>Confirm your details and generate {isBulk ? "codes" : "code"}.</p>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Review and create</h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
+                Confirm your details and generate {isBulk ? "codes" : "code"}.
+              </p>
 
-              <div
-                style={{
-                  padding: "20px",
-                  borderRadius: "12px",
-                  backgroundColor: "#f8fafc",
-                  marginBottom: "24px",
-                  fontSize: "14px",
-                  color: "#09090b",
-                  lineHeight: "2",
-                }}
-              >
+              <div className="p-5 rounded-card bg-slate-50 mb-6 text-sm text-zinc-950 leading-loose">
                 {codeType === "value-embed" && !isBulk && (
                   <>
-                    <div><span style={{ color: "#64748b" }}>Type:</span> Value Embed</div>
-                    <div><span style={{ color: "#64748b" }}>Description:</span> {descriptionTag}</div>
-                    <div><span style={{ color: "#64748b" }}>Funding source:</span> {fundingSourceId}</div>
-                    <div><span style={{ color: "#64748b" }}>Value:</span> ${value}</div>
-                    <div><span style={{ color: "#64748b" }}>Expiration:</span> {expirationEnabled && expiration ? expiration : "None"}</div>
+                    <div><span className="text-muted">Type:</span> Value Embed</div>
+                    <div><span className="text-muted">Description:</span> {descriptionTag}</div>
+                    <div><span className="text-muted">Funding source:</span> {fundingSourceId}</div>
+                    <div><span className="text-muted">Value:</span> ${value}</div>
+                    <div><span className="text-muted">Expiration:</span> {expirationEnabled && expiration ? expiration : "None"}</div>
                   </>
                 )}
                 {codeType === "value-embed" && isBulk && (
                   <>
-                    <div><span style={{ color: "#64748b" }}>Type:</span> Value Embed (bulk)</div>
-                    <div><span style={{ color: "#64748b" }}>Description:</span> {descriptionTag}</div>
-                    <div><span style={{ color: "#64748b" }}>Funding source:</span> {fundingSourceId}</div>
-                    <div><span style={{ color: "#64748b" }}>Quantity:</span> {parsedQty} codes</div>
+                    <div><span className="text-muted">Type:</span> Value Embed (bulk)</div>
+                    <div><span className="text-muted">Description:</span> {descriptionTag}</div>
+                    <div><span className="text-muted">Funding source:</span> {fundingSourceId}</div>
+                    <div><span className="text-muted">Quantity:</span> {parsedQty} codes</div>
                     <div>
-                      <span style={{ color: "#64748b" }}>Values:</span>{" "}
+                      <span className="text-muted">Values:</span>{" "}
                       {bulkMin === bulkMax ? `$${bulkMin} each` : `$${bulkMin}–$${bulkMax}`}
                     </div>
-                    <div><span style={{ color: "#64748b" }}>Total value:</span> ${bulkTotal.toLocaleString()}</div>
+                    <div><span className="text-muted">Total value:</span> ${bulkTotal.toLocaleString()}</div>
                   </>
                 )}
                 {codeType === "self-titling" && (
                   <>
-                    <div><span style={{ color: "#64748b" }}>Type:</span> Self-Titling</div>
-                    <div><span style={{ color: "#64748b" }}>Item tag:</span> {itemTag}</div>
-                    <div><span style={{ color: "#64748b" }}>UNS name:</span> {unsName}</div>
+                    <div><span className="text-muted">Type:</span> Self-Titling</div>
+                    <div><span className="text-muted">Item tag:</span> {itemTag}</div>
+                    <div><span className="text-muted">UNS name:</span> {unsName}</div>
                   </>
                 )}
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-                <Button variant="outline" onClick={() => setStep(isBulk ? 2 : 1)} style={{ width: "120px", height: "44px" }}>Back</Button>
-                <Button onClick={handleCreate} disabled={loading} style={{ width: "140px", height: "44px" }}>
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={() => setStep(isBulk ? 2 : 1)} className="w-[120px] h-11">Back</Button>
+                <Button onClick={handleCreate} disabled={loading} className="w-[140px] h-11">
                   {loading ? "Creating…" : isBulk ? "Create codes" : "Create code"}
                 </Button>
               </div>
@@ -758,48 +566,34 @@ export function GenerateCodeFlowModal({
           {/* STEP 3 or 4 — Success */}
           {step === successStep && successList.length > 0 && (
             <>
-              <div style={{ textAlign: "center", marginBottom: "8px" }}>
-                <span style={{ fontSize: "40px" }}>✓</span>
+              <div className="text-center mb-2">
+                <span className="text-[40px]">✓</span>
               </div>
-              <h2 style={headingStyle}>Code created successfully</h2>
-              <p style={subtitleStyle}>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Code created successfully</h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
                 {successList.length === 1
                   ? "Your code is ready to use."
                   : `${successList.length} code sets generated and ready to use.`}
               </p>
 
-              <div
-                style={{
-                  padding: "16px 20px",
-                  borderRadius: "12px",
-                  backgroundColor: "#f8fafc",
-                  marginBottom: "24px",
-                  fontSize: "14px",
-                  maxHeight: "180px",
-                  overflowY: "auto",
-                }}
-              >
+              <div className="p-4 px-5 rounded-card bg-slate-50 mb-6 text-sm max-h-[180px] overflow-y-auto">
                 {successList.slice(0, 8).map((c: { id: string; publicCode: string; label?: string; itemTag?: string }) => (
-                  <div key={c.id} style={{ marginBottom: "6px" }}>
+                  <div key={c.id} className="mb-1.5">
                     <a
                       href={createdVE ? pathToValueEmbedDetail(c.id) : pathToSelfTitlingDetail(c.id)}
-                      style={{ color: "var(--color-primary)", fontWeight: 500, textDecoration: "underline" }}
+                      className="text-primary font-medium underline"
                     >
                       {(c as ValueEmbedCodeSet).label ?? (c as SelfTitlingCodeSet).itemTag} — {c.publicCode}
                     </a>
                   </div>
                 ))}
                 {successList.length > 8 && (
-                  <div style={{ color: "#64748b", marginTop: "4px" }}>and {successList.length - 8} more…</div>
+                  <div className="text-muted mt-1">and {successList.length - 8} more…</div>
                 )}
               </div>
 
-              <div style={{ display: "flex", justifyContent: "flex-end", gap: "12px" }}>
-                <Button
-                  variant="outline"
-                  onClick={resetAndClose}
-                  style={{ width: "120px", height: "44px" }}
-                >
+              <div className="flex justify-end gap-3">
+                <Button variant="outline" onClick={resetAndClose} className="w-[120px] h-11">
                   Done
                 </Button>
                 <Button
@@ -812,14 +606,14 @@ export function GenerateCodeFlowModal({
                     resetAndClose();
                     navigate(href);
                   }}
-                  style={{ width: "120px", height: "44px" }}
+                  className="w-[120px] h-11"
                 >
                   {successList.length === 1 ? "View code" : "View codes"}
                 </Button>
               </div>
             </>
           )}
-          </div>
+        </div>
       </div>
     </div>
   );

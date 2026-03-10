@@ -31,15 +31,7 @@ export function QRCodeDisplay({
     />
   );
 
-  const wrapperStyle: React.CSSProperties = {
-    width: size,
-    height: size,
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: "8px",
-    backgroundColor: "#fff",
-  };
+  const wrapperClass = "flex items-center justify-center rounded-[8px] bg-white";
 
   if (linkToUrl && value.startsWith("http")) {
     return (
@@ -47,7 +39,8 @@ export function QRCodeDisplay({
         href={value}
         target="_blank"
         rel="noopener noreferrer"
-        style={{ ...wrapperStyle, textDecoration: "none" }}
+        className={`${wrapperClass} no-underline`}
+        style={{ width: size, height: size }}
         aria-label={`${alt} (opens in new tab)`}
       >
         {qr}
@@ -55,5 +48,9 @@ export function QRCodeDisplay({
     );
   }
 
-  return <div style={wrapperStyle}>{qr}</div>;
+  return (
+    <div className={wrapperClass} style={{ width: size, height: size }}>
+      {qr}
+    </div>
+  );
 }

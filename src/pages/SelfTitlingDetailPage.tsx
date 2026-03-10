@@ -51,7 +51,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
 
   return (
     <div>
-      <div style={{ marginBottom: "24px" }}>
+      <div className="mb-6">
         <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
           Back to dashboard
         </Button>
@@ -61,7 +61,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
       <p><strong>UNS name:</strong> {code.unsName}</p>
       <p><Badge status={code.status} /></p>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Public profile page</h2>
         <p>
           <a href={profileUrl} target="_blank" rel="noopener noreferrer">
@@ -70,26 +70,26 @@ export function SelfTitlingDetailPage(): React.ReactElement {
         </p>
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>QR code</h2>
         <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Item profile QR code" />
-        <p style={{ fontSize: "14px", marginTop: "8px" }}>Links to item profile.</p>
+        <p className="text-sm mt-2">Links to item profile.</p>
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Public code</h2>
-        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <code style={{ fontFamily: "monospace", fontSize: "18px" }}>{code.publicCode}</code>
+        <div className="flex items-center gap-2">
+          <code className="font-mono text-lg">{code.publicCode}</code>
           <CopyButton text={code.publicCode} />
         </div>
       </section>
 
-      <section style={{ marginTop: "24px" }}>
+      <section className="mt-6">
         <h2>Ownership</h2>
         <p>Status: {code.ownershipStatus ?? "owned"}</p>
       </section>
 
-      <section style={{ marginTop: "24px", display: "flex", gap: "12px", flexWrap: "wrap" }}>
+      <section className="mt-6 flex flex-wrap gap-3">
         <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
           Export sticker template
         </Button>
@@ -101,15 +101,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
       </section>
 
       {transferOpen && (
-        <div
-          style={{
-            marginTop: "24px",
-            padding: "16px",
-            border: "1px solid #e5e7eb",
-            borderRadius: "8px",
-            maxWidth: "400px",
-          }}
-        >
+        <div className="mt-6 p-4 border border-[#e5e7eb] rounded-[8px] max-w-[400px]">
           <h3>Transfer title</h3>
           <Input
             label="Recipient (UNS name)"
@@ -120,7 +112,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
             placeholder="e.g. bob.uns"
             error={recipientError}
           />
-          <div style={{ display: "flex", gap: "8px" }}>
+          <div className="flex gap-2">
             <Button onClick={handleTransfer} disabled={transferring}>
               {transferring ? "Transferring…" : "Confirm transfer"}
             </Button>

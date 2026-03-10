@@ -19,12 +19,7 @@ export function SortIcon({ direction, color }: SortIconProps): React.ReactElemen
       strokeWidth="2"
       strokeLinecap="round"
       strokeLinejoin="round"
-      style={{
-        flexShrink: 0,
-        transform: isAsc ? "rotate(180deg)" : "rotate(0deg)",
-        transformOrigin: "center",
-        transition: "transform 0.25s ease",
-      }}
+      className={`flex-shrink-0 transition-transform duration-[250ms] ease-in-out ${isAsc ? "rotate-180" : "rotate-0"}`}
       aria-hidden
     >
       <path d="m7 15 5 5 5-5" />

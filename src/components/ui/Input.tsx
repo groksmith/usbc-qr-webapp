@@ -12,47 +12,27 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 export function Input({ label, error, hint, required, id, style, ...props }: InputProps): React.ReactElement {
   const inputId = id ?? (label ? label.replace(/\s+/g, "-").toLowerCase() : undefined);
   return (
-    <div style={{ marginBottom: "16px", width: "100%" }}>
+    <div className="mb-4 w-full">
       {label && (
         <>
-          <label
-            htmlFor={inputId}
-            style={{
-              display: "block",
-              marginBottom: "2px",
-              fontSize: "14px",
-              fontWeight: 500,
-              color: "var(--color-heading)",
-            }}
-          >
+          <label htmlFor={inputId} className="block mb-0.5 text-sm font-medium text-heading">
             {label}
-            {required && <span style={{ color: "#dc2626", marginLeft: "2px" }}>*</span>}
+            {required && <span className="text-negative ml-0.5">*</span>}
           </label>
           {hint && !error && (
-            <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#64748b", fontWeight: 400 }}>
-              {hint}
-            </p>
+            <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>
           )}
         </>
       )}
       <input
         id={inputId}
-        style={{
-          width: "100%",
-          boxSizing: "border-box",
-          padding: "10px 14px",
-          fontSize: "14px",
-          borderRadius: "12px",
-          border: error ? "2px solid #dc2626" : "none",
-          outline: "none",
-          backgroundColor: "#FFFFFF",
-          ...style,
-        }}
+        className={`w-full box-border py-2.5 px-3.5 text-sm rounded-btn outline-none bg-white ${
+          error ? "border-2 border-negative" : "border-0"
+        }`}
+        style={style}
         {...props}
       />
-      {error && (
-        <p style={{ margin: "4px 0 0", fontSize: "14px", color: "#dc2626" }}>{error}</p>
-      )}
+      {error && <p className="mt-1 mb-0 text-sm text-negative">{error}</p>}
     </div>
   );
 }

@@ -16,42 +16,39 @@ interface TabsProps {
 export function Tabs({ tabs, activeId, onChange, variant = "default" }: TabsProps): React.ReactElement {
   const isDashboard = variant === "dashboard";
   return (
-    <div
-      style={{
-        display: "flex",
-        gap: 0,
-        marginBottom: isDashboard ? 0 : "16px",
-        backgroundColor: isDashboard ? "transparent" : undefined,
-      }}
-    >
+    <div className={`flex gap-0 ${isDashboard ? "mb-0" : "mb-4"}`}>
       {tabs.map((tab, index) => {
         const isActive = activeId === tab.id;
         const isFirst = index === 0;
         const isLast = index === tabs.length - 1;
-        const activeRadius = "12px";
+
+        if (isDashboard) {
+          const radiusTL = isActive || isFirst ? "rounded-tl-card" : "rounded-tl-none";
+          const radiusTR = isActive || isLast ? "rounded-tr-card" : "rounded-tr-none";
+          return (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => onChange(tab.id)}
+              className={`flex items-center px-[30px] h-[54px] text-base font-semibold border-0 cursor-pointer rounded-bl-none rounded-br-none ${radiusTL} ${radiusTR} ${
+                isActive ? "bg-primary text-white" : "bg-transparent text-[#333333]"
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        }
+
         return (
           <button
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            style={{
-              display: isDashboard ? "flex" : undefined,
-              alignItems: isDashboard ? "center" : undefined,
-              padding: isDashboard ? "0 30px" : "15px 30px",
-              height: isDashboard ? "54px" : undefined,
-              fontSize: "16px",
-              fontWeight: isDashboard ? 600 : (isActive ? 600 : 400),
-              color: isActive ? (isDashboard ? "#FFFFFF" : "var(--color-primary)") : (isDashboard ? "#333333" : "var(--color-body)"),
-              backgroundColor: isActive ? (isDashboard ? "var(--color-primary)" : "rgba(93, 159, 181, 0.15)") : "transparent",
-              border: "none",
-              borderBottom: isDashboard ? "none" : isActive ? "3px solid var(--color-primary)" : "3px solid transparent",
-              cursor: "pointer",
-              borderRadius: isDashboard
-                ? isActive
-                  ? `${activeRadius} ${activeRadius} 0 0`
-                  : `${isFirst ? activeRadius : 0} ${isLast ? activeRadius : 0} 0 0`
-                : "6px 6px 0 0",
-            }}
+            className={`py-[15px] px-[30px] text-base border-0 border-b-[3px] border-solid cursor-pointer rounded-tl-[6px] rounded-tr-[6px] rounded-bl-none rounded-br-none ${
+              isActive
+                ? "font-semibold text-primary bg-primary/15 border-primary"
+                : "font-normal text-body-text bg-transparent border-transparent"
+            }`}
           >
             {tab.label}
           </button>

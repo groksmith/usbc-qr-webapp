@@ -19,42 +19,21 @@ export function SearchInput({
 }: SearchInputProps): React.ReactElement {
   const inputId = id ?? (label ? label.replace(/\s+/g, "-").toLowerCase() : undefined);
   return (
-    <div style={{ marginBottom: "16px", width: "100%" }}>
+    <div className="mb-4 w-full">
       {label && (
         <>
-          <label
-            htmlFor={inputId}
-            style={{
-              display: "block",
-              marginBottom: "2px",
-              fontSize: "14px",
-              fontWeight: 500,
-              color: "var(--color-heading)",
-            }}
-          >
+          <label htmlFor={inputId} className="block mb-0.5 text-sm font-medium text-heading">
             {label}
-            {required && <span style={{ color: "#dc2626", marginLeft: "2px" }}>*</span>}
+            {required && <span className="text-negative ml-0.5">*</span>}
           </label>
           {hint && !error && (
-            <p style={{ margin: "0 0 4px", fontSize: "12px", color: "#64748b", fontWeight: 400 }}>
-              {hint}
-            </p>
+            <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>
           )}
         </>
       )}
-      <div style={{ position: "relative", display: "flex", alignItems: "center", width: "100%" }}>
+      <div className="relative flex items-center w-full">
         <span
-          style={{
-            position: "absolute",
-            left: "12px",
-            top: "50%",
-            transform: "translateY(-50%)",
-            color: "#9ca3af",
-            pointerEvents: "none",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
+          className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none flex items-center justify-center"
           aria-hidden
         >
           <SearchIcon />
@@ -63,23 +42,14 @@ export function SearchInput({
           id={inputId}
           type="search"
           autoComplete="off"
-          style={{
-            width: "100%",
-            boxSizing: "border-box",
-            padding: "10px 14px 10px 40px",
-            fontSize: "14px",
-            borderRadius: "12px",
-            border: error ? "2px solid #dc2626" : "1px solid #E0E0E0",
-            outline: "none",
-            backgroundColor: "#FFFFFF",
-            ...style,
-          }}
+          className={`w-full box-border py-2.5 pl-10 pr-3.5 text-sm rounded-btn outline-none bg-white ${
+            error ? "border-2 border-negative" : "border border-[#E0E0E0]"
+          }`}
+          style={style}
           {...props}
         />
       </div>
-      {error && (
-        <p style={{ margin: "4px 0 0", fontSize: "14px", color: "#dc2626" }}>{error}</p>
-      )}
+      {error && <p className="mt-1 mb-0 text-sm text-negative">{error}</p>}
     </div>
   );
 }

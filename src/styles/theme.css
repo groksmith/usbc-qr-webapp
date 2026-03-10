@@ -1,54 +1,15 @@
 /**
  * Design system (PRD): Inter variable font, primary #5D9FB5, gradient background.
- * Inter is loaded from Google Fonts (ital, opsz, wght 100–900). Use font-weight
- * 400 (regular), 500 (medium), 600 (semibold), 700 (bold) via vars or numeric.
+ * Design tokens live in tailwind.config.js. This file contains only global base
+ * styles that cannot be expressed as Tailwind utilities.
  */
-:root {
-  --color-primary: #5d9fb5;
-  --color-secondary: #ffffff;
-  --color-heading: #101010;
-  --color-body: #3f3f46;
-  --color-muted: #64748b;
-  --color-positive: #22c55e;
-  --color-negative: #ef4444;
-  --color-gradient-start: #a1c4da;
-  --color-gradient-end: #c6dfe6;
-
-  --font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  --font-size-h1: 30px;
-  --font-size-h2: 24px;
-  --font-size-body: 18px;
-  --font-size-small: 14px;
-  --font-size-caption: 12px;
-
-  --font-weight-regular: 400;
-  --font-weight-medium: 500;
-  --font-weight-semibold: 600;
-  --font-weight-bold: 700;
-
-  /* Card-style UI: prominent rounded corners, soft elevation */
-  --radius-card: 12px;
-  --radius-card-inner: 20px;
-  --radius-button: 12px;
-  --shadow-soft: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.06);
-  --shadow-elevated: 0 8px 32px rgba(0, 0, 0, 0.08);
-}
 
 body {
   margin: 0;
-  font-family: var(--font-family);
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-regular);
-  color: var(--color-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
-  background: linear-gradient(
-    to bottom left,
-    var(--color-gradient-start),
-    var(--color-gradient-end)
-  );
+  background: linear-gradient(to bottom left, #a1c4da, #c6dfe6);
   background-attachment: fixed;
 }
 
@@ -62,27 +23,27 @@ h1, h2, h3, h4, h5, h6,
 p,
 span,
 label {
-  font-family: var(--font-family);
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
 h1 {
-  font-size: var(--font-size-h1);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-heading);
+  font-size: 30px;
+  font-weight: 700;
+  color: #101010;
   margin: 0 0 0.5em;
 }
 
 h2 {
-  font-size: var(--font-size-h2);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-heading);
+  font-size: 24px;
+  font-weight: 700;
+  color: #101010;
   margin: 0 0 0.5em;
 }
 
 p {
-  font-size: var(--font-size-body);
-  font-weight: var(--font-weight-regular);
-  color: var(--color-body);
+  font-size: 18px;
+  font-weight: 400;
+  color: #3f3f46;
   margin: 0 0 0.5em;
 }
 
@@ -90,20 +51,23 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;
 }
 
-/* Input and dropdown: match design - no border, white background, no outline */
-input,
-select {
-  outline: none;
-  border: none;
-  background-color: #ffffff;
-}
-
+/* Input and dropdown: no outline on focus */
 input:focus,
 select:focus {
   outline: none;
 }
 
-/* Dropdown with chevron 12px from right edge (hide native arrow, use custom) */
+input::placeholder,
+input::-webkit-input-placeholder,
+input::-moz-placeholder,
+input:-ms-input-placeholder {
+  font-size: 14px;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-weight: 500;
+  color: #99a1af;
+}
+
+/* Dropdown with chevron — SVG background-image cannot be expressed as Tailwind utility */
 .select-chevron-right {
   appearance: none;
   -webkit-appearance: none;
@@ -115,27 +79,15 @@ select:focus {
   background-size: 16px;
 }
 
-input::placeholder,
-input::-webkit-input-placeholder,
-input::-moz-placeholder,
-input:-ms-input-placeholder {
-  font-size: var(--font-size-small);
-  font-family: var(--font-family);
-  font-weight: var(--font-weight-medium);
-  color: #99a1af;
-}
-
-/* Card-style containers: rounded, soft shadow, elevated */
+/* Card: rounded container with soft shadow */
 .card {
-  border-radius: var(--radius-card);
-  box-shadow: var(--shadow-card);
-  background-color: var(--color-secondary);
+  @apply rounded-card shadow-card bg-white;
 }
 
-/* Button: subtle depth + hover */
+/* Button: transition + soft shadow, dims on hover/active */
 .btn {
   transition: filter 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-  box-shadow: var(--shadow-soft);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 .btn:hover {
   filter: brightness(0.94);
@@ -155,16 +107,4 @@ input:-ms-input-placeholder {
 }
 .btn--outline:active {
   background-color: rgba(93, 159, 181, 0.18) !important;
-}
-
-/* Header user dropdown: hover states for menu items */
-.header-user-menu [role="menuitem"]:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-.header-user-menu .header-user-menu-signout:hover {
-  background-color: var(--color-primary) !important;
-  color: #fff !important;
-}
-.header-user-menu .header-user-menu-profile:hover {
-  background-color: rgba(0, 0, 0, 0.04);
 }

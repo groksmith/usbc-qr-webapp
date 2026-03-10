@@ -10,74 +10,7 @@ import {
   QRCodeDisplay,
 } from "./ui";
 
-const overlayStyle: React.CSSProperties = {
-  position: "fixed",
-  inset: 0,
-  backgroundColor: "rgba(147, 197, 213, 0.45)",
-  backdropFilter: "blur(6px)",
-  WebkitBackdropFilter: "blur(6px)",
-  display: "flex",
-  alignItems: "stretch",
-  justifyContent: "flex-end",
-  zIndex: 1000,
-};
-
 const SIDEBAR_TRANSITION_MS = 300;
-
-const shellStyleBase: React.CSSProperties = {
-  width: "100%",
-  maxWidth: "520px",
-  borderRadius: "24px 0 0 24px",
-  background: "#FFFFFF",
-  border: "none",
-  outline: "none",
-  boxShadow: "-4px 0 48px rgba(0,0,0,0.10)",
-  padding: "24px 28px 28px",
-  display: "flex",
-  flexDirection: "column",
-  overflow: "auto",
-  transition: `transform ${SIDEBAR_TRANSITION_MS}ms ease-out`,
-};
-
-const headerRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "space-between",
-  marginBottom: "20px",
-};
-
-const titleStyle: React.CSSProperties = {
-  margin: 0,
-  fontSize: "22px",
-  fontWeight: 700,
-  color: "#09090b",
-};
-
-const closeBtnStyle: React.CSSProperties = {
-  background: "none",
-  border: "none",
-  width: "32px",
-  height: "32px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  cursor: "pointer",
-  color: "#64748b",
-  fontSize: "24px",
-  lineHeight: 1,
-  padding: 0,
-};
-
-const sectionStyle: React.CSSProperties = {
-  marginTop: "20px",
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: "16px",
-  fontWeight: 600,
-  color: "#09090b",
-  margin: "0 0 8px",
-};
 
 export interface ValueEmbedDetailSidebarProps {
   open: boolean;
@@ -145,118 +78,126 @@ export function ValueEmbedDetailSidebar({
 
   return (
     <>
-      <div style={overlayStyle} onClick={handleClose} role="dialog" aria-modal="true" aria-label="Value Embed code detail">
-        <div style={{ ...shellStyleBase, transform: shellTransform }} onClick={(e) => e.stopPropagation()}>
-          <div style={headerRowStyle}>
-              <h2 style={titleStyle}>Value Embed Code</h2>
-              <button type="button" onClick={handleClose} style={closeBtnStyle} aria-label="Close">
-                ×
-              </button>
-            </div>
+      <div
+        className="fixed inset-0 bg-[rgba(147,197,213,0.45)] backdrop-blur-[6px] flex items-stretch justify-end z-[1000]"
+        onClick={handleClose}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Value Embed code detail"
+      >
+        <div
+          className="w-full max-w-[520px] rounded-l-[24px] bg-white border-0 outline-none shadow-sidebar p-6 px-7 pb-7 flex flex-col overflow-auto transition-transform duration-300 ease-out"
+          style={{ transform: shellTransform }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-5">
+            <h2 className="m-0 text-[22px] font-bold text-zinc-950">Value Embed Code</h2>
+            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0" aria-label="Close">
+              ×
+            </button>
+          </div>
 
-            {loading && <p style={{ color: "#64748b" }}>Loading…</p>}
-            {!loading && !code && <p style={{ color: "#64748b" }}>Code not found.</p>}
-            {!loading && code && (
-              <>
-                <p style={{ margin: "0 0 4px", fontSize: "14px", color: "#64748b" }}>
-                  <strong>Description tag:</strong> {code.label}
+          {loading && <p className="text-muted">Loading…</p>}
+          {!loading && !code && <p className="text-muted">Code not found.</p>}
+          {!loading && code && (
+            <>
+              <p className="m-0 mb-1 text-sm text-muted"><strong>Description tag:</strong> {code.label}</p>
+              <p className="m-0"><Badge status={code.status} /></p>
+
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">QR code</h3>
+                <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Value Embed QR code" />
+                <p className="text-sm mt-2">
+                  <a href={code.qrUrl} target="_blank" rel="noopener noreferrer" className="break-all">{code.qrUrl}</a>
                 </p>
-                <p style={{ margin: 0 }}><Badge status={code.status} /></p>
+              </section>
 
-                <section style={sectionStyle}>
-                  <h3 style={sectionTitleStyle}>QR code</h3>
-                  <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Value Embed QR code" />
-                  <p style={{ fontSize: "14px", marginTop: "8px" }}>
-                    <a href={code.qrUrl} target="_blank" rel="noopener noreferrer" style={{ wordBreak: "break-all" }}>{code.qrUrl}</a>
-                  </p>
-                </section>
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Public code</h3>
+                <div className="flex items-center gap-0">
+                  <code className="font-mono text-sm">{code.publicCode}</code>
+                  <CopyIconButton text={code.publicCode} />
+                </div>
+              </section>
 
-                <section style={sectionStyle}>
-                  <h3 style={sectionTitleStyle}>Public code</h3>
-                  <div style={{ display: "flex", alignItems: "center", gap: "0" }}>
-                    <code style={{ fontFamily: "monospace", fontSize: "14px" }}>{code.publicCode}</code>
-                    <CopyIconButton text={code.publicCode} />
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Private code</h3>
+                {revealPrivate ? (
+                  <div className="flex items-center gap-2">
+                    <code className="font-mono text-sm">{code.privateCode ?? "—"}</code>
+                    <CopyButton text={code.privateCode ?? ""} />
                   </div>
-                </section>
-
-                <section style={sectionStyle}>
-                  <h3 style={sectionTitleStyle}>Private code</h3>
-                  {revealPrivate ? (
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                      <code style={{ fontFamily: "monospace", fontSize: "14px" }}>{code.privateCode ?? "—"}</code>
-                      <CopyButton text={code.privateCode ?? ""} />
-                    </div>
-                  ) : (
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        if (window.confirm("Reveal private code? It should be kept secure.")) {
-                          setRevealPrivate(true);
-                        }
-                      }}
-                    >
-                      Reveal private code
-                    </Button>
-                  )}
-                </section>
-
-                <section style={sectionStyle}>
-                  <h3 style={sectionTitleStyle}>Value & balance</h3>
-                  <p style={{ margin: "0 0 8px", fontSize: "14px" }}>
-                    A wallet is generated for this code pair and holds the assigned funds until redemption or return to source.
-                  </p>
-                  <p style={{ margin: 0, fontSize: "14px" }}>Value: {code.value} · Balance: {code.balance}</p>
-                  <p style={{ margin: "4px 0 0", fontSize: "14px" }}>Funding source: {code.fundingSourceId}</p>
-                  <p style={{ margin: "4px 0 0", fontSize: "14px" }}>
-                    Expiration: {code.expiration ? new Date(code.expiration).toLocaleString() : "None"}
-                  </p>
-                </section>
-
-                <section style={sectionStyle}>
-                  <h3 style={sectionTitleStyle}>Status timeline</h3>
-                  <p style={{ margin: 0, fontSize: "14px" }}>Created: {new Date(code.createdAt).toLocaleString()}</p>
-                  {code.redemptionTimestamp && (
-                    <p style={{ margin: "4px 0 0", fontSize: "14px" }}>Redeemed: {new Date(code.redemptionTimestamp).toLocaleString()}</p>
-                  )}
-                </section>
-
-                <section style={{ ...sectionStyle, display: "flex", flexWrap: "wrap", gap: "8px" }}>
-                  <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
-                    Export sticker template
+                ) : (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (window.confirm("Reveal private code? It should be kept secure.")) {
+                        setRevealPrivate(true);
+                      }
+                    }}
+                  >
+                    Reveal private code
                   </Button>
-                  {code.status === "active" && (
-                    <>
-                      {!cancelConfirm ? (
-                        <Button variant="secondary" onClick={() => setCancelConfirm(true)}>
-                          Cancel code
-                        </Button>
-                      ) : (
-                        <>
-                          <span style={{ fontSize: "14px", width: "100%" }}>Value returns to source. Confirm?</span>
-                          <Button onClick={handleCancel} disabled={cancelling}>
-                            {cancelling ? "Cancelling…" : "Confirm cancel"}
-                          </Button>
-                          <Button variant="outline" onClick={() => setCancelConfirm(false)}>
-                            Back
-                          </Button>
-                        </>
-                      )}
-                    </>
-                  )}
-                </section>
+                )}
+              </section>
 
-                <p style={{ marginTop: "16px", fontSize: "14px", display: "flex", flexDirection: "column", gap: "8px" }}>
-                  <a href={`${window.location.origin}/check-balance?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
-                    View public check balance page
-                  </a>
-                  {code.status === "active" && (
-                    <a href={`${window.location.origin}/redeem?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
-                      Redeem (private code required)
-                    </a>
-                  )}
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Value & balance</h3>
+                <p className="m-0 mb-2 text-sm">
+                  A wallet is generated for this code pair and holds the assigned funds until redemption or return to source.
                 </p>
-              </>
-            )}
+                <p className="m-0 text-sm">Value: {code.value} · Balance: {code.balance}</p>
+                <p className="mt-1 mb-0 text-sm">Funding source: {code.fundingSourceId}</p>
+                <p className="mt-1 mb-0 text-sm">
+                  Expiration: {code.expiration ? new Date(code.expiration).toLocaleString() : "None"}
+                </p>
+              </section>
+
+              <section className="mt-5">
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Status timeline</h3>
+                <p className="m-0 text-sm">Created: {new Date(code.createdAt).toLocaleString()}</p>
+                {code.redemptionTimestamp && (
+                  <p className="mt-1 mb-0 text-sm">Redeemed: {new Date(code.redemptionTimestamp).toLocaleString()}</p>
+                )}
+              </section>
+
+              <section className="mt-5 flex flex-wrap gap-2">
+                <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
+                  Export sticker template
+                </Button>
+                {code.status === "active" && (
+                  <>
+                    {!cancelConfirm ? (
+                      <Button variant="secondary" onClick={() => setCancelConfirm(true)}>
+                        Cancel code
+                      </Button>
+                    ) : (
+                      <>
+                        <span className="text-sm w-full">Value returns to source. Confirm?</span>
+                        <Button onClick={handleCancel} disabled={cancelling}>
+                          {cancelling ? "Cancelling…" : "Confirm cancel"}
+                        </Button>
+                        <Button variant="outline" onClick={() => setCancelConfirm(false)}>
+                          Back
+                        </Button>
+                      </>
+                    )}
+                  </>
+                )}
+              </section>
+
+              <div className="mt-4 text-sm flex flex-col gap-2">
+                <a href={`${window.location.origin}/check-balance?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
+                  View public check balance page
+                </a>
+                {code.status === "active" && (
+                  <a href={`${window.location.origin}/redeem?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
+                    Redeem (private code required)
+                  </a>
+                )}
+              </div>
+            </>
+          )}
         </div>
       </div>
 

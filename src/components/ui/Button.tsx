@@ -5,36 +5,24 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
 }
 
+const variantClasses: Record<string, string> = {
+  primary: "bg-primary text-white border-0",
+  secondary: "bg-body-text text-white border-0",
+  outline: "bg-transparent text-primary border border-primary",
+};
+
 export function Button({
   variant = "primary",
   children,
   style,
+  className,
   ...props
 }: ButtonProps): React.ReactElement {
-  const base: React.CSSProperties = {
-    height: "36px",
-    padding: "0 16px",
-    boxSizing: "border-box",
-    fontSize: "14px",
-    fontWeight: 600,
-    border: "none",
-    borderRadius: "12px",
-    cursor: "pointer",
-  };
-  const variants: Record<string, React.CSSProperties> = {
-    primary: { backgroundColor: "var(--color-primary)", color: "var(--color-secondary)" },
-    secondary: { backgroundColor: "var(--color-body)", color: "var(--color-secondary)" },
-    outline: {
-      backgroundColor: "transparent",
-      color: "var(--color-primary)",
-      border: "1px solid var(--color-primary)",
-    },
-  };
   return (
     <button
       type="button"
-      className={`btn btn--${variant}`}
-      style={{ ...base, ...variants[variant], ...style }}
+      className={`btn btn--${variant} h-9 px-4 box-border text-sm font-semibold rounded-btn cursor-pointer ${variantClasses[variant]} ${className ?? ""}`}
+      style={style}
       {...props}
     >
       {children}

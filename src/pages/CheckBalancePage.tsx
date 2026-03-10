@@ -39,11 +39,11 @@ export function CheckBalancePage(): React.ReactElement {
   };
 
   return (
-    <div style={{ maxWidth: "560px", margin: "0 auto" }}>
+    <div className="max-w-[560px] mx-auto">
       <h1>Check balance</h1>
       <p>Enter the public code to see balance and status. Do not enter your private code here.</p>
 
-      <div style={{ marginBottom: "24px" }}>
+      <div className="mb-6">
         <Input
           label="Public code"
           required
@@ -59,21 +59,15 @@ export function CheckBalancePage(): React.ReactElement {
       </div>
 
       {searched && !loading && result && (
-        <div
-          className="card"
-          style={{
-            padding: "28px 32px",
-            marginBottom: "24px",
-          }}
-        >
+        <div className="card p-7 px-8 mb-6">
           <h2>Result</h2>
           <p><strong>Current balance:</strong> {result.balance}</p>
           <p><strong>Original value:</strong> {result.value}</p>
           <p><strong>Status:</strong> {STATUS_LABELS[result.status]}</p>
           {result.status === "active" && (
-            <p style={{ marginTop: "16px", fontSize: "16px" }}>
+            <p className="mt-4 text-base">
               To redeem, you need the private code, a bronze badge, and a UNS name.{" "}
-              <Link to={`${ROUTES.REDEEM}?code=${encodeURIComponent(result.publicCode)}`} style={{ color: "var(--color-primary)", fontWeight: 600 }}>
+              <Link to={`${ROUTES.REDEEM}?code=${encodeURIComponent(result.publicCode)}`} className="text-primary font-semibold">
                 Go to Redeem page
               </Link>
             </p>
@@ -82,16 +76,10 @@ export function CheckBalancePage(): React.ReactElement {
       )}
 
       {searched && !loading && !result && (
-        <p style={{ color: "var(--color-body)" }}>No item found for this public code.</p>
+        <p className="text-body-text">No item found for this public code.</p>
       )}
 
-      <section
-        className="card"
-        style={{
-          marginTop: "32px",
-          padding: "24px 28px",
-        }}
-      >
+      <section className="card mt-8 p-6 px-7">
         <h2>How to redeem</h2>
         <p>You need:</p>
         <ul>
@@ -100,11 +88,11 @@ export function CheckBalancePage(): React.ReactElement {
           <li>A valid <strong>UNS name</strong> linked to that identity</li>
         </ul>
         <p>
-          <Link to={ROUTES.REDEEM} style={{ color: "var(--color-primary)", fontWeight: 600 }}>
+          <Link to={ROUTES.REDEEM} className="text-primary font-semibold">
             Go to Redeem page
           </Link>
         </p>
-        <p style={{ fontSize: "14px", marginTop: "16px" }}>
+        <p className="text-sm mt-4">
           Download the app and acquire a bronze badge to complete redemption. This page is for
           information only; redemption is done on the Redeem page.
         </p>

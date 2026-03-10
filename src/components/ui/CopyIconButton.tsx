@@ -24,20 +24,9 @@ export function CopyIconButton({ text, title = "Copy" }: CopyIconButtonProps): R
       onClick={copy}
       title={copied ? "Copied!" : title}
       aria-label={copied ? "Copied!" : title}
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "4px",
-        marginLeft: "6px",
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        color: copied ? "var(--color-positive)" : "#64748b",
-        borderRadius: "4px",
-        transition: "color 0.2s ease, transform 0.15s ease",
-        transform: copied ? "scale(1.15)" : "scale(1)",
-      }}
+      className={`inline-flex items-center justify-center p-1 ml-1.5 bg-transparent border-0 cursor-pointer rounded-[4px] transition-[color,transform] duration-150 ${
+        copied ? "text-positive scale-[1.15]" : "text-muted scale-100"
+      }`}
     >
       {copied ? (
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>

@@ -34,16 +34,16 @@ export function SelfTitlingNewPage(): React.ReactElement {
       <div>
         <h1>Self-Titling code created</h1>
         <p>Code set created.</p>
-        <ul style={{ marginBottom: "24px" }}>
+        <ul className="mb-6">
           {created.map((c) => (
             <li key={c.id}>
-              <a href={pathToSelfTitlingDetail(c.id)} style={{ color: "var(--color-primary)" }}>
+              <a href={pathToSelfTitlingDetail(c.id)} className="text-primary">
                 {c.itemTag} — {c.publicCode}
               </a>
             </li>
           ))}
         </ul>
-        <div style={{ display: "flex", gap: "12px" }}>
+        <div className="flex gap-3">
           <Button onClick={() => navigate(ROUTES.CODES)}>Done</Button>
           <Button variant="outline">Export stickers</Button>
         </div>
@@ -52,9 +52,9 @@ export function SelfTitlingNewPage(): React.ReactElement {
   }
 
   return (
-    <div style={{ maxWidth: "560px" }}>
+    <div className="max-w-[560px]">
       <h1>Generate Self-Titling Code</h1>
-      <p style={{ marginBottom: "24px" }}>
+      <p className="mb-6">
         Step {step + 1} of {STEPS.length}: {STEPS[step]}
       </p>
 
@@ -80,14 +80,9 @@ export function SelfTitlingNewPage(): React.ReactElement {
             onChange={(e) => setUnsName(e.target.value)}
             placeholder="e.g. alice.uns"
           />
-          <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+          <div className="flex gap-3 mt-6">
             <Button variant="outline" onClick={() => setStep(0)}>Back</Button>
-            <Button
-              onClick={() => setStep(2)}
-              disabled={!itemTag.trim() || !unsName.trim()}
-            >
-              Next
-            </Button>
+            <Button onClick={() => setStep(2)} disabled={!itemTag.trim() || !unsName.trim()}>Next</Button>
           </div>
         </div>
       )}
@@ -96,7 +91,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
         <div>
           <p><strong>Item tag:</strong> {itemTag}</p>
           <p><strong>UNS name:</strong> {unsName}</p>
-          <div style={{ display: "flex", gap: "12px", marginTop: "24px" }}>
+          <div className="flex gap-3 mt-6">
             <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
             <Button onClick={handleCreate} disabled={loading}>
               {loading ? "Creating…" : "Create"}
@@ -105,7 +100,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
         </div>
       )}
 
-      <div style={{ marginTop: "24px" }}>
+      <div className="mt-6">
         <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
           Cancel
         </Button>
