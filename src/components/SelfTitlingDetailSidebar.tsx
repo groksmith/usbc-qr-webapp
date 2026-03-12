@@ -96,6 +96,17 @@ export function SelfTitlingDetailSidebar({
               <p className="m-0 mb-1 text-sm text-muted"><strong>UNS name:</strong> {code.unsName}</p>
               <p className="m-0"><Badge status={code.status} /></p>
 
+              {code.imageUrl && (
+                <section className="mt-5">
+                  <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Item image</h3>
+                  <img
+                    src={code.imageUrl}
+                    alt={code.itemTag}
+                    className="w-full max-w-[240px] h-auto max-h-[240px] object-contain rounded-[8px] border border-[#e4e4e7]"
+                  />
+                </section>
+              )}
+
               <section className="mt-5">
                 <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Public profile page</h3>
                 <p className="text-sm m-0">

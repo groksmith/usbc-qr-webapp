@@ -151,6 +151,7 @@ export async function createSelfTitlingCodes(
       label: itemTag,
       itemTag,
       unsName: params.unsName,
+      imageUrl: params.imageUrl,
       status: "active",
       createdAt: now,
       updatedAt: now,
@@ -237,6 +238,7 @@ export async function getItemProfile(publicCode: string): Promise<ItemProfilePub
     publicCode: st.publicCode,
     ownerDisplay: st.unsName,
     qrUrl: st.qrUrl,
+    imageUrl: st.imageUrl,
     status: st.status,
   };
 }

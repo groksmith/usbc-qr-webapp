@@ -61,6 +61,17 @@ export function SelfTitlingDetailPage(): React.ReactElement {
       <p><strong>UNS name:</strong> {code.unsName}</p>
       <p><Badge status={code.status} /></p>
 
+      {code.imageUrl && (
+        <section className="mt-4 sm:mt-6">
+          <h2 className="text-lg font-semibold">Item image</h2>
+          <img
+            src={code.imageUrl}
+            alt={code.itemTag}
+            className="mt-2 w-full max-w-[320px] h-auto max-h-[320px] object-contain rounded-[8px] border border-[#e5e7eb]"
+          />
+        </section>
+      )}
+
       <section className="mt-4 sm:mt-6">
         <h2 className="text-lg font-semibold">Public profile page</h2>
         <p>

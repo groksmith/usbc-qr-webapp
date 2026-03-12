@@ -35,6 +35,8 @@ export interface SelfTitlingCodeSet extends CodeSetBase {
   kind: "self-titling";
   itemTag: string;
   unsName: string;
+  /** Item image URL (e.g. from upload). */
+  imageUrl?: string;
   ownershipTokenId?: string;
   ownershipStatus?: "owned" | "transferred" | "pending_transfer";
 }
@@ -75,6 +77,8 @@ export interface ItemProfilePublic {
   publicCode: string;
   ownerDisplay: string;
   qrUrl: string;
+  /** Item image URL when available. */
+  imageUrl?: string;
   status: CodeSetStatus;
 }
 
@@ -96,5 +100,7 @@ export interface CreateValueEmbedParams {
 export interface CreateSelfTitlingParams {
   itemTag: string;
   unsName: string;
+  /** Optional image URL (e.g. data URL from upload; replace with IPFS URL when backend supports it). */
+  imageUrl?: string;
   quantity?: number;
 }

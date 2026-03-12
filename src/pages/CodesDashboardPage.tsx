@@ -184,9 +184,11 @@ export function CodesDashboardPage(): React.ReactElement {
               <img src={csvIcon} alt="" width={18} height={18} className="block flex-shrink-0" />
               <span>Download csv</span>
             </button>
-            <Button onClick={() => setGenerateModalOpen(true)} className="h-11 w-full sm:w-[165px]">
-              Generate code
-            </Button>
+            <div className="h-11 w-full sm:w-[165px] flex">
+              <Button onClick={() => setGenerateModalOpen(true)} className="!h-full w-full min-h-0">
+                Generate code
+              </Button>
+            </div>
           </div>
         </div>
 

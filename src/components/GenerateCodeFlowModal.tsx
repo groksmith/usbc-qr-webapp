@@ -81,6 +81,9 @@ export function GenerateCodeFlowModal({
   // Self-Titling fields
   const [itemTag, setItemTag] = useState("");
   const [unsName, setUnsName] = useState("");
+  /** Data URL of uploaded image for self-titling item. */
+  const [selfTitlingImageUrl, setSelfTitlingImageUrl] = useState<string | null>(null);
+  const [isDraggingOverImage, setIsDraggingOverImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [createdVE, setCreatedVE] = useState<ValueEmbedCodeSet[] | null>(null);
   const [createdST, setCreatedST] = useState<SelfTitlingCodeSet[] | null>(null);
@@ -111,6 +114,8 @@ export function GenerateCodeFlowModal({
     setBulkItems([]);
     setItemTag("");
     setUnsName("");
+    setSelfTitlingImageUrl(null);
+    setIsDraggingOverImage(false);
     setCreatedVE(null);
     setCreatedST(null);
     setErrors({});
@@ -203,6 +208,7 @@ export function GenerateCodeFlowModal({
         const result = await createSelfTitlingCodes({
           itemTag,
           unsName,
+          imageUrl: selfTitlingImageUrl ?? undefined,
           quantity: 1,
         });
         setCreatedST(result.codes);
@@ -404,6 +410,95 @@ export function GenerateCodeFlowModal({
               <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Configure Self-Titling Code</h2>
               <p className="m-0 mb-7 text-sm text-muted font-normal text-center">Set up your code parameters.</p>
 
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-zinc-950 mb-1.5">
+                  Item image <span className="font-normal text-muted">(optional)</span>
+                </label>
+                {selfTitlingImageUrl ? (
+                  <div className="flex flex-col gap-2">
+                    <img
+                      src={selfTitlingImageUrl}
+                      alt="Item preview"
+                      className="w-full max-w-[200px] h-auto max-h-[200px] object-contain rounded-[8px] border border-[#e4e4e7]"
+                    />
+                    <div className="flex gap-2">
+                      <label className="py-2 px-3 text-sm font-medium text-primary bg-primary/[0.08] border border-primary/20 rounded-[8px] cursor-pointer">
+                        Change image
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/jpg"
+                          className="sr-only"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const reader = new FileReader();
+                              reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
+                              reader.readAsDataURL(file);
+                            }
+                          }}
+                        />
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setSelfTitlingImageUrl(null)}
+                        className="py-2 px-3 text-sm font-medium text-zinc-700 bg-zinc-100 border border-zinc-200 rounded-[8px] cursor-pointer hover:bg-zinc-200"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <label
+                    className={`flex flex-col items-center justify-center w-full py-6 px-4 border-2 border-dashed rounded-[8px] cursor-pointer transition-colors ${
+                      isDraggingOverImage
+                        ? "border-primary bg-primary/[0.08]"
+                        : "border-[#e4e4e7] hover:border-primary/50 hover:bg-primary/[0.04]"
+                    }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingOverImage(true);
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingOverImage(false);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      setIsDraggingOverImage(false);
+                      const file = e.dataTransfer.files?.[0];
+                      if (!file) return;
+                      const accepted = ["image/png", "image/jpeg", "image/jpg"];
+                      if (!accepted.includes(file.type)) return;
+                      const reader = new FileReader();
+                      reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
+                      reader.readAsDataURL(file);
+                    }}
+                  >
+                    <span className="text-sm font-medium text-zinc-600">
+                      {isDraggingOverImage ? "Drop image here" : "Click or drag and drop to upload"}
+                    </span>
+                    <span className="text-xs text-muted mt-1 block text-center">Recommended: 1:1 aspect ratio (e.g. 1080×1080 px), minimum 100 KB.</span>
+                    <span className="text-xs text-muted mt-0.5 block">PNG, JPG, JPEG</span>
+                    <input
+                      type="file"
+                      accept="image/png,image/jpeg,image/jpg"
+                      className="sr-only"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+
               <Input
                 label="Item tag"
                 required
@@ -574,6 +669,10 @@ export function GenerateCodeFlowModal({
                     <div><span className="text-muted">Type:</span> Self-Titling</div>
                     <div><span className="text-muted">Item tag:</span> {itemTag}</div>
                     <div><span className="text-muted">UNS name:</span> {unsName}</div>
+                    <div><span className="text-muted">Image:</span> {selfTitlingImageUrl ? "Yes" : "None"}</div>
+                    {selfTitlingImageUrl && (
+                      <img src={selfTitlingImageUrl} alt="" className="mt-2 max-w-[120px] max-h-[120px] object-contain rounded-[8px] border border-[#e4e4e7]" />
+                    )}
                   </>
                 )}
               </div>
