@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getItemProfile } from "../services/api";
 import type { ItemProfilePublic } from "../types";
-import { STATUS_LABELS } from "../constants/status";
 import { Badge, QRCodeDisplay, CopyIconButton } from "../components/ui";
 
 /**
@@ -41,8 +40,9 @@ export function ItemProfilePage(): React.ReactElement {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6">
-      {/* OpenSea-style: image + details side by side on desktop */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+      <div className="rounded-2xl bg-white border border-zinc-200 shadow-soft p-4 sm:p-6 lg:p-8">
+        {/* OpenSea-style: image + details side by side on desktop */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
         {/* Left: Image */}
         <div className="w-full aspect-square max-w-full lg:max-w-none rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200">
           {profile.imageUrl ? (
@@ -52,7 +52,7 @@ export function ItemProfilePage(): React.ReactElement {
               className="w-full h-full object-contain"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-zinc-400 text-sm">
+            <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-500 text-sm">
               No image
             </div>
           )}
@@ -64,16 +64,12 @@ export function ItemProfilePage(): React.ReactElement {
             <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
               Self-titled item
             </p>
-            <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">
-              {profile.itemTag}
-            </h1>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge status={profile.status} />
-            <span className="text-sm text-muted">
-              {STATUS_LABELS[profile.status]}
-            </span>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">
+                {profile.itemTag}
+              </h1>
+              <Badge status={profile.status} />
+            </div>
           </div>
 
           <div className="space-y-1">
@@ -115,6 +111,7 @@ export function ItemProfilePage(): React.ReactElement {
               QR links to this page
             </p>
           </div>
+        </div>
         </div>
       </div>
     </div>

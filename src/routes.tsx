@@ -32,15 +32,12 @@ export function RoutesConfig(): React.ReactElement {
             path={ROUTES.CODES_SELF_TITLING_DETAIL}
             element={<SelfTitlingDetailPage />}
           />
+          <Route path={ROUTES.ITEM_PROFILE} element={<ItemProfilePage />} />
         </Route>
 
         <Route element={<PublicLayout />}>
           <Route path={ROUTES.CHECK_BALANCE} element={<CheckBalancePage />} />
           <Route path={ROUTES.REDEEM} element={<RedeemPage />} />
-          <Route
-            path={ROUTES.ITEM_PROFILE}
-            element={<ItemProfilePage />}
-          />
         </Route>
 
         <Route path="*" element={<Navigate to={ROUTES.CODES} replace />} />
