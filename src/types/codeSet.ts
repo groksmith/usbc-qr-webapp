@@ -80,6 +80,8 @@ export interface ItemProfilePublic {
   /** Item image URL when available. */
   imageUrl?: string;
   status: CodeSetStatus;
+  /** Created at date (ISO string). */
+  createdAt?: string;
 }
 
 export interface BulkValueEmbedItem {

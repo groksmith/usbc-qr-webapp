@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { getItemProfile } from "../services/api";
 import type { ItemProfilePublic } from "../types";
 import { Badge, QRCodeDisplay, CopyIconButton } from "../components/ui";
+import { formatTableDate } from "../utils/date";
 
 /**
  * Public page for a self-titled code (no auth required).
@@ -39,7 +40,7 @@ export function ItemProfilePage(): React.ReactElement {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6">
       <div className="rounded-2xl bg-white border border-zinc-200 shadow-soft p-4 sm:p-6 lg:p-8">
         {/* OpenSea-style: image + details side by side on desktop */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
@@ -72,27 +73,25 @@ export function ItemProfilePage(): React.ReactElement {
             </div>
           </div>
 
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-zinc-500 m-0">UNS name</p>
-            <p className="text-base font-semibold text-zinc-950 m-0">
-              {profile.unsName}
-            </p>
-          </div>
-
-          <div className="space-y-1">
-            <p className="text-sm font-medium text-zinc-500 m-0">Owned by</p>
-            <p className="text-base text-zinc-950 m-0">{profile.ownerDisplay}</p>
-          </div>
-
-          <div className="pt-2 border-t border-zinc-200">
-            <p className="text-sm font-medium text-zinc-500 m-0 mb-1">
-              Public code
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <code className="text-sm font-mono text-zinc-800 break-all">
-                {profile.publicCode}
-              </code>
-              <CopyIconButton text={profile.publicCode} />
+          <div className="flex flex-wrap items-start gap-9">
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-zinc-500 m-0">Public code</p>
+              <div className="flex items-center gap-2">
+                <code className="text-base font-mono font-normal text-zinc-950 whitespace-nowrap">
+                  {profile.publicCode}
+                </code>
+                <CopyIconButton text={profile.publicCode} />
+              </div>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-zinc-500 m-0">Owned by</p>
+              <p className="text-base font-normal text-zinc-950 m-0">{profile.ownerDisplay}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-sm font-medium text-zinc-500 m-0">Created at</p>
+              <p className="text-base font-normal text-zinc-950 m-0">
+                {formatTableDate(profile.createdAt)}
+              </p>
             </div>
           </div>
 

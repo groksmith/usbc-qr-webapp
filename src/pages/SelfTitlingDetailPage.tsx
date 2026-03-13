@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getSelfTitlingCodeById, transferSelfTitling } from "../services/api";
+import { getSelfTitlingCodeById } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
-import { ROUTES, pathToItemProfile } from "../constants/routes";
-import { Button, Badge, Input, CopyButton, StickerExportModal, QRCodeDisplay } from "../components/ui";
-import { validateUnsName, UNS_NAME_HINT } from "../utils/validation";
+import { ROUTES } from "../constants/routes";
+import {
+  Badge,
+  CopyIconButton,
+  StickerExportModal,
+  QRCodeDisplay,
+} from "../components/ui";
+import { TransferTitleModal } from "../components/TransferTitleModal";
+import { formatTableDate } from "../utils/date";
 
 export function SelfTitlingDetailPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
@@ -12,9 +18,6 @@ export function SelfTitlingDetailPage(): React.ReactElement {
   const [code, setCode] = useState<SelfTitlingCodeSet | null>(null);
   const [loading, setLoading] = useState(true);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [recipient, setRecipient] = useState("");
-  const [recipientError, setRecipientError] = useState<string | undefined>();
-  const [transferring, setTransferring] = useState(false);
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
 
   useEffect(() => {
@@ -25,113 +28,155 @@ export function SelfTitlingDetailPage(): React.ReactElement {
     });
   }, [id]);
 
-  const handleTransfer = async (): Promise<void> => {
-    if (!id) return;
-    const validation = validateUnsName(recipient);
-    if (!validation.valid) {
-      setRecipientError(validation.message);
-      return;
-    }
-    setRecipientError(undefined);
-    setTransferring(true);
-    await transferSelfTitling(id, recipient.trim());
-    setTransferOpen(false);
-    setRecipient("");
-    setCode((prev) =>
-      prev ? { ...prev, ownershipStatus: "transferred", updatedAt: new Date().toISOString() } : null
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-body-text">Loading…</div>
+      </div>
     );
-    setTransferring(false);
-  };
+  }
 
-  const profileUrl = code ? pathToItemProfile(code.publicCode) : "";
-
-  if (loading || !code) {
-    return <div className="py-4 text-body-text">{loading ? "Loading…" : "Code not found."}</div>;
+  if (!code) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="text-body-text">Code not found.</div>
+      </div>
+    );
   }
 
   return (
-    <div className="min-w-0">
-      <div className="mb-4 sm:mb-6">
-        <Button variant="outline" onClick={() => navigate(ROUTES.CODES)}>
-          Back to dashboard
-        </Button>
-      </div>
-      <h1 className="text-xl sm:text-2xl">Self-Titling Code</h1>
-      <p className="mt-1"><strong>Item tag:</strong> {code.itemTag}</p>
-      <p><strong>UNS name:</strong> {code.unsName}</p>
-      <p><Badge status={code.status} /></p>
+    <div className="max-w-5xl mx-auto px-4 sm:px-6">
+      <div className="rounded-2xl bg-white border border-zinc-200 shadow-soft p-4 sm:p-6 lg:p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+          {/* Left: Image — same as public view */}
+          <div className="w-full aspect-square max-w-full lg:max-w-none rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200">
+            {code.imageUrl ? (
+              <img
+                src={code.imageUrl}
+                alt={code.itemTag}
+                className="w-full h-full object-contain"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-500 text-sm">
+                No image
+              </div>
+            )}
+          </div>
 
-      {code.imageUrl && (
-        <section className="mt-4 sm:mt-6">
-          <h2 className="text-lg font-semibold">Item image</h2>
-          <img
-            src={code.imageUrl}
-            alt={code.itemTag}
-            className="mt-2 w-full max-w-[320px] h-auto max-h-[320px] object-contain rounded-[8px] border border-[#e5e7eb]"
-          />
-        </section>
-      )}
+          {/* Right: Details — same structure as ItemProfilePage */}
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => navigate(ROUTES.CODES)}
+                className="inline-flex items-center gap-2 bg-transparent border-0 p-0 cursor-pointer text-zinc-950 font-sans text-[0.8rem] hover:underline focus:outline-none focus:underline"
+              >
+                <svg
+                  className="w-4 h-4 shrink-0"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden
+                >
+                  <path d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+                <span>Back to the dashboard</span>
+              </button>
+            </div>
 
-      <section className="mt-4 sm:mt-6">
-        <h2 className="text-lg font-semibold">Public profile page</h2>
-        <p>
-          <a href={profileUrl} target="_blank" rel="noopener noreferrer">
-            Open item profile
-          </a>
-        </p>
-      </section>
+            <div>
+              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
+                Self-titled item
+              </p>
+              <div className="flex items-center gap-3">
+                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">
+                  {code.itemTag}
+                </h1>
+                <Badge status={code.status} />
+              </div>
+            </div>
 
-      <section className="mt-4 sm:mt-6">
-        <h2 className="text-lg font-semibold">QR code</h2>
-        <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Item profile QR code" />
-        <p className="text-sm mt-2">Links to item profile.</p>
-      </section>
+            <div className="flex flex-wrap items-start gap-9">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-zinc-500 m-0">Public code</p>
+                <div className="flex items-center gap-2">
+                  <code className="text-base font-mono font-normal text-zinc-950 whitespace-nowrap">
+                    {code.publicCode}
+                  </code>
+                  <CopyIconButton text={code.publicCode} />
+                </div>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-zinc-500 m-0">Owned by</p>
+                <p className="text-base font-normal text-zinc-950 m-0">{code.unsName}</p>
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-zinc-500 m-0">Created at</p>
+                <p className="text-base font-normal text-zinc-950 m-0">
+                  {formatTableDate(code.createdAt)}
+                </p>
+              </div>
+            </div>
 
-      <section className="mt-4 sm:mt-6">
-        <h2 className="text-lg font-semibold">Public code</h2>
-        <div className="flex flex-wrap items-center gap-2 min-w-0">
-          <code className="font-mono text-base sm:text-lg break-all">{code.publicCode}</code>
-          <CopyButton text={code.publicCode} />
-        </div>
-      </section>
+            {/* QR code — same as public view */}
+            <div className="pt-4 border-t border-zinc-200">
+              <p className="text-sm font-medium text-zinc-500 m-0 mb-3">
+                Scan to view
+              </p>
+              <QRCodeDisplay
+                value={code.qrUrl}
+                size={180}
+                linkToUrl
+                alt="Item profile QR code"
+              />
+              <p className="text-xs text-muted mt-2">QR links to item profile</p>
+            </div>
 
-      <section className="mt-4 sm:mt-6">
-        <h2 className="text-lg font-semibold">Ownership</h2>
-        <p>Status: {code.ownershipStatus ?? "owned"}</p>
-      </section>
-
-      <section className="mt-4 sm:mt-6 flex flex-wrap gap-3">
-        <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
-          Export sticker template
-        </Button>
-        {code.ownershipStatus !== "transferred" && (
-          <Button variant="secondary" onClick={() => setTransferOpen(true)}>
-            Transfer title
-          </Button>
-        )}
-      </section>
-
-      {transferOpen && (
-        <div className="mt-4 sm:mt-6 p-4 border border-[#e5e7eb] rounded-[8px] w-full max-w-[400px]">
-          <h3>Transfer title</h3>
-          <Input
-            label="Recipient (UNS name)"
-            required
-            hint={UNS_NAME_HINT}
-            value={recipient}
-            onChange={(e) => { setRecipient(e.target.value); setRecipientError(undefined); }}
-            placeholder="e.g. bob.uns"
-            error={recipientError}
-          />
-          <div className="flex gap-2">
-            <Button onClick={handleTransfer} disabled={transferring}>
-              {transferring ? "Transferring…" : "Confirm transfer"}
-            </Button>
-            <Button variant="outline" onClick={() => setTransferOpen(false)}>
-              Cancel
-            </Button>
+            {/* Auth-only CTAs */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setStickerModalOpen(true)}
+                className="w-[140px] h-10 px-4 rounded-lg bg-zinc-950 text-white font-medium text-sm whitespace-nowrap border-0 cursor-pointer hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
+              >
+                Export Sticker
+              </button>
+              {code.ownershipStatus !== "transferred" && (
+                <button
+                  type="button"
+                  onClick={() => setTransferOpen(true)}
+                  className="w-[140px] h-10 px-4 rounded-lg bg-transparent text-zinc-950 font-medium text-sm whitespace-nowrap border border-zinc-950 cursor-pointer hover:bg-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
+                >
+                  Transfer
+                </button>
+              )}
+            </div>
           </div>
         </div>
+      </div>
+
+      {id && (
+        <TransferTitleModal
+          open={transferOpen}
+          onClose={() => setTransferOpen(false)}
+          codeId={id}
+          itemTag={code.itemTag}
+          publicCode={code.publicCode}
+          onTransferred={() =>
+            setCode((previous) =>
+              previous
+                ? {
+                    ...previous,
+                    ownershipStatus: "transferred",
+                    updatedAt: new Date().toISOString(),
+                  }
+                : null
+            )
+          }
+        />
       )}
 
       <StickerExportModal

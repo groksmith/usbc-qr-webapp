@@ -240,6 +240,7 @@ export async function getItemProfile(publicCode: string): Promise<ItemProfilePub
     qrUrl: st.qrUrl,
     imageUrl: st.imageUrl,
     status: st.status,
+    createdAt: st.createdAt,
   };
 }
 

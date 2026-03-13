@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { getValueEmbedCodes, getSelfTitlingCodes } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, CodeSetStatus } from "../types";
 import { Button, Tabs, StickerExportModal, SearchIcon, CopyIconButton } from "../components/ui";
@@ -8,8 +9,8 @@ import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExpor
 import { formatTableDate } from "../utils/date";
 import csvIcon from "../assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
+import { pathToSelfTitlingDetail } from "../constants/routes";
 import { ValueEmbedDetailSidebar } from "../components/ValueEmbedDetailSidebar";
-import { SelfTitlingDetailSidebar } from "../components/SelfTitlingDetailSidebar";
 import { TransferTitleModal } from "../components/TransferTitleModal";
 
 type DashboardTab = "value-embed" | "self-titling";
@@ -37,8 +38,8 @@ export function CodesDashboardPage(): React.ReactElement {
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
   const [stickerValueEmbedCode, setStickerValueEmbedCode] = useState<ValueEmbedCodeExportData | null>(null);
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
+  const navigate = useNavigate();
   const [viewDetailCodeId, setViewDetailCodeId] = useState<string | null>(null);
-  const [viewDetailSelfTitlingId, setViewDetailSelfTitlingId] = useState<string | null>(null);
   const [transferModal, setTransferModal] = useState<{ codeId: string; itemTag: string; publicCode: string } | null>(null);
   const [valueEmbedSort, setValueEmbedSort] = useState<{ column: ValueEmbedSortColumn; direction: SortDirection }>({
     column: "createdAt",
@@ -379,7 +380,7 @@ export function CodesDashboardPage(): React.ReactElement {
                         <span><span className="font-medium text-heading">Created:</span> {formatTableDate(row.createdAt)}</span>
                       </div>
                       <div className="flex flex-wrap gap-2 pt-2 border-t border-[#EEF2F2]">
-                        <button type="button" onClick={() => setViewDetailSelfTitlingId(row.id)} className={actionBtnClass}>View</button>
+                        <button type="button" onClick={() => navigate(pathToSelfTitlingDetail(row.id))} className={actionBtnClass}>View</button>
                         <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
                         <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} className={actionBtnClass}>Transfer</button>
                       </div>
@@ -457,7 +458,7 @@ export function CodesDashboardPage(): React.ReactElement {
                         <td className={tdClass}>{formatTableDate(row.createdAt)}</td>
                         <td className={tdClass}>
                           <div className="flex justify-start items-center gap-3 flex-wrap">
-                            <button type="button" onClick={() => setViewDetailSelfTitlingId(row.id)} className={actionBtnClass}>View</button>
+                            <button type="button" onClick={() => navigate(pathToSelfTitlingDetail(row.id))} className={actionBtnClass}>View</button>
                             <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
                             <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} className={actionBtnClass}>Transfer</button>
                           </div>
@@ -518,11 +519,6 @@ export function CodesDashboardPage(): React.ReactElement {
         open={!!viewDetailCodeId}
         onClose={() => setViewDetailCodeId(null)}
         codeId={viewDetailCodeId}
-      />
-      <SelfTitlingDetailSidebar
-        open={!!viewDetailSelfTitlingId}
-        onClose={() => setViewDetailSelfTitlingId(null)}
-        codeId={viewDetailSelfTitlingId}
       />
       {transferModal && (
         <TransferTitleModal
