@@ -38,7 +38,7 @@ export function SelfTitlingItemCard({
   qrCaption = "QR links to this page",
 }: SelfTitlingItemCardProps): React.ReactElement {
   return (
-    <div className="max-w-5xl mx-auto px-4 sm:px-6">
+    <div className="max-w-[68rem] mx-auto px-4 sm:px-6">
       <div className="rounded-2xl bg-white border border-zinc-200 shadow-soft p-4 sm:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
           {/* Left: Image */}
