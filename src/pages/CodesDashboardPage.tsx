@@ -160,8 +160,8 @@ export function CodesDashboardPage(): React.ReactElement {
     { id: "self-titling" as const, label: "Self-Titling" },
   ];
 
-  const getRowClass = (index: number): string =>
-    `border-b border-[#EEF2F2] ${index % 2 === 0 ? "bg-white" : "bg-[#F8FCFC]"}`;
+  const getRowClass = (): string =>
+    "border-b border-[#EEF2F2] bg-white";
 
   return (
     <div className="min-w-0">
@@ -350,7 +350,7 @@ export function CodesDashboardPage(): React.ReactElement {
                         tabIndex={0}
                         onClick={() => navigate(pathToValueEmbedDetail(row.id))}
                         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToValueEmbedDetail(row.id)); } }}
-                        className={`group border-b border-[#EEF2F2] cursor-pointer transition-colors ${index % 2 === 0 ? "bg-white hover:bg-zinc-50" : "bg-[#F8FCFC] hover:bg-zinc-100"}`}
+                        className="group border-b border-[#EEF2F2] cursor-pointer transition-colors bg-white hover:bg-zinc-50"
                       >
                         <td className={tdClass}>{row.label}</td>
                         <td className={`${tdClass} font-mono`}>
@@ -560,7 +560,7 @@ export function CodesDashboardPage(): React.ReactElement {
                         tabIndex={0}
                         onClick={() => navigate(pathToSelfTitlingDetail(row.id))}
                         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToSelfTitlingDetail(row.id)); } }}
-                        className={`group border-b border-[#EEF2F2] cursor-pointer transition-colors ${index % 2 === 0 ? "bg-white hover:bg-zinc-50" : "bg-[#F8FCFC] hover:bg-zinc-100"}`}
+                        className="group border-b border-[#EEF2F2] cursor-pointer transition-colors bg-white hover:bg-zinc-50"
                       >
                         <td className={tdClass}>{row.itemTag}</td>
                         <td className={`${tdClass} font-mono`}>

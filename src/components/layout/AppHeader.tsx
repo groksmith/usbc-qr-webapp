@@ -2,10 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
 import brandLogo from "../../assets/images/brand_logo.svg";
-import { SearchIcon } from "../ui/SearchIcon";
 
 export function AppHeader(): React.ReactElement {
-  const [searchValue, setSearchValue] = useState("");
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -42,18 +40,6 @@ export function AppHeader(): React.ReactElement {
           >
             <img src={brandLogo} alt="USBC" className="h-6 sm:h-7 w-auto block" />
           </NavLink>
-          <nav className="hidden sm:flex items-center gap-1">
-            <NavLink
-              to={ROUTES.CODES}
-              className={({ isActive }) =>
-                `py-1.5 sm:py-2 px-3 sm:px-4 rounded-card text-sm no-underline ${
-                  isActive ? "font-semibold text-white bg-primary" : "font-normal text-zinc-950"
-                }`
-              }
-            >
-              Codes
-            </NavLink>
-          </nav>
         </div>
 
         {/* Mobile only: user + burger grouped on the right (burger rightmost) */}
@@ -162,23 +148,6 @@ export function AppHeader(): React.ReactElement {
       </div>
       </div>
 
-      {/* Center (desktop only): search bar */}
-      <div className="hidden sm:flex flex-1 min-w-0 max-w-[480px] mx-4 lg:mx-8">
-        <div className="relative flex items-center w-full">
-          <input
-            type="search"
-            placeholder="Search..."
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            className="w-full py-2 sm:py-2.5 pl-4 pr-11 text-sm font-normal border border-zinc-200 rounded-card bg-white outline-none"
-            aria-label="Search"
-          />
-          <span className="absolute right-[14px] top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-            <SearchIcon />
-          </span>
-        </div>
-      </div>
-
       {/* Right (desktop only): Get Help + user menu */}
       <div className="hidden sm:flex items-center justify-end gap-3 sm:gap-6 flex-shrink-0">
         <a href="#help" className="text-sm font-normal text-zinc-950 no-underline">
@@ -267,37 +236,9 @@ export function AppHeader(): React.ReactElement {
         </div>
       </div>
 
-      {/* Mobile dropdown: nav + search + help */}
+      {/* Mobile dropdown: help */}
       {mobileNavOpen && (
         <div className="sm:hidden mt-2 border-t border-zinc-200 pt-2 space-y-3">
-          <nav className="flex flex-col gap-1">
-            <NavLink
-              to={ROUTES.CODES}
-              onClick={() => setMobileNavOpen(false)}
-              className={({ isActive }) =>
-                `py-2 px-3 rounded-card text-sm no-underline ${
-                  isActive ? "font-semibold text-white bg-primary" : "font-normal text-zinc-950 bg-zinc-100"
-                }`
-              }
-            >
-              Codes
-            </NavLink>
-          </nav>
-
-          <div className="relative flex items-center w-full">
-            <input
-              type="search"
-              placeholder="Search..."
-              value={searchValue}
-              onChange={(e) => setSearchValue(e.target.value)}
-              className="w-full py-2 pl-4 pr-11 text-sm font-normal border border-zinc-200 rounded-card bg-white outline-none"
-              aria-label="Search"
-            />
-            <span className="absolute right-[14px] top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none">
-              <SearchIcon />
-            </span>
-          </div>
-
           <a href="#help" className="inline-block text-sm font-normal text-zinc-950 no-underline">
             Get Help
           </a>
