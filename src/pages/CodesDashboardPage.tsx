@@ -1,15 +1,15 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getValueEmbedCodes, getSelfTitlingCodes } from "../services/api";
+import { getValueEmbedCodes, getSelfTitlingCodes, cancelValueEmbedCode } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, CodeSetStatus } from "../types";
-import { Button, Tabs, StickerExportModal, SearchIcon, CopyIconButton } from "../components/ui";
+import { Button, Tabs, StickerExportModal, SearchIcon, CopyIconButton, Modal } from "../components/ui";
 import type { ValueEmbedCodeExportData } from "../components/ui/StickerExportModal";
 import { STATUS_LABELS, STATUS_COLORS } from "../constants/status";
 import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExport";
 import { formatTableDate } from "../utils/date";
 import csvIcon from "../assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
-import { pathToSelfTitlingDetail } from "../constants/routes";
+import { pathToSelfTitlingDetail, pathToValueEmbedDetail, ROUTES } from "../constants/routes";
 import { ValueEmbedDetailSidebar } from "../components/ValueEmbedDetailSidebar";
 import { TransferTitleModal } from "../components/TransferTitleModal";
 
@@ -40,6 +40,11 @@ export function CodesDashboardPage(): React.ReactElement {
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
   const navigate = useNavigate();
   const [viewDetailCodeId, setViewDetailCodeId] = useState<string | null>(null);
+  const [valueEmbedMenuRowId, setValueEmbedMenuRowId] = useState<string | null>(null);
+  const valueEmbedMenuRef = useRef<HTMLDivElement>(null);
+  const [valueEmbedConfirm, setValueEmbedConfirm] = useState<{ action: "redeem" | "cancel"; row: ValueEmbedCodeSet } | null>(null);
+  const [selfTitlingMenuRowId, setSelfTitlingMenuRowId] = useState<string | null>(null);
+  const selfTitlingMenuRef = useRef<HTMLDivElement>(null);
   const [transferModal, setTransferModal] = useState<{ codeId: string; itemTag: string; publicCode: string } | null>(null);
   const [valueEmbedSort, setValueEmbedSort] = useState<{ column: ValueEmbedSortColumn; direction: SortDirection }>({
     column: "createdAt",
@@ -56,6 +61,28 @@ export function CodesDashboardPage(): React.ReactElement {
     setValueEmbedPage(1);
     setSelfTitlingPage(1);
   }, [statusFilter, search]);
+
+  useEffect(() => {
+    if (!valueEmbedMenuRowId) return;
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (valueEmbedMenuRef.current && !valueEmbedMenuRef.current.contains(event.target as Node)) {
+        setValueEmbedMenuRowId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [valueEmbedMenuRowId]);
+
+  useEffect(() => {
+    if (!selfTitlingMenuRowId) return;
+    const handleClickOutside = (event: MouseEvent): void => {
+      if (selfTitlingMenuRef.current && !selfTitlingMenuRef.current.contains(event.target as Node)) {
+        setSelfTitlingMenuRowId(null);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [selfTitlingMenuRowId]);
 
   useEffect(() => {
     let cancelled = false;
@@ -140,7 +167,7 @@ export function CodesDashboardPage(): React.ReactElement {
     <div className="min-w-0">
       <div className="card bg-white/95 p-4 sm:p-6 md:p-8 md:px-10 pb-6 md:pb-10">
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
-          <h1 className="m-0 text-xl sm:text-2xl">Codes Dashboard</h1>
+          <h1 className="m-0 text-xl sm:text-2xl font-semibold">Codes Dashboard</h1>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <select
               className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5 w-full sm:w-auto min-w-0"
@@ -204,10 +231,16 @@ export function CodesDashboardPage(): React.ReactElement {
                 {paginatedValueEmbedList.map((row) => (
                   <div
                     key={row.id}
-                    className="rounded-card border border-[#E8E8E8] bg-white p-4 shadow-soft"
+                    className="relative rounded-card border border-[#E8E8E8] bg-white p-4 shadow-soft active:bg-zinc-50 transition-colors"
                   >
-                    <div className="flex flex-col gap-2 text-sm">
-                      <div className="flex justify-between items-start gap-2">
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => navigate(pathToValueEmbedDetail(row.id))}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToValueEmbedDetail(row.id)); } }}
+                      className="flex flex-col gap-2 text-sm cursor-pointer"
+                    >
+                      <div className="flex justify-between items-start gap-2 pr-8">
                         <span className="font-semibold text-heading">{row.label}</span>
                         <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium shrink-0">
                           {STATUS_LABELS[row.status]}
@@ -224,13 +257,33 @@ export function CodesDashboardPage(): React.ReactElement {
                         <span><span className="font-medium text-heading">Created:</span> {formatTableDate(row.createdAt)}</span>
                         <span><span className="font-medium text-heading">Expiration:</span> {formatTableDate(row.expiration)}</span>
                       </div>
-                      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#EEF2F2]">
-                        <button type="button" onClick={() => setViewDetailCodeId(row.id)} className={actionBtnClass}>View</button>
-                        <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
-                        {row.status === "active" && (
-                          <button type="button" className={actionBtnClass}>Cancel</button>
-                        )}
+                      <div className="flex items-center justify-end pt-1">
+                        <svg className="w-5 h-5 text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
+                    </div>
+                    <div ref={valueEmbedMenuRowId === row.id ? valueEmbedMenuRef : undefined} className="absolute top-4 right-4">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setValueEmbedMenuRowId((id) => (id === row.id ? null : row.id)); }}
+                        className="p-1 rounded hover:bg-zinc-200 text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                        aria-label="Actions"
+                        aria-expanded={valueEmbedMenuRowId === row.id}
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                          <circle cx="12" cy="6" r="1.5" />
+                          <circle cx="12" cy="12" r="1.5" />
+                          <circle cx="12" cy="18" r="1.5" />
+                        </svg>
+                      </button>
+                      {valueEmbedMenuRowId === row.id && (
+                        <div role="menu" className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Export</button>
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "redeem", row }); setValueEmbedMenuRowId(null); }}>Redeem</button>
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "cancel", row }); setValueEmbedMenuRowId(null); }}>Cancel</button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -286,12 +339,19 @@ export function CodesDashboardPage(): React.ReactElement {
                       <th className={sortableThClass} onClick={() => handleValueEmbedSort("expiration")} aria-sort={valueEmbedSort.column === "expiration" ? (valueEmbedSort.direction === "asc" ? "ascending" : "descending") : undefined}>
                         Expiration
                       </th>
-                      <th className={thClass}>Actions</th>
+                      <th className={thClass} aria-label="Row actions" />
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedValueEmbedList.map((row, index) => (
-                      <tr key={row.id} className={getRowClass(index)}>
+                      <tr
+                        key={row.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => navigate(pathToValueEmbedDetail(row.id))}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToValueEmbedDetail(row.id)); } }}
+                        className={`group border-b border-[#EEF2F2] cursor-pointer transition-colors ${index % 2 === 0 ? "bg-white hover:bg-zinc-50" : "bg-[#F8FCFC] hover:bg-zinc-100"}`}
+                      >
                         <td className={tdClass}>{row.label}</td>
                         <td className={`${tdClass} font-mono`}>
                           <span className="inline-flex items-center">
@@ -307,13 +367,37 @@ export function CodesDashboardPage(): React.ReactElement {
                         </td>
                         <td className={tdClass}>{formatTableDate(row.createdAt)}</td>
                         <td className={tdClass}>{formatTableDate(row.expiration)}</td>
-                        <td className={tdClass}>
-                          <div className="flex justify-start items-center gap-3 flex-wrap">
-                            <button type="button" onClick={() => setViewDetailCodeId(row.id)} className={actionBtnClass}>View</button>
-                            <button type="button" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
-                            {row.status === "active" && (
-                              <button type="button" className={actionBtnClass}>Cancel</button>
+                        <td className={`${tdClass} w-0 pr-4`}>
+                          <div ref={valueEmbedMenuRowId === row.id ? valueEmbedMenuRef : undefined} className="relative flex items-center justify-end gap-3">
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); setValueEmbedMenuRowId((id) => (id === row.id ? null : row.id)); }}
+                              className="p-1 rounded hover:bg-zinc-200 text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                              aria-label="Actions"
+                              aria-expanded={valueEmbedMenuRowId === row.id}
+                            >
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                <circle cx="12" cy="6" r="1.5" />
+                                <circle cx="12" cy="12" r="1.5" />
+                                <circle cx="12" cy="18" r="1.5" />
+                              </svg>
+                            </button>
+                            {valueEmbedMenuRowId === row.id && (
+                              <div
+                                role="menu"
+                                className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Export</button>
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "redeem", row }); setValueEmbedMenuRowId(null); }}>Redeem</button>
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "cancel", row }); setValueEmbedMenuRowId(null); }}>Cancel</button>
+                              </div>
                             )}
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none w-4 h-4 shrink-0" aria-hidden>
+                              <svg className="w-full h-full text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 5l7 7-7 7" />
+                              </svg>
+                            </span>
                           </div>
                         </td>
                       </tr>
@@ -360,10 +444,16 @@ export function CodesDashboardPage(): React.ReactElement {
                 {paginatedSelfTitlingList.map((row) => (
                   <div
                     key={row.id}
-                    className="rounded-card border border-[#E8E8E8] bg-white p-4 shadow-soft"
+                    className="relative rounded-card border border-[#E8E8E8] bg-white p-4 shadow-soft active:bg-zinc-50 transition-colors"
                   >
-                    <div className="flex flex-col gap-2 text-sm">
-                      <div className="flex justify-between items-start gap-2">
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => navigate(pathToSelfTitlingDetail(row.id))}
+                      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToSelfTitlingDetail(row.id)); } }}
+                      className="flex flex-col gap-2 text-sm cursor-pointer"
+                    >
+                      <div className="flex justify-between items-start gap-2 pr-8">
                         <span className="font-semibold text-heading">{row.itemTag}</span>
                         <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium shrink-0">
                           {STATUS_LABELS[row.status]}
@@ -379,11 +469,34 @@ export function CodesDashboardPage(): React.ReactElement {
                         <span><span className="font-medium text-heading">UNS name:</span> {row.unsName}</span>
                         <span><span className="font-medium text-heading">Created:</span> {formatTableDate(row.createdAt)}</span>
                       </div>
-                      <div className="flex flex-wrap gap-2 pt-2 border-t border-[#EEF2F2]">
-                        <button type="button" onClick={() => navigate(pathToSelfTitlingDetail(row.id))} className={actionBtnClass}>View</button>
-                        <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
-                        <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} className={actionBtnClass}>Transfer</button>
+                      <div className="flex items-center justify-end pt-1">
+                        <svg className="w-5 h-5 text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M9 5l7 7-7 7" />
+                        </svg>
                       </div>
+                    </div>
+                    <div ref={selfTitlingMenuRowId === row.id ? selfTitlingMenuRef : undefined} className="absolute top-4 right-4">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); setSelfTitlingMenuRowId((id) => (id === row.id ? null : row.id)); }}
+                        className="p-1 rounded hover:bg-zinc-200 text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                        aria-label="Actions"
+                        aria-expanded={selfTitlingMenuRowId === row.id}
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                          <circle cx="12" cy="6" r="1.5" />
+                          <circle cx="12" cy="12" r="1.5" />
+                          <circle cx="12" cy="18" r="1.5" />
+                        </svg>
+                      </button>
+                      {selfTitlingMenuRowId === row.id && (
+                        <div role="menu" className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); setSelfTitlingMenuRowId(null); }}>Export</button>
+                          {row.ownershipStatus !== "transferred" && (
+                            <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode }); setSelfTitlingMenuRowId(null); }}>Transfer</button>
+                          )}
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -436,12 +549,19 @@ export function CodesDashboardPage(): React.ReactElement {
                       <th className={sortableThClass} onClick={() => handleSelfTitlingSort("createdAt")} aria-sort={selfTitlingSort.column === "createdAt" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
                         Created
                       </th>
-                      <th className={thClass}>Actions</th>
+                      <th className={thClass} aria-label="Row actions" />
                     </tr>
                   </thead>
                   <tbody>
                     {paginatedSelfTitlingList.map((row, index) => (
-                      <tr key={row.id} className={getRowClass(index)}>
+                      <tr
+                        key={row.id}
+                        role="button"
+                        tabIndex={0}
+                        onClick={() => navigate(pathToSelfTitlingDetail(row.id))}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToSelfTitlingDetail(row.id)); } }}
+                        className={`group border-b border-[#EEF2F2] cursor-pointer transition-colors ${index % 2 === 0 ? "bg-white hover:bg-zinc-50" : "bg-[#F8FCFC] hover:bg-zinc-100"}`}
+                      >
                         <td className={tdClass}>{row.itemTag}</td>
                         <td className={`${tdClass} font-mono`}>
                           <span className="inline-flex items-center">
@@ -456,11 +576,38 @@ export function CodesDashboardPage(): React.ReactElement {
                           </span>
                         </td>
                         <td className={tdClass}>{formatTableDate(row.createdAt)}</td>
-                        <td className={tdClass}>
-                          <div className="flex justify-start items-center gap-3 flex-wrap">
-                            <button type="button" onClick={() => navigate(pathToSelfTitlingDetail(row.id))} className={actionBtnClass}>View</button>
-                            <button type="button" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); }} className={actionBtnClass}>Export</button>
-                            <button type="button" onClick={() => setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode })} className={actionBtnClass}>Transfer</button>
+                        <td className={`${tdClass} w-0 pr-4`}>
+                          <div ref={selfTitlingMenuRowId === row.id ? selfTitlingMenuRef : undefined} className="relative flex items-center justify-end gap-3">
+                            <button
+                              type="button"
+                              onClick={(e) => { e.stopPropagation(); setSelfTitlingMenuRowId((id) => (id === row.id ? null : row.id)); }}
+                              className="p-1 rounded hover:bg-zinc-200 text-zinc-600 focus:outline-none focus:ring-2 focus:ring-zinc-400"
+                              aria-label="Actions"
+                              aria-expanded={selfTitlingMenuRowId === row.id}
+                            >
+                              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden>
+                                <circle cx="12" cy="6" r="1.5" />
+                                <circle cx="12" cy="12" r="1.5" />
+                                <circle cx="12" cy="18" r="1.5" />
+                              </svg>
+                            </button>
+                            {selfTitlingMenuRowId === row.id && (
+                              <div
+                                role="menu"
+                                className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); setSelfTitlingMenuRowId(null); }}>Export</button>
+                                {row.ownershipStatus !== "transferred" && (
+                                  <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode }); setSelfTitlingMenuRowId(null); }}>Transfer</button>
+                                )}
+                              </div>
+                            )}
+                            <span className="opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none w-4 h-4 shrink-0" aria-hidden>
+                              <svg className="w-full h-full text-zinc-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 5l7 7-7 7" />
+                              </svg>
+                            </span>
                           </div>
                         </td>
                       </tr>
@@ -510,6 +657,41 @@ export function CodesDashboardPage(): React.ReactElement {
         variant={activeTab}
         valueEmbedCode={activeTab === "value-embed" ? stickerValueEmbedCode ?? undefined : undefined}
       />
+      <Modal
+        open={!!valueEmbedConfirm}
+        onClose={() => setValueEmbedConfirm(null)}
+        title={valueEmbedConfirm?.action === "redeem" ? "Redeem code?" : valueEmbedConfirm?.action === "cancel" ? "Cancel / remove code?" : ""}
+        size="confirmation"
+      >
+        {valueEmbedConfirm && (
+          <>
+            <p className="text-zinc-700 mb-4">
+              {valueEmbedConfirm.action === "redeem"
+                ? "Are you sure you want to redeem this value embed code? You will be taken to the redeem page."
+                : "Are you sure you want to cancel or remove this code? Value will return to source and the code will no longer be active."}
+            </p>
+            <div className="flex flex-wrap gap-2 justify-end">
+              <Button variant="outline" onClick={() => setValueEmbedConfirm(null)}>
+                Cancel
+              </Button>
+              <Button
+                onClick={async () => {
+                  if (!valueEmbedConfirm) return;
+                  if (valueEmbedConfirm.action === "redeem") {
+                    navigate(`${ROUTES.REDEEM}?code=${encodeURIComponent(valueEmbedConfirm.row.publicCode)}`);
+                  } else {
+                    await cancelValueEmbedCode(valueEmbedConfirm.row.id);
+                    void getValueEmbedCodes({ status: statusFilter || undefined, search: search || undefined }).then(setValueEmbedList);
+                  }
+                  setValueEmbedConfirm(null);
+                }}
+              >
+                {valueEmbedConfirm.action === "redeem" ? "Redeem" : "Confirm cancel"}
+              </Button>
+            </div>
+          </>
+        )}
+      </Modal>
       <GenerateCodeFlowModal
         open={generateModalOpen}
         onClose={() => setGenerateModalOpen(false)}
