@@ -30,7 +30,7 @@ export function Tabs({ tabs, activeId, onChange, variant = "default" }: TabsProp
               key={tab.id}
               type="button"
               onClick={() => onChange(tab.id)}
-              className={`flex items-center px-4 sm:px-[30px] h-12 sm:h-[54px] text-sm sm:text-base font-semibold border-0 cursor-pointer rounded-bl-none rounded-br-none flex-shrink-0 ${radiusTL} ${radiusTR} ${
+              className={`flex items-center justify-center min-w-[140px] sm:min-w-[165px] px-4 sm:px-[30px] h-12 sm:h-[54px] text-sm sm:text-base font-semibold border-0 cursor-pointer rounded-bl-none rounded-br-none flex-shrink-0 ${radiusTL} ${radiusTR} ${
                 isActive ? "bg-primary text-white" : "bg-transparent text-[#333333]"
               }`}
             >

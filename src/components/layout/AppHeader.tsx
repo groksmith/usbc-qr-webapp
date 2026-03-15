@@ -148,11 +148,8 @@ export function AppHeader(): React.ReactElement {
       </div>
       </div>
 
-      {/* Right (desktop only): Get Help + user menu */}
+      {/* Right (desktop only): user menu (Get Help hidden for now) */}
       <div className="hidden sm:flex items-center justify-end gap-3 sm:gap-6 flex-shrink-0">
-        <a href="#help" className="text-sm font-normal text-zinc-950 no-underline">
-          Get Help
-        </a>
         <div
           ref={userMenuRef}
           className="relative flex items-center gap-[10px] cursor-pointer"
@@ -236,14 +233,7 @@ export function AppHeader(): React.ReactElement {
         </div>
       </div>
 
-      {/* Mobile dropdown: help */}
-      {mobileNavOpen && (
-        <div className="sm:hidden mt-2 border-t border-zinc-200 pt-2 space-y-3">
-          <a href="#help" className="inline-block text-sm font-normal text-zinc-950 no-underline">
-            Get Help
-          </a>
-        </div>
-      )}
+      {/* Mobile dropdown: help (hidden for now) */}
     </header>
   );
 }
