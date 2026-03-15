@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { updateValueEmbedCode } from "../services/api";
 import type { ValueEmbedCodeSet } from "../types";
-import { Button, Input } from "./ui";
+import { Button, Input, CloseIcon } from "./ui";
 import { validateValueAmount } from "../utils/validation";
 
 function formatExpirationForInput(iso: string | undefined): string {
@@ -21,10 +21,10 @@ function CloseButton({ onClick }: { onClick: () => void }): React.ReactElement {
     <button
       type="button"
       onClick={onClick}
-      className="w-8 h-8 min-w-[32px] min-h-[32px] p-0 flex items-center justify-center bg-transparent border-0 text-[32px] leading-none text-slate-400 cursor-pointer flex-shrink-0"
+      className="w-9 h-9 min-w-[36px] min-h-[36px] p-0 flex items-center justify-center rounded-full bg-transparent border-0 text-slate-400 cursor-pointer flex-shrink-0 hover:bg-zinc-200 transition-colors"
       aria-label="Close"
     >
-      ×
+      <CloseIcon />
     </button>
   );
 }

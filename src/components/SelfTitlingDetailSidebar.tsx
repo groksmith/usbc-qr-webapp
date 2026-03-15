@@ -5,6 +5,7 @@ import {
   Button,
   Badge,
   CopyIconButton,
+  CloseIcon,
   StickerExportModal,
   QRCodeDisplay,
 } from "./ui";
@@ -83,8 +84,8 @@ export function SelfTitlingDetailSidebar({
         >
           <div className="flex items-center justify-between gap-2 mb-4 sm:mb-5">
             <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">Self-Titling Code</h2>
-            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0 touch-manipulation shrink-0" aria-label="Close">
-              ×
+            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full cursor-pointer text-muted p-0 touch-manipulation shrink-0 hover:bg-zinc-200 transition-colors" aria-label="Close">
+              <CloseIcon />
             </button>
           </div>
 

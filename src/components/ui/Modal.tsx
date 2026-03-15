@@ -1,4 +1,5 @@
 import React from "react";
+import { CloseIcon } from "./CloseIcon";
 
 interface ModalProps {
   open: boolean;
@@ -34,10 +35,10 @@ export function Modal({ open, onClose, title, children, size = "default" }: Moda
           <button
             type="button"
             onClick={onClose}
-            className="bg-transparent border-0 text-2xl cursor-pointer text-body-text leading-none shrink-0 w-8 h-8 flex items-center justify-center touch-manipulation"
+            className="bg-transparent border-0 cursor-pointer text-body-text shrink-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full touch-manipulation hover:bg-zinc-200 transition-colors"
             aria-label="Close"
           >
-            ×
+            <CloseIcon />
           </button>
         </div>
         {children}

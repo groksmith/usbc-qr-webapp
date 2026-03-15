@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeDisplay } from "./QRCodeDisplay";
 import { CopyButton } from "./CopyButton";
+import { CloseIcon } from "./CloseIcon";
 
 const SIDEBAR_TRANSITION_MS = 300;
 
@@ -67,10 +68,10 @@ export function ViewQRCodeSidebar({
           <button
             type="button"
             onClick={handleClose}
-            className="bg-transparent border-0 w-8 h-8 min-w-[32px] min-h-[32px] flex items-center justify-center cursor-pointer text-muted text-2xl leading-none p-0 touch-manipulation shrink-0"
+            className="bg-transparent border-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full cursor-pointer text-muted p-0 touch-manipulation shrink-0 hover:bg-zinc-200 transition-colors"
             aria-label="Close"
           >
-            ×
+            <CloseIcon />
           </button>
         </div>
         <div className="w-full max-w-[320px] mx-auto flex flex-col items-center text-center min-w-0">

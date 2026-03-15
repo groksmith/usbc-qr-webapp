@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createValueEmbedCodes, createSelfTitlingCodes } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, BulkValueEmbedItem } from "../types";
 import { pathToValueEmbedDetail, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input, SearchInput } from "./ui";
+import { Button, Input, SearchInput, CloseIcon } from "./ui";
 import {
   validateDescriptionTag,
   validateValueAmount,
@@ -52,10 +52,10 @@ function CloseButton({ onClick }: { onClick: () => void }): React.ReactElement {
     <button
       type="button"
       onClick={onClick}
-      className="w-8 h-8 min-w-[32px] min-h-[32px] p-0 flex items-center justify-center bg-transparent border-0 text-[32px] leading-none text-slate-400 cursor-pointer flex-shrink-0"
+      className="w-9 h-9 min-w-[36px] min-h-[36px] p-0 flex items-center justify-center rounded-full bg-transparent border-0 text-slate-400 cursor-pointer flex-shrink-0 hover:bg-zinc-200 transition-colors"
       aria-label="Close"
     >
-      ×
+      <CloseIcon />
     </button>
   );
 }
