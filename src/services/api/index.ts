@@ -6,6 +6,7 @@ export {
   createValueEmbedCodes,
   createSelfTitlingCodes,
   cancelValueEmbedCode,
+  updateValueEmbedCode,
   transferSelfTitling,
   checkBalance,
   redeem,
@@ -13,3 +14,4 @@ export {
   getValueEmbedWalletItems,
   getSelfTitlingWalletItems,
 } from "./client";
+export type { UpdateValueEmbedParams } from "./client";

@@ -89,7 +89,9 @@ export function ValueEmbedNewPage(): React.ReactElement {
               onChange={(e) => setFundingSourceId(e.target.value)}
             >
               <option value="USBC">USBC</option>
-              <option value="URT">URT</option>
+              <option value="URT" disabled className="text-zinc-400">
+                URT (Coming soon)
+              </option>
             </select>
           </div>
           <Input

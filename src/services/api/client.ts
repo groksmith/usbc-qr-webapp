@@ -172,6 +172,30 @@ export async function cancelValueEmbedCode(id: string): Promise<void> {
   valueEmbedStore[idx] = updated;
 }
 
+export interface UpdateValueEmbedParams {
+  value: number;
+  expiration?: string | null;
+}
+
+export async function updateValueEmbedCode(
+  id: string,
+  params: UpdateValueEmbedParams
+): Promise<void> {
+  await delay();
+  const idx = valueEmbedStore.findIndex((c) => c.id === id);
+  if (idx === -1) return;
+  const current = valueEmbedStore[idx];
+  const balance = Math.min(current.balance, params.value);
+  const updated: ValueEmbedCodeSet = {
+    ...current,
+    value: params.value,
+    balance,
+    expiration: params.expiration ?? undefined,
+    updatedAt: new Date().toISOString(),
+  };
+  valueEmbedStore[idx] = updated;
+}
+
 export async function transferSelfTitling(
   id: string,
   _recipient: string

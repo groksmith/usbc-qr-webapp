@@ -9,6 +9,7 @@ import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExpor
 import { formatTableDate } from "../utils/date";
 import csvIcon from "../assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
+import { EditValueEmbedModal } from "../components/EditValueEmbedModal";
 import { pathToSelfTitlingDetail, pathToValueEmbedDetail, ROUTES } from "../constants/routes";
 import { ValueEmbedDetailSidebar } from "../components/ValueEmbedDetailSidebar";
 import { TransferTitleModal } from "../components/TransferTitleModal";
@@ -46,6 +47,7 @@ export function CodesDashboardPage(): React.ReactElement {
   const [selfTitlingMenuRowId, setSelfTitlingMenuRowId] = useState<string | null>(null);
   const selfTitlingMenuRef = useRef<HTMLDivElement>(null);
   const [transferModal, setTransferModal] = useState<{ codeId: string; itemTag: string; publicCode: string } | null>(null);
+  const [editValueEmbedRow, setEditValueEmbedRow] = useState<ValueEmbedCodeSet | null>(null);
   const [valueEmbedSort, setValueEmbedSort] = useState<{ column: ValueEmbedSortColumn; direction: SortDirection }>({
     column: "createdAt",
     direction: "desc",
@@ -279,6 +281,7 @@ export function CodesDashboardPage(): React.ReactElement {
                       </button>
                       {valueEmbedMenuRowId === row.id && (
                         <div role="menu" className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setEditValueEmbedRow(row); setValueEmbedMenuRowId(null); }}>Edit</button>
                           <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Export</button>
                           <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "redeem", row }); setValueEmbedMenuRowId(null); }}>Redeem</button>
                           <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "cancel", row }); setValueEmbedMenuRowId(null); }}>Cancel</button>
@@ -388,6 +391,7 @@ export function CodesDashboardPage(): React.ReactElement {
                                 className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
                                 onClick={(e) => e.stopPropagation()}
                               >
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setEditValueEmbedRow(row); setValueEmbedMenuRowId(null); }}>Edit</button>
                                 <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Export</button>
                                 <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "redeem", row }); setValueEmbedMenuRowId(null); }}>Redeem</button>
                                 <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "cancel", row }); setValueEmbedMenuRowId(null); }}>Cancel</button>
@@ -696,6 +700,14 @@ export function CodesDashboardPage(): React.ReactElement {
         open={generateModalOpen}
         onClose={() => setGenerateModalOpen(false)}
         defaultCodeType={activeTab}
+      />
+      <EditValueEmbedModal
+        open={!!editValueEmbedRow}
+        onClose={() => setEditValueEmbedRow(null)}
+        code={editValueEmbedRow}
+        onSuccess={() => {
+          void getValueEmbedCodes({ status: statusFilter || undefined, search: search || undefined }).then(setValueEmbedList);
+        }}
       />
       <ValueEmbedDetailSidebar
         open={!!viewDetailCodeId}
