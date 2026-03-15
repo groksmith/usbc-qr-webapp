@@ -33,6 +33,7 @@ export function RoutesConfig(): React.ReactElement {
             element={<SelfTitlingDetailPage />}
           />
           <Route path={ROUTES.ITEM_PROFILE} element={<ItemProfilePage />} />
+          <Route path={ROUTES.TRANSFER_HISTORY} element={<Navigate to={ROUTES.CODES} replace />} />
         </Route>
 
         <Route element={<PublicLayout />}>

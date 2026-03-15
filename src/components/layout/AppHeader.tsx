@@ -102,10 +102,10 @@ export function AppHeader(): React.ReactElement {
                 role="menuitem"
                 onClick={() => {
                   setUserMenuOpen(false);
-                  navigate("/settings");
+                  navigate(ROUTES.TRANSFER_HISTORY);
                 }}
               >
-                Settings
+                Transfer history
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>
@@ -211,10 +211,10 @@ export function AppHeader(): React.ReactElement {
                 role="menuitem"
                 onClick={() => {
                   setUserMenuOpen(false);
-                  navigate("/settings");
+                  navigate(ROUTES.TRANSFER_HISTORY);
                 }}
               >
-                Settings
+                Transfer history
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                   <path d="M9 18l6-6-6-6" />
                 </svg>

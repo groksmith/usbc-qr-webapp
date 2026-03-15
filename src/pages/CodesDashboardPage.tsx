@@ -169,18 +169,6 @@ export function CodesDashboardPage(): React.ReactElement {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
           <h1 className="m-0 text-xl sm:text-2xl font-semibold">Codes Dashboard</h1>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <select
-              className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5 w-full sm:w-auto min-w-0"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter((e.target.value || "") as CodeSetStatus | "")}
-            >
-              <option value="">All statuses</option>
-              <option value="active">Active</option>
-              <option value="redeemed">Redeemed</option>
-              <option value="expired">Expired</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="pending_transfer">Pending transfer</option>
-            </select>
             <div className="relative flex-1 sm:flex-initial min-w-0 w-full sm:w-auto sm:min-w-[220px]">
               <span
                 className="absolute left-3 top-1/2 -translate-y-1/2 scale-[0.8] text-gray-400 pointer-events-none flex items-center justify-center"
@@ -199,6 +187,18 @@ export function CodesDashboardPage(): React.ReactElement {
                 className="h-11 w-full min-w-0 py-0 pr-3.5 pl-10 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white"
               />
             </div>
+            <select
+              className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5 w-full sm:w-[165px] min-w-0"
+              value={statusFilter}
+              onChange={(e) => setStatusFilter((e.target.value || "") as CodeSetStatus | "")}
+            >
+              <option value="">All statuses</option>
+              <option value="active">Active</option>
+              <option value="redeemed">Redeemed</option>
+              <option value="expired">Expired</option>
+              <option value="cancelled">Cancelled</option>
+              <option value="pending_transfer">Pending transfer</option>
+            </select>
             <button
               type="button"
               onClick={() => {

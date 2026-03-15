@@ -11,6 +11,7 @@ export const ROUTES = {
   CHECK_BALANCE: "/check-balance",
   REDEEM: "/redeem",
   ITEM_PROFILE: "/item/:publicCode",
+  TRANSFER_HISTORY: "/transfer-history",
 } as const;
 
 export function pathToValueEmbedDetail(id: string): string {
