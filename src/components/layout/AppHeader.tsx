@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
 import brandLogo from "../../assets/images/brand_logo.svg";
+import profilePicPlaceholder from "../../assets/images/profile-pic-placeholder.jpg";
 
 export function AppHeader(): React.ReactElement {
   const [userMenuOpen, setUserMenuOpen] = useState(false);
@@ -59,8 +60,15 @@ export function AppHeader(): React.ReactElement {
             }
           }}
         >
-          <div className="w-9 h-9 rounded-full bg-indigo-300 text-indigo-900 flex items-center justify-center text-sm font-semibold" aria-hidden>
-            F
+          <div
+            className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden"
+            aria-hidden
+          >
+            <img
+              src={profilePicPlaceholder}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="text-sm font-semibold text-zinc-950 truncate max-w-[100px]">frunjyan</span>
           <svg
@@ -85,15 +93,18 @@ export function AppHeader(): React.ReactElement {
                 <div className="text-lg font-bold text-zinc-900">+37441878899</div>
               </div>
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" role="separator" />
-              <div className="flex items-center justify-between gap-3 py-3 rounded-[8px] hover:bg-black/[0.04]">
-                <div className="w-9 h-9 rounded-full bg-indigo-300 text-indigo-900 flex items-center justify-center text-sm font-semibold flex-shrink-0" aria-hidden>
-                  F
+              <div className="flex items-center gap-3 py-3 rounded-[8px]">
+                <div
+                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden flex-shrink-0"
+                  aria-hidden
+                >
+                  <img
+                    src={profilePicPlaceholder}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="flex-1 text-sm font-medium text-zinc-900">frunjyan</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <circle cx="12" cy="12" r="10" fill="#5d9fb5" />
-                  <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
               </div>
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
               <button
@@ -113,7 +124,7 @@ export function AppHeader(): React.ReactElement {
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
               <button
                 type="button"
-                className="flex items-center gap-[10px] w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer font-sans hover:bg-primary hover:text-white transition-colors duration-150"
+                className="flex items-center gap-[10px] w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer font-sans hover:bg-black/[0.04]"
                 role="menuitem"
                 onClick={handleSignOut}
               >
@@ -165,8 +176,15 @@ export function AppHeader(): React.ReactElement {
             }
           }}
         >
-          <div className="w-9 h-9 rounded-full bg-indigo-300 text-indigo-900 flex items-center justify-center text-sm font-semibold" aria-hidden>
-            F
+          <div
+            className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden"
+            aria-hidden
+          >
+            <img
+              src={profilePicPlaceholder}
+              alt="Profile"
+              className="w-full h-full object-cover"
+            />
           </div>
           <span className="text-sm font-semibold text-zinc-950 truncate max-w-[100px] sm:max-w-none">frunjyan</span>
           <svg
@@ -191,15 +209,18 @@ export function AppHeader(): React.ReactElement {
                 <div className="text-lg font-bold text-zinc-900">+37441878899</div>
               </div>
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" role="separator" />
-              <div className="flex items-center justify-between gap-3 py-3 rounded-[8px] hover:bg-black/[0.04]">
-                <div className="w-9 h-9 rounded-full bg-indigo-300 text-indigo-900 flex items-center justify-center text-sm font-semibold flex-shrink-0" aria-hidden>
-                  F
+              <div className="flex items-center gap-3 py-3 rounded-[8px]">
+                <div
+                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden flex-shrink-0"
+                  aria-hidden
+                >
+                  <img
+                    src={profilePicPlaceholder}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="flex-1 text-sm font-medium text-zinc-900">frunjyan</span>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <circle cx="12" cy="12" r="10" fill="#5d9fb5" />
-                  <path d="M9 12l2 2 4-4" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
               </div>
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
               <button
@@ -219,7 +240,7 @@ export function AppHeader(): React.ReactElement {
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
               <button
                 type="button"
-                className="flex items-center gap-[10px] w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer font-sans hover:bg-primary hover:text-white transition-colors duration-150"
+                className="flex items-center gap-[10px] w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer font-sans hover:bg-black/[0.04]"
                 role="menuitem"
                 onClick={handleSignOut}
               >
