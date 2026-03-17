@@ -1,5 +1,6 @@
 import React from "react";
-import type { CodeSetStatus } from "../types";
+import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import type { CodeSetStatus, OwnershipChange } from "../types";
 import { Badge, QRCodeDisplay, CopyIconButton } from "./ui";
 import { formatTableDate } from "../utils/date";
 
@@ -9,6 +10,10 @@ export interface SelfTitlingItemCardData {
   publicCode: string;
   ownerDisplay: string;
   qrUrl: string;
+  /** Optional item description; shown under the item name. */
+  description?: string;
+  /** Log of ownership changes (most-recent last). */
+  ownershipHistory?: OwnershipChange[];
   imageUrl?: string;
   createdAt?: string;
 }
@@ -18,13 +23,15 @@ export interface SelfTitlingItemCardProps {
   /** Show "Back to the dashboard" link (authenticated view). */
   showBackLink?: boolean;
   onBack?: () => void;
-  /** Show Export Sticker and Transfer CTAs (authenticated view). */
+  /** Show Print Sticker and Transfer CTAs (authenticated view). */
   showCTAs?: boolean;
-  onExportSticker?: () => void;
+  onPrintSticker?: () => void;
   onTransfer?: () => void;
   showTransferButton?: boolean;
   /** Caption under QR code. */
   qrCaption?: string;
+  /** When set, shows an edit icon in the top-right corner of the card; called when the owner wants to edit the item. */
+  onEdit?: () => void;
 }
 
 export function SelfTitlingItemCard({
@@ -32,26 +39,67 @@ export function SelfTitlingItemCard({
   showBackLink = false,
   onBack,
   showCTAs = false,
-  onExportSticker,
+  onPrintSticker,
   onTransfer,
   showTransferButton = false,
   qrCaption = "QR links to this page",
+  onEdit,
 }: SelfTitlingItemCardProps): React.ReactElement {
+  const ownershipHistory =
+    data.ownershipHistory ?? [{ owner: data.ownerDisplay, timestamp: data.createdAt ?? new Date().toISOString() }];
+
+  const formatDateTime = (iso: string): string => {
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return "—";
+    return d.toLocaleString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+    });
+  };
+
   return (
     <div className="max-w-[68rem] mx-auto px-4 sm:px-6">
-      <div className="rounded-2xl bg-white border border-zinc-200 shadow-soft p-4 sm:p-6 lg:p-8">
+      <div className="relative rounded-2xl bg-white border border-zinc-200 shadow-soft p-4 sm:p-6 lg:p-8">
+        {onEdit && (
+          <button
+            type="button"
+            onClick={onEdit}
+            className="absolute top-4 right-4 sm:top-6 sm:right-6 w-9 h-9 flex items-center justify-center rounded-full bg-transparent border-0 text-zinc-500 cursor-pointer hover:bg-zinc-100 hover:text-zinc-950 focus:outline-none focus:ring-2 focus:ring-zinc-400 focus:ring-offset-2"
+            aria-label="Edit item"
+          >
+            <PencilSquareIcon className="w-5 h-5" aria-hidden />
+          </button>
+        )}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
-          {/* Left: Image */}
-          <div className="w-full aspect-square max-w-full lg:max-w-none rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200">
-            {data.imageUrl ? (
-              <img
-                src={data.imageUrl}
-                alt={data.itemTag}
-                className="w-full h-full object-contain"
-              />
-            ) : (
-              <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-500 text-sm">
-                No image
+          {/* Left: Image + Ownership history */}
+          <div className="flex flex-col gap-4">
+            <div className="w-full aspect-square max-w-full lg:max-w-none rounded-2xl overflow-hidden bg-zinc-100 border border-zinc-200">
+              {data.imageUrl ? (
+                <img
+                  src={data.imageUrl}
+                  alt={data.itemTag}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-500 text-sm">
+                  No image
+                </div>
+              )}
+            </div>
+            {ownershipHistory.length > 0 && (
+              <div className="pt-0">
+                <p className="text-sm font-medium text-zinc-500 m-0 mb-3">Ownership history</p>
+                <div className="space-y-2">
+                  {ownershipHistory.map((h, idx) => (
+                    <div key={`${h.owner}-${h.timestamp}-${idx}`} className="flex items-start justify-between gap-3">
+                      <span className="text-sm text-zinc-950 font-medium break-all">{h.owner}</span>
+                      <span className="text-sm text-zinc-500 whitespace-nowrap">{formatDateTime(h.timestamp)}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
           </div>
@@ -92,6 +140,11 @@ export function SelfTitlingItemCard({
                 </h1>
                 <Badge status={data.status} />
               </div>
+              {data.description != null && data.description !== "" && (
+                <p className="text-base font-normal text-zinc-700 mt-2 mb-0 whitespace-pre-wrap">
+                  {data.description}
+                </p>
+              )}
             </div>
 
             <div className="flex flex-wrap items-start gap-9">
@@ -133,13 +186,13 @@ export function SelfTitlingItemCard({
 
             {showCTAs && (
               <div className="flex flex-wrap gap-2">
-                {onExportSticker && (
+                {onPrintSticker && (
                   <button
                     type="button"
-                    onClick={onExportSticker}
+                    onClick={onPrintSticker}
                     className="w-[140px] h-10 px-4 rounded-lg bg-zinc-950 text-white font-medium text-sm whitespace-nowrap border-0 cursor-pointer hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
                   >
-                    Export Sticker
+                    Print Sticker
                   </button>
                 )}
                 {showTransferButton && onTransfer && (

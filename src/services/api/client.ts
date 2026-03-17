@@ -12,6 +12,7 @@ import type {
   ItemProfilePublic,
   CreateValueEmbedParams,
   CreateSelfTitlingParams,
+  UpdateSelfTitlingParams,
 } from "../../types";
 import { mockValueEmbedCodes, mockSelfTitlingCodes } from "./mockData";
 
@@ -151,11 +152,13 @@ export async function createSelfTitlingCodes(
       label: itemTag,
       itemTag,
       unsName: params.unsName,
+      description: params.description,
       imageUrl: params.imageUrl,
       status: "active",
       createdAt: now,
       updatedAt: now,
       qrUrl: `${baseUrl}/item/${encodeURIComponent(publicCode)}`,
+      ownershipHistory: [{ owner: params.unsName, timestamp: now }],
       ownershipStatus: "owned",
     };
     codes.push(code);
@@ -196,18 +199,44 @@ export async function updateValueEmbedCode(
   valueEmbedStore[idx] = updated;
 }
 
-export async function transferSelfTitling(
+export async function updateSelfTitlingCode(
   id: string,
-  _recipient: string
+  params: UpdateSelfTitlingParams
 ): Promise<void> {
   await delay();
   const index = selfTitlingStore.findIndex((c) => c.id === id);
   if (index === -1) return;
-  const updated = {
-    ...selfTitlingStore[index],
-    ownershipStatus: "transferred" as const,
-    status: "active" as const,
+  const current = selfTitlingStore[index];
+  const updated: SelfTitlingCodeSet = {
+    ...current,
+    ...(params.itemTag !== undefined && { itemTag: params.itemTag, label: params.itemTag }),
+    ...(params.imageUrl !== undefined && { imageUrl: params.imageUrl ?? undefined }),
+    description: params.description ?? undefined,
     updatedAt: new Date().toISOString(),
+  };
+  selfTitlingStore[index] = updated;
+}
+
+export async function transferSelfTitling(
+  id: string,
+  recipient: string
+): Promise<void> {
+  await delay();
+  const index = selfTitlingStore.findIndex((c) => c.id === id);
+  if (index === -1) return;
+  const now = new Date().toISOString();
+  const current = selfTitlingStore[index];
+  const ownershipHistory = [
+    ...(current.ownershipHistory ?? [{ owner: current.unsName, timestamp: current.createdAt }]),
+    { owner: recipient, timestamp: now },
+  ];
+  const updated: SelfTitlingCodeSet = {
+    ...current,
+    unsName: recipient,
+    ownershipHistory,
+    ownershipStatus: "owned",
+    status: "active",
+    updatedAt: now,
   };
   selfTitlingStore[index] = updated;
 }
@@ -262,6 +291,8 @@ export async function getItemProfile(publicCode: string): Promise<ItemProfilePub
     publicCode: st.publicCode,
     ownerDisplay: st.unsName,
     qrUrl: st.qrUrl,
+    description: st.description,
+    ownershipHistory: st.ownershipHistory,
     imageUrl: st.imageUrl,
     status: st.status,
     createdAt: st.createdAt,

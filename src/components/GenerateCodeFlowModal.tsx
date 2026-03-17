@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { createValueEmbedCodes, createSelfTitlingCodes } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, BulkValueEmbedItem } from "../types";
 import { pathToValueEmbedDetail, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input, SearchInput, CloseIcon } from "./ui";
+import { Button, Input, Textarea, SearchInput, CloseIcon } from "./ui";
 import {
   validateDescriptionTag,
   validateValueAmount,
   validateQuantity,
   validateItemTag,
   validateUnsName,
+  validateImageFile,
   UNS_NAME_HINT,
 } from "../utils/validation";
 
@@ -81,8 +82,10 @@ export function GenerateCodeFlowModal({
   // Self-Titling fields
   const [itemTag, setItemTag] = useState("");
   const [unsName, setUnsName] = useState("");
+  const [selfTitlingDescription, setSelfTitlingDescription] = useState("");
   /** Data URL of uploaded image for self-titling item. */
   const [selfTitlingImageUrl, setSelfTitlingImageUrl] = useState<string | null>(null);
+  const [selfTitlingImageError, setSelfTitlingImageError] = useState<string | undefined>(undefined);
   const [isDraggingOverImage, setIsDraggingOverImage] = useState(false);
   const [loading, setLoading] = useState(false);
   const [createdVE, setCreatedVE] = useState<ValueEmbedCodeSet[] | null>(null);
@@ -114,7 +117,9 @@ export function GenerateCodeFlowModal({
     setBulkItems([]);
     setItemTag("");
     setUnsName("");
+    setSelfTitlingDescription("");
     setSelfTitlingImageUrl(null);
+    setSelfTitlingImageError(undefined);
     setIsDraggingOverImage(false);
     setCreatedVE(null);
     setCreatedST(null);
@@ -208,6 +213,7 @@ export function GenerateCodeFlowModal({
         const result = await createSelfTitlingCodes({
           itemTag,
           unsName,
+          description: selfTitlingDescription.trim() || undefined,
           imageUrl: selfTitlingImageUrl ?? undefined,
           quantity: 1,
         });
@@ -418,11 +424,13 @@ export function GenerateCodeFlowModal({
                 </label>
                 {selfTitlingImageUrl ? (
                   <div className="flex flex-col gap-2">
-                    <img
-                      src={selfTitlingImageUrl}
-                      alt="Item preview"
-                      className="w-full max-w-[200px] h-auto max-h-[200px] object-contain rounded-[8px] border border-[#e4e4e7]"
-                    />
+                    <div className="w-[200px] h-[200px] rounded-[8px] overflow-hidden border border-[#e4e4e7] bg-zinc-100">
+                      <img
+                        src={selfTitlingImageUrl}
+                        alt="Item preview"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
                     <div className="flex gap-2">
                       <label className="py-2 px-3 text-sm font-medium text-primary bg-primary/[0.08] border border-primary/20 rounded-[8px] cursor-pointer">
                         Change image
@@ -432,17 +440,22 @@ export function GenerateCodeFlowModal({
                           className="sr-only"
                           onChange={(e) => {
                             const file = e.target.files?.[0];
-                            if (file) {
-                              const reader = new FileReader();
-                              reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
-                              reader.readAsDataURL(file);
+                            if (!file) return;
+                            const v = validateImageFile(file);
+                            if (!v.valid) {
+                              setSelfTitlingImageError(v.message);
+                              return;
                             }
+                            setSelfTitlingImageError(undefined);
+                            const reader = new FileReader();
+                            reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
+                            reader.readAsDataURL(file);
                           }}
                         />
                       </label>
                       <button
                         type="button"
-                        onClick={() => setSelfTitlingImageUrl(null)}
+                        onClick={() => { setSelfTitlingImageUrl(null); setSelfTitlingImageError(undefined); }}
                         className="py-2 px-3 text-sm font-medium text-zinc-700 bg-zinc-100 border border-zinc-200 rounded-[8px] cursor-pointer hover:bg-zinc-200"
                       >
                         Remove
@@ -472,8 +485,12 @@ export function GenerateCodeFlowModal({
                       setIsDraggingOverImage(false);
                       const file = e.dataTransfer.files?.[0];
                       if (!file) return;
-                      const accepted = ["image/png", "image/jpeg", "image/jpg"];
-                      if (!accepted.includes(file.type)) return;
+                      const v = validateImageFile(file);
+                      if (!v.valid) {
+                        setSelfTitlingImageError(v.message);
+                        return;
+                      }
+                      setSelfTitlingImageError(undefined);
                       const reader = new FileReader();
                       reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
                       reader.readAsDataURL(file);
@@ -490,14 +507,22 @@ export function GenerateCodeFlowModal({
                       className="sr-only"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        if (file) {
-                          const reader = new FileReader();
-                          reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
-                          reader.readAsDataURL(file);
+                        if (!file) return;
+                        const v = validateImageFile(file);
+                        if (!v.valid) {
+                          setSelfTitlingImageError(v.message);
+                          return;
                         }
+                        setSelfTitlingImageError(undefined);
+                        const reader = new FileReader();
+                        reader.onload = () => setSelfTitlingImageUrl(reader.result as string);
+                        reader.readAsDataURL(file);
                       }}
                     />
                   </label>
+                )}
+                {selfTitlingImageError && (
+                  <p className="mt-1 mb-0 text-sm text-negative">{selfTitlingImageError}</p>
                 )}
               </div>
 
@@ -509,6 +534,14 @@ export function GenerateCodeFlowModal({
                 onChange={(e) => { setItemTag(e.target.value); setErrors((prev) => ({ ...prev, itemTag: undefined })); }}
                 placeholder="e.g. Conference badge"
                 error={errors.itemTag}
+                style={{ border: "1px solid #E0E0E0" }}
+              />
+              <Textarea
+                label="Description"
+                optional
+                value={selfTitlingDescription}
+                onChange={(e) => setSelfTitlingDescription(e.target.value)}
+                placeholder="e.g. Limited edition conference badge 2024"
                 style={{ border: "1px solid #E0E0E0" }}
               />
               <SearchInput
@@ -671,9 +704,14 @@ export function GenerateCodeFlowModal({
                     <div><span className="text-muted">Type:</span> Self-Titling</div>
                     <div><span className="text-muted">Item tag:</span> {itemTag}</div>
                     <div><span className="text-muted">UNS name:</span> {unsName}</div>
+                    {selfTitlingDescription.trim() && (
+                      <div><span className="text-muted">Description:</span> {selfTitlingDescription.trim()}</div>
+                    )}
                     <div><span className="text-muted">Image:</span> {selfTitlingImageUrl ? "Yes" : "None"}</div>
                     {selfTitlingImageUrl && (
-                      <img src={selfTitlingImageUrl} alt="" className="mt-2 max-w-[120px] max-h-[120px] object-contain rounded-[8px] border border-[#e4e4e7]" />
+                      <div className="mt-2 w-[120px] h-[120px] rounded-[8px] overflow-hidden border border-[#e4e4e7] bg-zinc-100">
+                        <img src={selfTitlingImageUrl} alt="" className="w-full h-full object-cover" />
+                      </div>
                     )}
                   </>
                 )}

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { createSelfTitlingCodes } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
 import { ROUTES, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input, SearchInput } from "../components/ui";
+import { Button, Input, Textarea, SearchInput } from "../components/ui";
 
 const STEPS = ["Type", "Configuration", "Review", "Create"] as const;
 
@@ -11,6 +11,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
   const [step, setStep] = useState(0);
   const [itemTag, setItemTag] = useState("");
   const [unsName, setUnsName] = useState("");
+  const [description, setDescription] = useState("");
   const [created, setCreated] = useState<SelfTitlingCodeSet[] | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
       const result = await createSelfTitlingCodes({
         itemTag,
         unsName,
+        description: description.trim() || undefined,
         quantity: 1,
       });
       setCreated(result.codes);
@@ -45,7 +47,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
         </ul>
         <div className="flex gap-3">
           <Button onClick={() => navigate(ROUTES.CODES)}>Done</Button>
-          <Button variant="outline">Export stickers</Button>
+          <Button variant="outline">Print stickers</Button>
         </div>
       </div>
     );
@@ -73,6 +75,13 @@ export function SelfTitlingNewPage(): React.ReactElement {
             onChange={(e) => setItemTag(e.target.value)}
             placeholder="e.g. Conference badge"
           />
+          <Textarea
+            label="Description"
+            optional
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="e.g. Limited edition conference badge 2024"
+          />
           <SearchInput
             label="UNS name (required)"
             required
@@ -91,6 +100,7 @@ export function SelfTitlingNewPage(): React.ReactElement {
         <div>
           <p><strong>Item tag:</strong> {itemTag}</p>
           <p><strong>UNS name:</strong> {unsName}</p>
+          {description.trim() && <p><strong>Description:</strong> {description.trim()}</p>}
           <div className="flex gap-3 mt-6">
             <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
             <Button onClick={handleCreate} disabled={loading}>

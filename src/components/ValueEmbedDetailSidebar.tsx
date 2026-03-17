@@ -7,7 +7,7 @@ import {
   CopyButton,
   CopyIconButton,
   CloseIcon,
-  StickerExportModal,
+  StickerPrintModal,
   QRCodeDisplay,
 } from "./ui";
 
@@ -164,7 +164,7 @@ export function ValueEmbedDetailSidebar({
 
               <section className="mt-5 flex flex-wrap gap-2">
                 <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
-                  Export sticker template
+                  Print sticker template
                 </Button>
                 {code.status === "active" && (
                   <>
@@ -204,16 +204,16 @@ export function ValueEmbedDetailSidebar({
 
       {!loading && code && (
         <>
-          <StickerExportModal
-            open={stickerModalOpen}
-            onClose={() => setStickerModalOpen(false)}
-            variant="value-embed"
-            valueEmbedCode={{
-              publicCode: code.publicCode,
-              privateCode: code.privateCode,
-              qrUrl: code.qrUrl,
-            }}
-          />
+<StickerPrintModal
+          open={stickerModalOpen}
+          onClose={() => setStickerModalOpen(false)}
+          variant="value-embed"
+          valueEmbedCode={{
+            publicCode: code.publicCode,
+            privateCode: code.privateCode,
+            qrUrl: code.qrUrl,
+          }}
+        />
         </>
       )}
     </>

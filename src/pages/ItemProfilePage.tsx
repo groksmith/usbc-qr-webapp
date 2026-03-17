@@ -45,6 +45,7 @@ export function ItemProfilePage(): React.ReactElement {
         publicCode: profile.publicCode,
         ownerDisplay: profile.ownerDisplay,
         qrUrl: profile.qrUrl,
+        description: profile.description,
         imageUrl: profile.imageUrl,
         createdAt: profile.createdAt,
       }}

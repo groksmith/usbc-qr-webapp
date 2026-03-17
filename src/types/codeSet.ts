@@ -31,12 +31,23 @@ export interface ValueEmbedCodeSet extends CodeSetBase {
   redemptionTimestamp?: string;
 }
 
+export interface OwnershipChange {
+  /** Assigned owner username (UNS name). */
+  owner: string;
+  /** ISO timestamp for the change. */
+  timestamp: string;
+}
+
 export interface SelfTitlingCodeSet extends CodeSetBase {
   kind: "self-titling";
   itemTag: string;
   unsName: string;
+  /** Optional description for the item. */
+  description?: string;
   /** Item image URL (e.g. from upload). */
   imageUrl?: string;
+  /** Log of ownership changes (most-recent last). */
+  ownershipHistory?: OwnershipChange[];
   ownershipTokenId?: string;
   ownershipStatus?: "owned" | "transferred" | "pending_transfer";
 }
@@ -77,6 +88,10 @@ export interface ItemProfilePublic {
   publicCode: string;
   ownerDisplay: string;
   qrUrl: string;
+  /** Optional item description. */
+  description?: string;
+  /** Log of ownership changes (most-recent last). */
+  ownershipHistory?: OwnershipChange[];
   /** Item image URL when available. */
   imageUrl?: string;
   status: CodeSetStatus;
@@ -102,7 +117,18 @@ export interface CreateValueEmbedParams {
 export interface CreateSelfTitlingParams {
   itemTag: string;
   unsName: string;
+  /** Optional description for the item. */
+  description?: string;
   /** Optional image URL (e.g. data URL from upload; replace with IPFS URL when backend supports it). */
   imageUrl?: string;
   quantity?: number;
+}
+
+export interface UpdateSelfTitlingParams {
+  /** Item tag (short label for the item). */
+  itemTag?: string;
+  /** Item image URL; pass null to clear. */
+  imageUrl?: string | null;
+  /** Optional description for the item. */
+  description?: string | null;
 }

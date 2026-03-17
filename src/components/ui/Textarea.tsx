@@ -1,9 +1,9 @@
 import React from "react";
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   error?: string;
-  /** Shown under the label; use for format hints (e.g. "Format: name.uns") */
+  /** Shown under the label; use for format hints */
   hint?: string;
   /** If true, label is shown with a required indicator */
   required?: boolean;
@@ -11,7 +11,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   optional?: boolean;
 }
 
-export function Input({ label, error, hint, required, optional, id, style, ...props }: InputProps): React.ReactElement {
+export function Textarea({ label, error, hint, required, optional, id, style, ...props }: TextareaProps): React.ReactElement {
   const inputId = id ?? (label ? label.replace(/\s+/g, "-").toLowerCase() : undefined);
   return (
     <div className="mb-4 w-full">
@@ -27,9 +27,9 @@ export function Input({ label, error, hint, required, optional, id, style, ...pr
           )}
         </>
       )}
-      <input
+      <textarea
         id={inputId}
-        className={`w-full box-border py-2.5 px-3.5 text-sm rounded-btn outline-none bg-white ${
+        className={`w-full box-border py-2.5 px-3.5 text-sm rounded-btn outline-none bg-white min-h-[80px] resize-y ${
           error ? "border-2 border-negative" : "border-0"
         }`}
         style={style}

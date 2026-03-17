@@ -96,3 +96,27 @@ export function validateQuantity(value: string): ValidationResult {
   }
   return { valid: true };
 }
+
+/** Accepted image MIME types for item upload */
+const IMAGE_ACCEPTED_TYPES = ["image/png", "image/jpeg", "image/jpg"];
+/** Minimum file size: 100 KB */
+const IMAGE_MIN_BYTES = 100 * 1024;
+/** Maximum file size: 5 MB */
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
+
+/**
+ * Validates an image file after upload/selection (run in onChange/onDrop, not before).
+ * Checks type and file size.
+ */
+export function validateImageFile(file: File): ValidationResult {
+  if (!IMAGE_ACCEPTED_TYPES.includes(file.type)) {
+    return { valid: false, message: "Image must be PNG, JPG, or JPEG." };
+  }
+  if (file.size < IMAGE_MIN_BYTES) {
+    return { valid: false, message: "Image must be at least 100 KB." };
+  }
+  if (file.size > IMAGE_MAX_BYTES) {
+    return { valid: false, message: "Image must be 5 MB or less." };
+  }
+  return { valid: true };
+}

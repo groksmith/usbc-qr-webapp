@@ -2,14 +2,15 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getValueEmbedCodes, getSelfTitlingCodes, cancelValueEmbedCode } from "../services/api";
 import type { ValueEmbedCodeSet, SelfTitlingCodeSet, CodeSetStatus } from "../types";
-import { Button, Tabs, StickerExportModal, SearchIcon, CopyIconButton, Modal } from "../components/ui";
-import type { ValueEmbedCodeExportData } from "../components/ui/StickerExportModal";
+import { Button, Tabs, StickerPrintModal, SearchIcon, CopyIconButton, Modal } from "../components/ui";
+import type { ValueEmbedCodePrintData } from "../components/ui/StickerPrintModal";
 import { STATUS_LABELS, STATUS_COLORS } from "../constants/status";
 import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExport";
 import { formatTableDate } from "../utils/date";
 import csvIcon from "../assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
 import { EditValueEmbedModal } from "../components/EditValueEmbedModal";
+import { EditSelfTitlingModal } from "../components/EditSelfTitlingModal";
 import { pathToSelfTitlingDetail, pathToValueEmbedDetail, ROUTES } from "../constants/routes";
 import { ValueEmbedDetailSidebar } from "../components/ValueEmbedDetailSidebar";
 import { TransferTitleModal } from "../components/TransferTitleModal";
@@ -37,7 +38,7 @@ export function CodesDashboardPage(): React.ReactElement {
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
-  const [stickerValueEmbedCode, setStickerValueEmbedCode] = useState<ValueEmbedCodeExportData | null>(null);
+  const [stickerValueEmbedCode, setStickerValueEmbedCode] = useState<ValueEmbedCodePrintData | null>(null);
   const [generateModalOpen, setGenerateModalOpen] = useState(false);
   const navigate = useNavigate();
   const [viewDetailCodeId, setViewDetailCodeId] = useState<string | null>(null);
@@ -48,6 +49,7 @@ export function CodesDashboardPage(): React.ReactElement {
   const selfTitlingMenuRef = useRef<HTMLDivElement>(null);
   const [transferModal, setTransferModal] = useState<{ codeId: string; itemTag: string; publicCode: string } | null>(null);
   const [editValueEmbedRow, setEditValueEmbedRow] = useState<ValueEmbedCodeSet | null>(null);
+  const [editSelfTitlingRow, setEditSelfTitlingRow] = useState<SelfTitlingCodeSet | null>(null);
   const [valueEmbedSort, setValueEmbedSort] = useState<{ column: ValueEmbedSortColumn; direction: SortDirection }>({
     column: "createdAt",
     direction: "desc",
@@ -282,7 +284,7 @@ export function CodesDashboardPage(): React.ReactElement {
                       {valueEmbedMenuRowId === row.id && (
                         <div role="menu" className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
                           <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setEditValueEmbedRow(row); setValueEmbedMenuRowId(null); }}>Edit</button>
-                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Export</button>
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Print</button>
                           <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "redeem", row }); setValueEmbedMenuRowId(null); }}>Redeem</button>
                           <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "cancel", row }); setValueEmbedMenuRowId(null); }}>Cancel</button>
                         </div>
@@ -392,7 +394,7 @@ export function CodesDashboardPage(): React.ReactElement {
                                 onClick={(e) => e.stopPropagation()}
                               >
                                 <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setEditValueEmbedRow(row); setValueEmbedMenuRowId(null); }}>Edit</button>
-                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Export</button>
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode({ publicCode: row.publicCode, privateCode: row.privateCode, qrUrl: row.qrUrl }); setStickerModalOpen(true); setValueEmbedMenuRowId(null); }}>Print</button>
                                 <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "redeem", row }); setValueEmbedMenuRowId(null); }}>Redeem</button>
                                 <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setValueEmbedConfirm({ action: "cancel", row }); setValueEmbedMenuRowId(null); }}>Cancel</button>
                               </div>
@@ -455,8 +457,16 @@ export function CodesDashboardPage(): React.ReactElement {
                       tabIndex={0}
                       onClick={() => navigate(pathToSelfTitlingDetail(row.id))}
                       onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToSelfTitlingDetail(row.id)); } }}
-                      className="flex flex-col gap-2 text-sm cursor-pointer"
+                      className="flex gap-3 text-sm cursor-pointer"
                     >
+                      <div className="shrink-0 w-12 h-12 rounded-lg overflow-hidden bg-zinc-100 border border-zinc-200">
+                        {row.imageUrl ? (
+                          <img src={row.imageUrl} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs" aria-hidden>—</div>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-2 min-w-0 flex-1">
                       <div className="flex justify-between items-start gap-2 pr-8">
                         <span className="font-semibold text-heading">{row.itemTag}</span>
                         <span style={{ color: STATUS_COLORS[row.status] }} className="font-medium shrink-0">
@@ -478,6 +488,7 @@ export function CodesDashboardPage(): React.ReactElement {
                           <path d="M9 5l7 7-7 7" />
                         </svg>
                       </div>
+                      </div>
                     </div>
                     <div ref={selfTitlingMenuRowId === row.id ? selfTitlingMenuRef : undefined} className="absolute top-4 right-4">
                       <button
@@ -495,7 +506,8 @@ export function CodesDashboardPage(): React.ReactElement {
                       </button>
                       {selfTitlingMenuRowId === row.id && (
                         <div role="menu" className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg">
-                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); setSelfTitlingMenuRowId(null); }}>Export</button>
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setEditSelfTitlingRow(row); setSelfTitlingMenuRowId(null); }}>Edit</button>
+                          <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); setSelfTitlingMenuRowId(null); }}>Print</button>
                           {row.ownershipStatus !== "transferred" && (
                             <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode }); setSelfTitlingMenuRowId(null); }}>Transfer</button>
                           )}
@@ -538,6 +550,7 @@ export function CodesDashboardPage(): React.ReactElement {
                 <table className="w-full border-collapse">
                   <thead>
                     <tr>
+                      <th className={thClass} style={{ width: 56 }}>Image</th>
                       <th className={sortableThClass} onClick={() => handleSelfTitlingSort("itemTag")} aria-sort={selfTitlingSort.column === "itemTag" ? (selfTitlingSort.direction === "asc" ? "ascending" : "descending") : undefined}>
                         Item tag
                       </th>
@@ -566,6 +579,13 @@ export function CodesDashboardPage(): React.ReactElement {
                         onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); navigate(pathToSelfTitlingDetail(row.id)); } }}
                         className="group border-b border-[#EEF2F2] cursor-pointer transition-colors bg-white hover:bg-zinc-50"
                       >
+                        <td className={`${tdClass} w-[56px] pl-4 pr-2 align-middle`}>
+                          {row.imageUrl ? (
+                            <img src={row.imageUrl} alt="" className="w-10 h-10 rounded-lg object-cover border border-zinc-200 bg-zinc-100" />
+                          ) : (
+                            <div className="w-10 h-10 rounded-lg bg-zinc-200 border border-zinc-200 flex items-center justify-center text-zinc-400 text-xs" aria-hidden>—</div>
+                          )}
+                        </td>
                         <td className={tdClass}>{row.itemTag}</td>
                         <td className={`${tdClass} font-mono`}>
                           <span className="inline-flex items-center">
@@ -601,7 +621,8 @@ export function CodesDashboardPage(): React.ReactElement {
                                 className="absolute right-0 top-full z-10 mt-1 min-w-[140px] rounded-lg border border-zinc-200 bg-white py-1 shadow-lg"
                                 onClick={(e) => e.stopPropagation()}
                               >
-                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); setSelfTitlingMenuRowId(null); }}>Export</button>
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setEditSelfTitlingRow(row); setSelfTitlingMenuRowId(null); }}>Edit</button>
+                                <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setStickerValueEmbedCode(null); setStickerModalOpen(true); setSelfTitlingMenuRowId(null); }}>Print</button>
                                 {row.ownershipStatus !== "transferred" && (
                                   <button type="button" role="menuitem" className="w-full px-4 py-2 text-left text-sm text-zinc-950 hover:bg-zinc-100" onClick={() => { setTransferModal({ codeId: row.id, itemTag: row.itemTag, publicCode: row.publicCode }); setSelfTitlingMenuRowId(null); }}>Transfer</button>
                                 )}
@@ -655,7 +676,7 @@ export function CodesDashboardPage(): React.ReactElement {
         </div>
       </div>
 
-      <StickerExportModal
+      <StickerPrintModal
         open={stickerModalOpen}
         onClose={() => { setStickerModalOpen(false); setStickerValueEmbedCode(null); }}
         variant={activeTab}
@@ -707,6 +728,14 @@ export function CodesDashboardPage(): React.ReactElement {
         code={editValueEmbedRow}
         onSuccess={() => {
           void getValueEmbedCodes({ status: statusFilter || undefined, search: search || undefined }).then(setValueEmbedList);
+        }}
+      />
+      <EditSelfTitlingModal
+        open={!!editSelfTitlingRow}
+        onClose={() => setEditSelfTitlingRow(null)}
+        code={editSelfTitlingRow}
+        onSuccess={() => {
+          void getSelfTitlingCodes({ status: statusFilter || undefined, search: search || undefined }).then(setSelfTitlingList);
         }}
       />
       <ValueEmbedDetailSidebar

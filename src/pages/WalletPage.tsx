@@ -66,7 +66,7 @@ export function WalletPage(): React.ReactElement {
                     <Link to={pathToValueEmbedDetail(row.id)}>
                       <Button variant="outline">View details</Button>
                     </Link>
-                    <Button variant="outline">Export stickers</Button>
+                    <Button variant="outline">Print stickers</Button>
                     {row.status === "redeemed" && (
                       <Button variant="outline">Clear from view</Button>
                     )}
@@ -101,7 +101,7 @@ export function WalletPage(): React.ReactElement {
                         <Link to={pathToValueEmbedDetail(row.id)}>
                           <Button variant="outline">View details</Button>
                         </Link>
-                        <Button variant="outline">Export stickers</Button>
+                        <Button variant="outline">Print stickers</Button>
                         {row.status === "redeemed" && (
                           <Button variant="outline">Clear from view</Button>
                         )}

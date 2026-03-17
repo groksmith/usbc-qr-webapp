@@ -6,7 +6,7 @@ import { ROUTES } from "../constants/routes";
 import {
   Badge,
   CopyIconButton,
-  StickerExportModal,
+  StickerPrintModal,
   QRCodeDisplay,
   Modal,
   Button,
@@ -179,7 +179,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
                 onClick={() => setStickerModalOpen(true)}
                 className="w-[140px] h-10 px-4 rounded-lg bg-zinc-950 text-white font-medium text-sm whitespace-nowrap border-0 cursor-pointer hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-zinc-950 focus:ring-offset-2"
               >
-                Export Sticker
+                Print Sticker
               </button>
               {code.status === "active" && (
                 <button
@@ -195,7 +195,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         </div>
       </div>
 
-      <StickerExportModal
+      <StickerPrintModal
         open={stickerModalOpen}
         onClose={() => setStickerModalOpen(false)}
         variant="value-embed"

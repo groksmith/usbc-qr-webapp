@@ -6,7 +6,7 @@ import {
   Badge,
   CopyIconButton,
   CloseIcon,
-  StickerExportModal,
+  StickerPrintModal,
   QRCodeDisplay,
 } from "./ui";
 import { TransferTitleModal } from "./TransferTitleModal";
@@ -97,14 +97,23 @@ export function SelfTitlingDetailSidebar({
               <p className="m-0 mb-1 text-sm text-muted"><strong>UNS name:</strong> {code.unsName}</p>
               <p className="m-0"><Badge status={code.status} /></p>
 
+              {code.description != null && code.description !== "" && (
+                <section className="mt-5">
+                  <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Description</h3>
+                  <p className="m-0 text-sm text-zinc-700 whitespace-pre-wrap">{code.description}</p>
+                </section>
+              )}
+
               {code.imageUrl && (
                 <section className="mt-5">
                   <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Item image</h3>
-                  <img
-                    src={code.imageUrl}
-                    alt={code.itemTag}
-                    className="w-full max-w-[240px] h-auto max-h-[240px] object-contain rounded-[8px] border border-[#e4e4e7]"
-                  />
+                  <div className="w-[240px] h-[240px] rounded-[8px] overflow-hidden border border-[#e4e4e7] bg-zinc-100">
+                    <img
+                      src={code.imageUrl}
+                      alt={code.itemTag}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </section>
               )}
 
@@ -143,7 +152,7 @@ export function SelfTitlingDetailSidebar({
 
               <section className="mt-5 flex flex-wrap gap-2">
                 <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
-                  Export sticker template
+                  Print sticker template
                 </Button>
                 {code.ownershipStatus !== "transferred" && (
                   <Button variant="secondary" onClick={() => setTransferOpen(true)}>
@@ -168,7 +177,7 @@ export function SelfTitlingDetailSidebar({
       )}
 
       {!loading && code && (
-        <StickerExportModal
+        <StickerPrintModal
           open={stickerModalOpen}
           onClose={() => setStickerModalOpen(false)}
           variant="self-titling"

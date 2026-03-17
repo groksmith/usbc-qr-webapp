@@ -4,16 +4,23 @@ import { getSelfTitlingCodeById } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
 import { ROUTES } from "../constants/routes";
 import { SelfTitlingItemCard } from "../components/SelfTitlingItemCard";
+import { EditSelfTitlingModal } from "../components/EditSelfTitlingModal";
 import { TransferTitleModal } from "../components/TransferTitleModal";
-import { StickerExportModal } from "../components/ui";
+import { StickerPrintModal } from "../components/ui";
 
 export function SelfTitlingDetailPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [code, setCode] = useState<SelfTitlingCodeSet | null>(null);
   const [loading, setLoading] = useState(true);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
+
+  const refreshCode = (): void => {
+    if (!id) return;
+    getSelfTitlingCodeById(id).then((c) => setCode(c ?? null));
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -48,16 +55,25 @@ export function SelfTitlingDetailPage(): React.ReactElement {
           publicCode: code.publicCode,
           ownerDisplay: code.unsName,
           qrUrl: code.qrUrl,
+          description: code.description,
           imageUrl: code.imageUrl,
           createdAt: code.createdAt,
         }}
         showBackLink
         onBack={() => navigate(ROUTES.CODES)}
         showCTAs
-        onExportSticker={() => setStickerModalOpen(true)}
+        onEdit={() => setEditModalOpen(true)}
+        onPrintSticker={() => setStickerModalOpen(true)}
         onTransfer={() => setTransferOpen(true)}
         showTransferButton={code.ownershipStatus !== "transferred"}
         qrCaption="QR links to item profile"
+      />
+
+      <EditSelfTitlingModal
+        open={editModalOpen}
+        onClose={() => setEditModalOpen(false)}
+        code={code}
+        onSuccess={refreshCode}
       />
 
       {id && (
@@ -81,7 +97,7 @@ export function SelfTitlingDetailPage(): React.ReactElement {
         />
       )}
 
-      <StickerExportModal
+      <StickerPrintModal
         open={stickerModalOpen}
         onClose={() => setStickerModalOpen(false)}
         variant="self-titling"

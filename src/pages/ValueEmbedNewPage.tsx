@@ -51,7 +51,7 @@ export function ValueEmbedNewPage(): React.ReactElement {
         </ul>
         <div className="flex gap-3">
           <Button onClick={() => navigate(ROUTES.CODES)}>Done</Button>
-          <Button variant="outline">Export stickers</Button>
+          <Button variant="outline">Print stickers</Button>
         </div>
       </div>
     );
