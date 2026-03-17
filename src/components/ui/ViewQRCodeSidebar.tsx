@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { QRCodeDisplay } from "./QRCodeDisplay";
-import { CopyButton } from "./CopyButton";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { CloseIcon } from "./CloseIcon";
+import { CopyButton } from "./CopyButton";
+import { QRCodeDisplay } from "./QRCodeDisplay";
 
 const SIDEBAR_TRANSITION_MS = 300;
 
@@ -64,7 +65,9 @@ export function ViewQRCodeSidebar({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between gap-2 mb-4 sm:mb-6">
-          <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">{title}</h2>
+          <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">
+            {title}
+          </h2>
           <button
             type="button"
             onClick={handleClose}
@@ -75,9 +78,7 @@ export function ViewQRCodeSidebar({
           </button>
         </div>
         <div className="w-full max-w-[320px] mx-auto flex flex-col items-center text-center min-w-0">
-          {label && (
-            <p className="m-0 mb-4 text-sm text-muted">{label}</p>
-          )}
+          {label && <p className="m-0 mb-4 text-sm text-muted">{label}</p>}
           <QRCodeDisplay value={qrUrl} size={200} linkToUrl alt={`QR code – ${title}`} />
           <p className="text-sm mt-4 text-muted break-all">
             Links to:{" "}

@@ -1,17 +1,11 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { pathToItemProfile } from "../constants/routes";
 import { getSelfTitlingCodeById } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
-import {
-  Button,
-  Badge,
-  CopyIconButton,
-  CloseIcon,
-  StickerPrintModal,
-  QRCodeDisplay,
-} from "./ui";
-import { TransferTitleModal } from "./TransferTitleModal";
 import { formatTableDate } from "../utils/date";
-import { pathToItemProfile } from "../constants/routes";
+import { TransferTitleModal } from "./TransferTitleModal";
+import { Badge, Button, CloseIcon, CopyIconButton, QRCodeDisplay, StickerPrintModal } from "./ui";
 
 const SIDEBAR_TRANSITION_MS = 300;
 
@@ -83,8 +77,15 @@ export function SelfTitlingDetailSidebar({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between gap-2 mb-4 sm:mb-5">
-            <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">Self-Titling Code</h2>
-            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full cursor-pointer text-muted p-0 touch-manipulation shrink-0 hover:bg-zinc-200 transition-colors" aria-label="Close">
+            <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">
+              Self-Titling Code
+            </h2>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="bg-transparent border-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full cursor-pointer text-muted p-0 touch-manipulation shrink-0 hover:bg-zinc-200 transition-colors"
+              aria-label="Close"
+            >
               <CloseIcon />
             </button>
           </div>
@@ -93,14 +94,22 @@ export function SelfTitlingDetailSidebar({
           {!loading && !code && <p className="text-muted">Code not found.</p>}
           {!loading && code && (
             <>
-              <p className="m-0 mb-1 text-sm text-muted"><strong>Item tag:</strong> {code.itemTag}</p>
-              <p className="m-0 mb-1 text-sm text-muted"><strong>UNS name:</strong> {code.unsName}</p>
-              <p className="m-0"><Badge status={code.status} /></p>
+              <p className="m-0 mb-1 text-sm text-muted">
+                <strong>Item tag:</strong> {code.itemTag}
+              </p>
+              <p className="m-0 mb-1 text-sm text-muted">
+                <strong>UNS name:</strong> {code.unsName}
+              </p>
+              <p className="m-0">
+                <Badge status={code.status} />
+              </p>
 
               {code.description != null && code.description !== "" && (
                 <section className="mt-5">
                   <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Description</h3>
-                  <p className="m-0 text-sm text-zinc-700 whitespace-pre-wrap">{code.description}</p>
+                  <p className="m-0 text-sm text-zinc-700 whitespace-pre-wrap">
+                    {code.description}
+                  </p>
                 </section>
               )}
 
@@ -118,9 +127,16 @@ export function SelfTitlingDetailSidebar({
               )}
 
               <section className="mt-5">
-                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Public profile page</h3>
+                <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">
+                  Public profile page
+                </h3>
                 <p className="text-sm m-0">
-                  <a href={profileUrl} target="_blank" rel="noopener noreferrer" className="break-all">
+                  <a
+                    href={profileUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all"
+                  >
                     Open item profile
                   </a>
                 </p>
@@ -172,7 +188,13 @@ export function SelfTitlingDetailSidebar({
           codeId={codeId}
           itemTag={code.itemTag}
           publicCode={code.publicCode}
-          onTransferred={() => setCode((prev) => (prev ? { ...prev, ownershipStatus: "transferred", updatedAt: new Date().toISOString() } : null))}
+          onTransferred={() =>
+            setCode((prev) =>
+              prev
+                ? { ...prev, ownershipStatus: "transferred", updatedAt: new Date().toISOString() }
+                : null
+            )
+          }
         />
       )}
 

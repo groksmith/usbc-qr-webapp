@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { getValueEmbedWalletItems, getSelfTitlingWalletItems } from "../services/api";
-import type { ValueEmbedCodeSet, SelfTitlingCodeSet } from "../types";
-import { pathToValueEmbedDetail, pathToSelfTitlingDetail, pathToItemProfile } from "../constants/routes";
-import { Tabs, Badge, Button } from "../components/ui";
+import { Badge, Button, Tabs } from "../components/ui";
+import {
+  pathToItemProfile,
+  pathToSelfTitlingDetail,
+  pathToValueEmbedDetail,
+} from "../constants/routes";
+import { getSelfTitlingWalletItems, getValueEmbedWalletItems } from "../services/api";
+import type { SelfTitlingCodeSet, ValueEmbedCodeSet } from "../types";
 import { formatTableDate } from "../utils/date";
 
 type WalletTab = "value-embed" | "self-titling";
@@ -17,15 +22,13 @@ export function WalletPage(): React.ReactElement {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    void Promise.all([getValueEmbedWalletItems(), getSelfTitlingWalletItems()]).then(
-      ([ve, st]) => {
-        if (!cancelled) {
-          setValueEmbedItems(ve);
-          setSelfTitlingItems(st);
-          setLoading(false);
-        }
+    void Promise.all([getValueEmbedWalletItems(), getSelfTitlingWalletItems()]).then(([ve, st]) => {
+      if (!cancelled) {
+        setValueEmbedItems(ve);
+        setSelfTitlingItems(st);
+        setLoading(false);
       }
-    );
+    });
     return () => {
       cancelled = true;
     };
@@ -58,9 +61,16 @@ export function WalletPage(): React.ReactElement {
                     <Badge status={row.status} />
                   </div>
                   <div className="grid grid-cols-1 gap-1.5 text-muted">
-                    <span><span className="font-medium text-heading">Value:</span> {row.value}</span>
-                    <span><span className="font-medium text-heading">Balance:</span> {row.balance}</span>
-                    <span><span className="font-medium text-heading">Expiration:</span> {formatTableDate(row.expiration)}</span>
+                    <span>
+                      <span className="font-medium text-heading">Value:</span> {row.value}
+                    </span>
+                    <span>
+                      <span className="font-medium text-heading">Balance:</span> {row.balance}
+                    </span>
+                    <span>
+                      <span className="font-medium text-heading">Expiration:</span>{" "}
+                      {formatTableDate(row.expiration)}
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-2 border-t border-[#e5e7eb]">
                     <Link to={pathToValueEmbedDetail(row.id)}>
@@ -95,7 +105,9 @@ export function WalletPage(): React.ReactElement {
                     <td className="p-3 px-2">{row.value}</td>
                     <td className="p-3 px-2">{row.balance}</td>
                     <td className="p-3 px-2">{formatTableDate(row.expiration)}</td>
-                    <td className="p-3 px-2"><Badge status={row.status} /></td>
+                    <td className="p-3 px-2">
+                      <Badge status={row.status} />
+                    </td>
                     <td className="p-3 px-2">
                       <div className="flex gap-2 flex-wrap">
                         <Link to={pathToValueEmbedDetail(row.id)}>
@@ -131,10 +143,16 @@ export function WalletPage(): React.ReactElement {
                     <Badge status={row.status} />
                   </div>
                   <div className="grid grid-cols-1 gap-1.5 text-muted">
-                    <span><span className="font-medium text-heading">UNS name:</span> {row.unsName}</span>
+                    <span>
+                      <span className="font-medium text-heading">UNS name:</span> {row.unsName}
+                    </span>
                   </div>
                   <div className="flex flex-wrap gap-2 pt-2 border-t border-[#e5e7eb]">
-                    <a href={pathToItemProfile(row.publicCode)} target="_blank" rel="noopener noreferrer">
+                    <a
+                      href={pathToItemProfile(row.publicCode)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
                       <Button variant="outline">View item profile</Button>
                     </a>
                     <Link to={pathToSelfTitlingDetail(row.id)}>
@@ -162,10 +180,16 @@ export function WalletPage(): React.ReactElement {
                   <tr key={row.id} className="border-b border-[#e5e7eb]">
                     <td className="p-3 px-2">{row.itemTag}</td>
                     <td className="p-3 px-2">{row.unsName}</td>
-                    <td className="p-3 px-2"><Badge status={row.status} /></td>
+                    <td className="p-3 px-2">
+                      <Badge status={row.status} />
+                    </td>
                     <td className="p-3 px-2">
                       <div className="flex gap-2 flex-wrap">
-                        <a href={pathToItemProfile(row.publicCode)} target="_blank" rel="noopener noreferrer">
+                        <a
+                          href={pathToItemProfile(row.publicCode)}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
                           <Button variant="outline">View item profile</Button>
                         </a>
                         <Link to={pathToSelfTitlingDetail(row.id)}>

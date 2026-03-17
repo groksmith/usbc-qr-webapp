@@ -19,7 +19,12 @@ input,
 select,
 textarea,
 a,
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 p,
 span,
 label {
@@ -86,7 +91,10 @@ input:-ms-input-placeholder {
 
 /* Button: transition + soft shadow, dims on hover/active */
 .btn {
-  transition: filter 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    filter 0.15s ease,
+    background-color 0.15s ease,
+    box-shadow 0.15s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 .btn:hover {
@@ -102,9 +110,9 @@ input:-ms-input-placeholder {
 }
 .btn--outline:hover {
   filter: none;
-  background-color: rgba(93, 159, 181, 0.12) !important;
+  background-color: rgba(93, 159, 181, 0.12);
   box-shadow: none;
 }
 .btn--outline:active {
-  background-color: rgba(93, 159, 181, 0.18) !important;
+  background-color: rgba(93, 159, 181, 0.18);
 }

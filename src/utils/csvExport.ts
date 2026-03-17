@@ -1,4 +1,4 @@
-import type { ValueEmbedCodeSet, SelfTitlingCodeSet } from "../types";
+import type { SelfTitlingCodeSet, ValueEmbedCodeSet } from "../types";
 
 /**
  * Mock CSV export: description/item tag, public code, internal ID.

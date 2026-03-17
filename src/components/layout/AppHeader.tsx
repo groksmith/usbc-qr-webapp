@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from "react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
+
 const brandLogo = "/assets/images/brand_logo.svg";
 const profilePicPlaceholder = "/assets/images/profile-pic-placeholder.jpg";
 
@@ -16,7 +18,8 @@ export function AppHeader(): React.ReactElement {
     function handleClickOutside(e: MouseEvent) {
       const target = e.target as Node;
       const outsideDesktop = userMenuRef.current && !userMenuRef.current.contains(target);
-      const outsideMobile = userMenuRefMobile.current && !userMenuRefMobile.current.contains(target);
+      const outsideMobile =
+        userMenuRefMobile.current && !userMenuRefMobile.current.contains(target);
       if (outsideDesktop && outsideMobile) setUserMenuOpen(false);
     }
     document.addEventListener("mousedown", handleClickOutside);
@@ -48,94 +51,116 @@ export function AppHeader(): React.ReactElement {
           <div
             ref={userMenuRefMobile}
             className="relative flex items-center gap-[10px] cursor-pointer shrink-0"
-          role="button"
-          tabIndex={0}
-          aria-expanded={userMenuOpen}
-          aria-haspopup="true"
-          onClick={() => setUserMenuOpen((open) => !open)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault();
-              setUserMenuOpen((open) => !open);
-            }
-          }}
-        >
-          <div
-            className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden"
-            aria-hidden
+            role="button"
+            tabIndex={0}
+            aria-expanded={userMenuOpen}
+            aria-haspopup="true"
+            onClick={() => setUserMenuOpen((open) => !open)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setUserMenuOpen((open) => !open);
+              }
+            }}
           >
-            <img
-              src={profilePicPlaceholder}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <span className="text-sm font-semibold text-zinc-950 truncate max-w-[100px]">frunjyan</span>
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            className={`text-zinc-950 ml-0.5 transition-transform duration-150 ${userMenuOpen ? "rotate-180" : "rotate-0"}`}
-            aria-hidden
-          >
-            <path d="M6 9l6 6 6-6" />
-          </svg>
-          {userMenuOpen && (
             <div
-              className="absolute top-[calc(100%+8px)] right-0 min-w-[240px] p-4 pb-5 bg-white/[0.92] backdrop-blur-xl border border-black/[0.06] rounded-card shadow-[0_4px_24px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.04)] z-[1000]"
-              role="menu"
+              className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden"
+              aria-hidden
             >
-              <div className="pt-1 pb-2" role="none">
-                <div className="text-[11px] font-semibold tracking-[0.05em] text-zinc-500 mb-1 uppercase">Signed in as</div>
-                <div className="text-lg font-bold text-zinc-900">+37441878899</div>
-              </div>
-              <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" role="separator" />
-              <div className="flex items-center gap-3 py-3 rounded-[8px]">
-                <div
-                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden shrink-0"
-                  aria-hidden
-                >
-                  <img
-                    src={profilePicPlaceholder}
-                    alt="Profile"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <span className="flex-1 text-sm font-medium text-zinc-900">frunjyan</span>
-              </div>
-              <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
-              <button
-                type="button"
-                className="flex items-center justify-between w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer no-underline font-sans hover:bg-black/[0.04]"
-                role="menuitem"
-                onClick={() => {
-                  setUserMenuOpen(false);
-                  navigate(ROUTES.TRANSFER_HISTORY);
-                }}
-              >
-                Transfer history
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 18l6-6-6-6" />
-                </svg>
-              </button>
-              <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
-              <button
-                type="button"
-                className="flex items-center gap-[10px] w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer font-sans hover:bg-black/[0.04]"
-                role="menuitem"
-                onClick={handleSignOut}
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Sign Out
-              </button>
+              <img
+                src={profilePicPlaceholder}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
             </div>
-          )}
-        </div>
+            <span className="text-sm font-semibold text-zinc-950 truncate max-w-[100px]">
+              frunjyan
+            </span>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className={`text-zinc-950 ml-0.5 transition-transform duration-150 ${userMenuOpen ? "rotate-180" : "rotate-0"}`}
+              aria-hidden
+            >
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+            {userMenuOpen && (
+              <div
+                className="absolute top-[calc(100%+8px)] right-0 min-w-[240px] p-4 pb-5 bg-white/[0.92] backdrop-blur-xl border border-black/[0.06] rounded-card shadow-[0_4px_24px_rgba(0,0,0,0.12),0_0_0_1px_rgba(0,0,0,0.04)] z-[1000]"
+                role="menu"
+              >
+                <div className="pt-1 pb-2" role="none">
+                  <div className="text-[11px] font-semibold tracking-[0.05em] text-zinc-500 mb-1 uppercase">
+                    Signed in as
+                  </div>
+                  <div className="text-lg font-bold text-zinc-900">+37441878899</div>
+                </div>
+                <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" />
+                <div className="flex items-center gap-3 py-3 rounded-[8px]">
+                  <div
+                    className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden shrink-0"
+                    aria-hidden
+                  >
+                    <img
+                      src={profilePicPlaceholder}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <span className="flex-1 text-sm font-medium text-zinc-900">frunjyan</span>
+                </div>
+                <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
+                <button
+                  type="button"
+                  className="flex items-center justify-between w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer no-underline font-sans hover:bg-black/[0.04]"
+                  role="menuitem"
+                  onClick={() => {
+                    setUserMenuOpen(false);
+                    navigate(ROUTES.TRANSFER_HISTORY);
+                  }}
+                >
+                  Transfer history
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path d="M9 18l6-6-6-6" />
+                  </svg>
+                </button>
+                <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" aria-hidden />
+                <button
+                  type="button"
+                  className="flex items-center gap-[10px] w-full py-3 text-sm font-medium text-zinc-900 bg-transparent border-0 rounded-[8px] cursor-pointer font-sans hover:bg-black/[0.04]"
+                  role="menuitem"
+                  onClick={handleSignOut}
+                >
+                  <svg
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <path
+                      d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                  Sign Out
+                </button>
+              </div>
+            )}
+          </div>
           <button
             type="button"
             className="flex items-center justify-center w-9 h-9 p-0 bg-transparent border-0 text-zinc-600 shrink-0 cursor-pointer"
@@ -156,7 +181,7 @@ export function AppHeader(): React.ReactElement {
               <path d="M4 8h16M4 16h16" />
             </svg>
           </button>
-      </div>
+        </div>
       </div>
 
       {/* Right (desktop only): user menu (Get Help hidden for now) */}
@@ -180,13 +205,11 @@ export function AppHeader(): React.ReactElement {
             className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden"
             aria-hidden
           >
-            <img
-              src={profilePicPlaceholder}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+            <img src={profilePicPlaceholder} alt="Profile" className="w-full h-full object-cover" />
           </div>
-          <span className="text-sm font-semibold text-zinc-950 truncate max-w-[100px] sm:max-w-none">frunjyan</span>
+          <span className="text-sm font-semibold text-zinc-950 truncate max-w-[100px] sm:max-w-none">
+            frunjyan
+          </span>
           <svg
             width="16"
             height="16"
@@ -205,10 +228,12 @@ export function AppHeader(): React.ReactElement {
               role="menu"
             >
               <div className="pt-1 pb-2" role="none">
-                <div className="text-[11px] font-semibold tracking-[0.05em] text-zinc-500 mb-1 uppercase">Signed in as</div>
+                <div className="text-[11px] font-semibold tracking-[0.05em] text-zinc-500 mb-1 uppercase">
+                  Signed in as
+                </div>
                 <div className="text-lg font-bold text-zinc-900">+37441878899</div>
               </div>
-              <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" role="separator" />
+              <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" />
               <div className="flex items-center gap-3 py-3 rounded-[8px]">
                 <div
                   className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden shrink-0"
@@ -233,7 +258,14 @@ export function AppHeader(): React.ReactElement {
                 }}
               >
                 Transfer history
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
                   <path d="M9 18l6-6-6-6" />
                 </svg>
               </button>
@@ -244,8 +276,19 @@ export function AppHeader(): React.ReactElement {
                 role="menuitem"
                 onClick={handleSignOut}
               >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9" strokeLinecap="round" strokeLinejoin="round" />
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path
+                    d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4M16 17l5-5-5-5M21 12H9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
                 Sign Out
               </button>

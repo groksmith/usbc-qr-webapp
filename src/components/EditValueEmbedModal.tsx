@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { updateValueEmbedCode } from "../services/api";
 import type { ValueEmbedCodeSet } from "../types";
-import { Button, Input, CloseIcon } from "./ui";
 import { validateValueAmount } from "../utils/validation";
+import { Button, CloseIcon, Input } from "./ui";
 
 function formatExpirationForInput(iso: string | undefined): string {
   if (!iso) return "";
@@ -81,7 +82,8 @@ export function EditValueEmbedModal({
     try {
       await updateValueEmbedCode(code.id, {
         value: Number(value),
-        expiration: expirationEnabled && expiration.trim() ? new Date(expiration).toISOString() : null,
+        expiration:
+          expirationEnabled && expiration.trim() ? new Date(expiration).toISOString() : null,
       });
       onSuccess?.();
       handleClose();
@@ -101,12 +103,12 @@ export function EditValueEmbedModal({
       aria-modal="true"
       aria-labelledby="edit-value-embed-title"
     >
-      <div
-        className={`${shellClass} mx-0 sm:mx-4`}
-        onClick={(ev) => ev.stopPropagation()}
-      >
+      <div className={`${shellClass} mx-0 sm:mx-4`} onClick={(ev) => ev.stopPropagation()}>
         <div className="flex items-center justify-between mb-1 min-h-[32px] gap-2">
-          <h2 id="edit-value-embed-title" className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950">
+          <h2
+            id="edit-value-embed-title"
+            className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950"
+          >
             Edit Value Embed
           </h2>
           <CloseButton onClick={handleClose} />
@@ -171,11 +173,7 @@ export function EditValueEmbedModal({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full sm:w-[120px] h-11"
-            >
+            <Button type="submit" disabled={loading} className="w-full sm:w-[120px] h-11">
               {loading ? "Saving…" : "Save"}
             </Button>
           </div>

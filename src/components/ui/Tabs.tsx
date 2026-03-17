@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 interface Tab {
   id: string;
@@ -13,7 +13,12 @@ interface TabsProps {
   variant?: "default" | "dashboard";
 }
 
-export function Tabs({ tabs, activeId, onChange, variant = "default" }: TabsProps): React.ReactElement {
+export function Tabs({
+  tabs,
+  activeId,
+  onChange,
+  variant = "default",
+}: TabsProps): React.ReactElement {
   const isDashboard = variant === "dashboard";
   return (
     <div className={`flex gap-0 overflow-x-auto min-w-0 ${isDashboard ? "mb-0" : "mb-4"}`}>

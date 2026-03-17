@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { STATUS_COLORS, STATUS_LABELS } from "../../constants/status";
 import type { CodeSetStatus } from "../../types";
 

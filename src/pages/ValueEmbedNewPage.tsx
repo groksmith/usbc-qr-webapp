@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button, Input } from "../components/ui";
+import { pathToValueEmbedDetail, ROUTES } from "../constants/routes";
 import { createValueEmbedCodes } from "../services/api";
 import type { ValueEmbedCodeSet } from "../types";
-import { ROUTES, pathToValueEmbedDetail } from "../constants/routes";
-import { Button, Input } from "../components/ui";
 
 const STEPS = ["Type", "Configuration", "Review", "Create"] as const;
 
@@ -27,7 +28,7 @@ export function ValueEmbedNewPage(): React.ReactElement {
         fundingSourceId,
         value: Number(value) || 0,
         expiration: expirationEnabled && expiration ? expiration : undefined,
-        quantity: Math.max(1, parseInt(quantity, 10) || 1),
+        quantity: Math.max(1, Number.parseInt(quantity, 10) || 1),
       });
       setCreated(result.codes);
     } finally {
@@ -66,7 +67,10 @@ export function ValueEmbedNewPage(): React.ReactElement {
 
       {step === 0 && (
         <div>
-          <p>You are creating <strong>Value Embed</strong> code sets (with funding source, value, optional expiration).</p>
+          <p>
+            You are creating <strong>Value Embed</strong> code sets (with funding source, value,
+            optional expiration).
+          </p>
           <Button onClick={() => setStep(1)}>Next</Button>
         </div>
       )}
@@ -80,9 +84,7 @@ export function ValueEmbedNewPage(): React.ReactElement {
             placeholder="e.g. Holiday promo 2024"
           />
           <div className="mb-4">
-            <label className="block text-sm font-medium text-zinc-950 mb-1.5">
-              Funding source
-            </label>
+            <label className="block text-sm font-medium text-zinc-950 mb-1.5">Funding source</label>
             <select
               className="select-chevron-right w-full h-10 text-sm border border-[#E0E0E0] rounded-card bg-white outline-none text-zinc-950 font-sans box-border px-3.5"
               value={fundingSourceId}
@@ -127,21 +129,37 @@ export function ValueEmbedNewPage(): React.ReactElement {
             onChange={(e) => setQuantity(e.target.value)}
           />
           <div className="flex gap-3 mt-6">
-            <Button variant="outline" onClick={() => setStep(0)}>Back</Button>
-            <Button onClick={() => setStep(2)} disabled={!descriptionTag.trim() || !value}>Next</Button>
+            <Button variant="outline" onClick={() => setStep(0)}>
+              Back
+            </Button>
+            <Button onClick={() => setStep(2)} disabled={!descriptionTag.trim() || !value}>
+              Next
+            </Button>
           </div>
         </div>
       )}
 
       {step === 2 && (
         <div>
-          <p><strong>Description tag:</strong> {descriptionTag}</p>
-          <p><strong>Funding source:</strong> {fundingSourceId}</p>
-          <p><strong>Value:</strong> {value}</p>
-          <p><strong>Expiration:</strong> {expirationEnabled && expiration ? expiration : "None"}</p>
-          <p><strong>Quantity:</strong> {quantity}</p>
+          <p>
+            <strong>Description tag:</strong> {descriptionTag}
+          </p>
+          <p>
+            <strong>Funding source:</strong> {fundingSourceId}
+          </p>
+          <p>
+            <strong>Value:</strong> {value}
+          </p>
+          <p>
+            <strong>Expiration:</strong> {expirationEnabled && expiration ? expiration : "None"}
+          </p>
+          <p>
+            <strong>Quantity:</strong> {quantity}
+          </p>
           <div className="flex gap-3 mt-6">
-            <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
+            <Button variant="outline" onClick={() => setStep(1)}>
+              Back
+            </Button>
             <Button onClick={handleCreate} disabled={loading}>
               {loading ? "Creating…" : "Create"}
             </Button>

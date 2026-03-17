@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { getValueEmbedCodeById, cancelValueEmbedCode } from "../services/api";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { cancelValueEmbedCode, getValueEmbedCodeById } from "../services/api";
 import type { ValueEmbedCodeSet } from "../types";
 import {
-  Button,
   Badge,
+  Button,
+  CloseIcon,
   CopyButton,
   CopyIconButton,
-  CloseIcon,
-  StickerPrintModal,
   QRCodeDisplay,
+  StickerPrintModal,
 } from "./ui";
 
 const SIDEBAR_TRANSITION_MS = 300;
@@ -92,8 +93,15 @@ export function ValueEmbedDetailSidebar({
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between gap-2 mb-4 sm:mb-5">
-            <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">Value Embed Code</h2>
-            <button type="button" onClick={handleClose} className="bg-transparent border-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full cursor-pointer text-muted p-0 touch-manipulation shrink-0 hover:bg-zinc-200 transition-colors" aria-label="Close">
+            <h2 className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950 truncate min-w-0">
+              Value Embed Code
+            </h2>
+            <button
+              type="button"
+              onClick={handleClose}
+              className="bg-transparent border-0 w-9 h-9 min-w-[36px] min-h-[36px] flex items-center justify-center rounded-full cursor-pointer text-muted p-0 touch-manipulation shrink-0 hover:bg-zinc-200 transition-colors"
+              aria-label="Close"
+            >
               <CloseIcon />
             </button>
           </div>
@@ -102,14 +110,25 @@ export function ValueEmbedDetailSidebar({
           {!loading && !code && <p className="text-muted">Code not found.</p>}
           {!loading && code && (
             <>
-              <p className="m-0 mb-1 text-sm text-muted"><strong>Description tag:</strong> {code.label}</p>
-              <p className="m-0"><Badge status={code.status} /></p>
+              <p className="m-0 mb-1 text-sm text-muted">
+                <strong>Description tag:</strong> {code.label}
+              </p>
+              <p className="m-0">
+                <Badge status={code.status} />
+              </p>
 
               <section className="mt-5">
                 <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">QR code</h3>
                 <QRCodeDisplay value={code.qrUrl} size={160} linkToUrl alt="Value Embed QR code" />
                 <p className="text-sm mt-2">
-                  <a href={code.qrUrl} target="_blank" rel="noopener noreferrer" className="break-all">{code.qrUrl}</a>
+                  <a
+                    href={code.qrUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="break-all"
+                  >
+                    {code.qrUrl}
+                  </a>
                 </p>
               </section>
 
@@ -145,12 +164,16 @@ export function ValueEmbedDetailSidebar({
               <section className="mt-5">
                 <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Value & balance</h3>
                 <p className="m-0 mb-2 text-sm">
-                  A wallet is generated for this code pair and holds the assigned funds until redemption or return to source.
+                  A wallet is generated for this code pair and holds the assigned funds until
+                  redemption or return to source.
                 </p>
-                <p className="m-0 text-sm">Value: {code.value} · Balance: {code.balance}</p>
+                <p className="m-0 text-sm">
+                  Value: {code.value} · Balance: {code.balance}
+                </p>
                 <p className="mt-1 mb-0 text-sm">Funding source: {code.fundingSourceId}</p>
                 <p className="mt-1 mb-0 text-sm">
-                  Expiration: {code.expiration ? new Date(code.expiration).toLocaleString() : "None"}
+                  Expiration:{" "}
+                  {code.expiration ? new Date(code.expiration).toLocaleString() : "None"}
                 </p>
               </section>
 
@@ -158,7 +181,9 @@ export function ValueEmbedDetailSidebar({
                 <h3 className="text-base font-semibold text-zinc-950 m-0 mb-2">Status timeline</h3>
                 <p className="m-0 text-sm">Created: {new Date(code.createdAt).toLocaleString()}</p>
                 {code.redemptionTimestamp && (
-                  <p className="mt-1 mb-0 text-sm">Redeemed: {new Date(code.redemptionTimestamp).toLocaleString()}</p>
+                  <p className="mt-1 mb-0 text-sm">
+                    Redeemed: {new Date(code.redemptionTimestamp).toLocaleString()}
+                  </p>
                 )}
               </section>
 
@@ -166,33 +191,38 @@ export function ValueEmbedDetailSidebar({
                 <Button variant="outline" onClick={() => setStickerModalOpen(true)}>
                   Print sticker template
                 </Button>
-                {code.status === "active" && (
-                  <>
-                    {!cancelConfirm ? (
-                      <Button variant="secondary" onClick={() => setCancelConfirm(true)}>
-                        Cancel code
+                {code.status === "active" &&
+                  (!cancelConfirm ? (
+                    <Button variant="secondary" onClick={() => setCancelConfirm(true)}>
+                      Cancel code
+                    </Button>
+                  ) : (
+                    <>
+                      <span className="text-sm w-full">Value returns to source. Confirm?</span>
+                      <Button onClick={handleCancel} disabled={cancelling}>
+                        {cancelling ? "Cancelling…" : "Confirm cancel"}
                       </Button>
-                    ) : (
-                      <>
-                        <span className="text-sm w-full">Value returns to source. Confirm?</span>
-                        <Button onClick={handleCancel} disabled={cancelling}>
-                          {cancelling ? "Cancelling…" : "Confirm cancel"}
-                        </Button>
-                        <Button variant="outline" onClick={() => setCancelConfirm(false)}>
-                          Back
-                        </Button>
-                      </>
-                    )}
-                  </>
-                )}
+                      <Button variant="outline" onClick={() => setCancelConfirm(false)}>
+                        Back
+                      </Button>
+                    </>
+                  ))}
               </section>
 
               <div className="mt-4 text-sm flex flex-col gap-2">
-                <a href={`${window.location.origin}/check-balance?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
+                <a
+                  href={`${window.location.origin}/check-balance?code=${encodeURIComponent(code.publicCode)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   View public check balance page
                 </a>
                 {code.status === "active" && (
-                  <a href={`${window.location.origin}/redeem?code=${encodeURIComponent(code.publicCode)}`} target="_blank" rel="noopener noreferrer">
+                  <a
+                    href={`${window.location.origin}/redeem?code=${encodeURIComponent(code.publicCode)}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
                     Redeem (private code required)
                   </a>
                 )}
@@ -203,8 +233,7 @@ export function ValueEmbedDetailSidebar({
       </div>
 
       {!loading && code && (
-        <>
-<StickerPrintModal
+        <StickerPrintModal
           open={stickerModalOpen}
           onClose={() => setStickerModalOpen(false)}
           variant="value-embed"
@@ -214,7 +243,6 @@ export function ValueEmbedDetailSidebar({
             qrUrl: code.qrUrl,
           }}
         />
-        </>
       )}
     </>
   );

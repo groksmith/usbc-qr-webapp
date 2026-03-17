@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { SearchIcon } from "./SearchIcon";
 
 interface SearchInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -26,9 +26,7 @@ export function SearchInput({
             {label}
             {required && <span className="text-negative ml-0.5">*</span>}
           </label>
-          {hint && !error && (
-            <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>
-          )}
+          {hint && !error && <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>}
         </>
       )}
       <div className="relative flex items-center w-full">

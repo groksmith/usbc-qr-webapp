@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 export interface SortIconProps {
   /** When set, shows a single arrow in this direction; when undefined, shows both (neutral). */

@@ -1,19 +1,19 @@
-export {
-  getValueEmbedCodes,
-  getSelfTitlingCodes,
-  getValueEmbedCodeById,
-  getSelfTitlingCodeById,
-  createValueEmbedCodes,
-  createSelfTitlingCodes,
-  cancelValueEmbedCode,
-  updateValueEmbedCode,
-  updateSelfTitlingCode,
-  transferSelfTitling,
-  checkBalance,
-  redeem,
-  getItemProfile,
-  getValueEmbedWalletItems,
-  getSelfTitlingWalletItems,
-} from "./client";
-export type { UpdateValueEmbedParams } from "./client";
 export type { UpdateSelfTitlingParams } from "../../types";
+export type { UpdateValueEmbedParams } from "./client";
+export {
+  cancelValueEmbedCode,
+  checkBalance,
+  createSelfTitlingCodes,
+  createValueEmbedCodes,
+  getItemProfile,
+  getSelfTitlingCodeById,
+  getSelfTitlingCodes,
+  getSelfTitlingWalletItems,
+  getValueEmbedCodeById,
+  getValueEmbedCodes,
+  getValueEmbedWalletItems,
+  redeem,
+  transferSelfTitling,
+  updateSelfTitlingCode,
+  updateValueEmbedCode,
+} from "./client";

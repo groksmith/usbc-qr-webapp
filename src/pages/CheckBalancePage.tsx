@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
-import { checkBalance } from "../services/api";
-import type { CheckBalanceResult } from "../types";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Button, Input } from "../components/ui";
 import { ROUTES } from "../constants/routes";
 import { STATUS_LABELS } from "../constants/status";
-import { Button, Input } from "../components/ui";
+import { checkBalance } from "../services/api";
+import type { CheckBalanceResult } from "../types";
 import { validatePublicCode } from "../utils/validation";
 
 export function CheckBalancePage(): React.ReactElement {
@@ -41,7 +42,9 @@ export function CheckBalancePage(): React.ReactElement {
   return (
     <div className="max-w-[560px] mx-auto px-4 sm:px-0">
       <h1 className="text-xl sm:text-2xl">Check balance</h1>
-      <p className="mt-1 text-sm sm:text-base text-body-text">Enter the public code to see balance and status. Do not enter your private code here.</p>
+      <p className="mt-1 text-sm sm:text-base text-body-text">
+        Enter the public code to see balance and status. Do not enter your private code here.
+      </p>
 
       <div className="mb-6">
         <Input
@@ -49,7 +52,10 @@ export function CheckBalancePage(): React.ReactElement {
           required
           hint="Letters, numbers, and hyphens only (e.g. VE-A1B2-C3D4-E5F6)"
           value={publicCode}
-          onChange={(e) => { setPublicCode(e.target.value); setPublicCodeError(undefined); }}
+          onChange={(e) => {
+            setPublicCode(e.target.value);
+            setPublicCodeError(undefined);
+          }}
           placeholder="e.g. VE-A1B2-C3D4-E5F6"
           error={publicCodeError}
         />
@@ -65,13 +71,22 @@ export function CheckBalancePage(): React.ReactElement {
       {searched && !loading && result && (
         <div className="card p-4 sm:p-7 sm:px-8 mb-6">
           <h2>Result</h2>
-          <p><strong>Current balance:</strong> {result.balance}</p>
-          <p><strong>Original value:</strong> {result.value}</p>
-          <p><strong>Status:</strong> {STATUS_LABELS[result.status]}</p>
+          <p>
+            <strong>Current balance:</strong> {result.balance}
+          </p>
+          <p>
+            <strong>Original value:</strong> {result.value}
+          </p>
+          <p>
+            <strong>Status:</strong> {STATUS_LABELS[result.status]}
+          </p>
           {result.status === "active" && (
             <p className="mt-4 text-base">
               To redeem, you need the private code, a bronze badge, and a UNS name.{" "}
-              <Link to={`${ROUTES.REDEEM}?code=${encodeURIComponent(result.publicCode)}`} className="text-primary font-semibold">
+              <Link
+                to={`${ROUTES.REDEEM}?code=${encodeURIComponent(result.publicCode)}`}
+                className="text-primary font-semibold"
+              >
                 Go to Redeem page
               </Link>
             </p>
@@ -87,9 +102,15 @@ export function CheckBalancePage(): React.ReactElement {
         <h2>How to redeem</h2>
         <p>You need:</p>
         <ul>
-          <li>The <strong>private code</strong> (from the inside sticker or secure message)</li>
-          <li>A <strong>bronze badge</strong> identity</li>
-          <li>A valid <strong>UNS name</strong> linked to that identity</li>
+          <li>
+            The <strong>private code</strong> (from the inside sticker or secure message)
+          </li>
+          <li>
+            A <strong>bronze badge</strong> identity
+          </li>
+          <li>
+            A valid <strong>UNS name</strong> linked to that identity
+          </li>
         </ul>
         <p>
           <Link to={ROUTES.REDEEM} className="text-primary font-semibold">

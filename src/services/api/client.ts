@@ -3,18 +3,18 @@
  * with real HTTP calls when the backend is ready. Call sites stay the same.
  */
 import type {
-  ValueEmbedCodeSet,
-  SelfTitlingCodeSet,
-  CodeSetListFilters,
   CheckBalanceResult,
+  CodeSetListFilters,
+  CreateSelfTitlingParams,
+  CreateValueEmbedParams,
+  ItemProfilePublic,
   RedeemParams,
   RedeemResult,
-  ItemProfilePublic,
-  CreateValueEmbedParams,
-  CreateSelfTitlingParams,
+  SelfTitlingCodeSet,
   UpdateSelfTitlingParams,
+  ValueEmbedCodeSet,
 } from "../../types";
-import { mockValueEmbedCodes, mockSelfTitlingCodes } from "./mockData";
+import { mockSelfTitlingCodes, mockValueEmbedCodes } from "./mockData";
 
 // In-memory store so create/cancel/transfer persist during session
 const valueEmbedStore = [...mockValueEmbedCodes];
@@ -27,28 +27,18 @@ function filterBySearch<T extends { label: string; publicCode: string }>(
   if (!search?.trim()) return items;
   const q = search.toLowerCase();
   return items.filter(
-    (i) =>
-      i.label.toLowerCase().includes(q) || i.publicCode.toLowerCase().includes(q)
+    (i) => i.label.toLowerCase().includes(q) || i.publicCode.toLowerCase().includes(q)
   );
 }
 
-function filterByStatus<T extends { status: string }>(
-  items: T[],
-  status?: string
-): T[] {
+function filterByStatus<T extends { status: string }>(items: T[], status?: string): T[] {
   if (!status) return items;
   return items.filter((i) => i.status === status);
 }
 
 /** In mock: treat past-expiration active codes as expired; funds returned to source implied. */
-function normalizeValueEmbedExpiration(
-  code: ValueEmbedCodeSet
-): ValueEmbedCodeSet {
-  if (
-    code.status !== "active" ||
-    !code.expiration ||
-    new Date(code.expiration) >= new Date()
-  )
+function normalizeValueEmbedExpiration(code: ValueEmbedCodeSet): ValueEmbedCodeSet {
+  if (code.status !== "active" || !code.expiration || new Date(code.expiration) >= new Date())
     return code;
   return {
     ...code,
@@ -78,17 +68,13 @@ export async function getSelfTitlingCodes(
   return list;
 }
 
-export async function getValueEmbedCodeById(
-  id: string
-): Promise<ValueEmbedCodeSet | null> {
+export async function getValueEmbedCodeById(id: string): Promise<ValueEmbedCodeSet | null> {
   await delay();
   const code = valueEmbedStore.find((c) => c.id === id) ?? null;
   return code ? normalizeValueEmbedExpiration(code) : null;
 }
 
-export async function getSelfTitlingCodeById(
-  id: string
-): Promise<SelfTitlingCodeSet | null> {
+export async function getSelfTitlingCodeById(id: string): Promise<SelfTitlingCodeSet | null> {
   await delay();
   return selfTitlingStore.find((c) => c.id === id) ?? null;
 }
@@ -100,8 +86,7 @@ export async function createValueEmbedCodes(
   const hasBulk = params.bulkItems && params.bulkItems.length > 0;
   const quantity = hasBulk ? params.bulkItems!.length : (params.quantity ?? 1);
   const codes: ValueEmbedCodeSet[] = [];
-  const baseUrl =
-    typeof window !== "undefined" ? window.location.origin : "https://example.com";
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://example.com";
 
   for (let i = 0; i < quantity; i++) {
     const itemValue = hasBulk ? params.bulkItems![i].value : params.value;
@@ -137,8 +122,7 @@ export async function createSelfTitlingCodes(
   await delay();
   const quantity = params.quantity ?? 1;
   const codes: SelfTitlingCodeSet[] = [];
-  const baseUrl =
-    typeof window !== "undefined" ? window.location.origin : "https://example.com";
+  const baseUrl = typeof window !== "undefined" ? window.location.origin : "https://example.com";
 
   for (let i = 0; i < quantity; i++) {
     const id = `st-new-${Date.now()}-${i}`;
@@ -217,10 +201,7 @@ export async function updateSelfTitlingCode(
   selfTitlingStore[index] = updated;
 }
 
-export async function transferSelfTitling(
-  id: string,
-  recipient: string
-): Promise<void> {
+export async function transferSelfTitling(id: string, recipient: string): Promise<void> {
   await delay();
   const index = selfTitlingStore.findIndex((c) => c.id === id);
   if (index === -1) return;
@@ -257,8 +238,7 @@ export async function checkBalance(publicCode: string): Promise<CheckBalanceResu
 export async function redeem(params: RedeemParams): Promise<RedeemResult> {
   await delay();
   const ve = valueEmbedStore.find((c) => c.publicCode === params.publicCode);
-  if (!ve)
-    return { success: false, error: "Invalid or unknown code." };
+  if (!ve) return { success: false, error: "Invalid or unknown code." };
   if (ve.privateCode !== params.privateCode)
     return { success: false, error: "Invalid private code." };
   if (ve.status !== "active")

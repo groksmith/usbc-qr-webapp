@@ -1,8 +1,8 @@
-import React from "react";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
+import type React from "react";
 import type { CodeSetStatus, OwnershipChange } from "../types";
-import { Badge, QRCodeDisplay, CopyIconButton } from "./ui";
 import { formatTableDate } from "../utils/date";
+import { Badge, CopyIconButton, QRCodeDisplay } from "./ui";
 
 export interface SelfTitlingItemCardData {
   itemTag: string;
@@ -45,8 +45,9 @@ export function SelfTitlingItemCard({
   qrCaption = "QR links to this page",
   onEdit,
 }: SelfTitlingItemCardProps): React.ReactElement {
-  const ownershipHistory =
-    data.ownershipHistory ?? [{ owner: data.ownerDisplay, timestamp: data.createdAt ?? new Date().toISOString() }];
+  const ownershipHistory = data.ownershipHistory ?? [
+    { owner: data.ownerDisplay, timestamp: data.createdAt ?? new Date().toISOString() },
+  ];
 
   const formatDateTime = (iso: string): string => {
     const d = new Date(iso);
@@ -94,9 +95,14 @@ export function SelfTitlingItemCard({
                 <p className="text-sm font-medium text-zinc-500 m-0 mb-3">Ownership history</p>
                 <div className="space-y-2">
                   {ownershipHistory.map((h, idx) => (
-                    <div key={`${h.owner}-${h.timestamp}-${idx}`} className="flex items-start justify-between gap-3">
+                    <div
+                      key={`${h.owner}-${h.timestamp}-${idx}`}
+                      className="flex items-start justify-between gap-3"
+                    >
                       <span className="text-sm text-zinc-950 font-medium break-all">{h.owner}</span>
-                      <span className="text-sm text-zinc-500 whitespace-nowrap">{formatDateTime(h.timestamp)}</span>
+                      <span className="text-sm text-zinc-500 whitespace-nowrap">
+                        {formatDateTime(h.timestamp)}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -135,9 +141,7 @@ export function SelfTitlingItemCard({
                 Self-titled item
               </p>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">
-                  {data.itemTag}
-                </h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">{data.itemTag}</h1>
                 <Badge status={data.status} />
               </div>
               {data.description != null && data.description !== "" && (
@@ -159,9 +163,7 @@ export function SelfTitlingItemCard({
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-zinc-500 m-0">Owned by</p>
-                <p className="text-base font-normal text-zinc-950 m-0">
-                  {data.ownerDisplay}
-                </p>
+                <p className="text-base font-normal text-zinc-950 m-0">{data.ownerDisplay}</p>
               </div>
               <div className="space-y-1">
                 <p className="text-sm font-medium text-zinc-500 m-0">Created at</p>
@@ -172,15 +174,8 @@ export function SelfTitlingItemCard({
             </div>
 
             <div className="pt-4 border-t border-zinc-200">
-              <p className="text-sm font-medium text-zinc-500 m-0 mb-3">
-                Scan to view
-              </p>
-              <QRCodeDisplay
-                value={data.qrUrl}
-                size={180}
-                linkToUrl
-                alt="Item profile QR code"
-              />
+              <p className="text-sm font-medium text-zinc-500 m-0 mb-3">Scan to view</p>
+              <QRCodeDisplay value={data.qrUrl} size={180} linkToUrl alt="Item profile QR code" />
               <p className="text-xs text-muted mt-2">{qrCaption}</p>
             </div>
 

@@ -2,12 +2,7 @@
  * Shared domain types for Code Sets (Value Embed and Self-Titling).
  */
 
-export type CodeSetStatus =
-  | "active"
-  | "redeemed"
-  | "expired"
-  | "cancelled"
-  | "pending_transfer";
+export type CodeSetStatus = "active" | "redeemed" | "expired" | "cancelled" | "pending_transfer";
 
 export interface CodeSetBase {
   id: string;

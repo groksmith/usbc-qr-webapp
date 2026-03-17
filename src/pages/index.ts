@@ -1,8 +1,8 @@
-export { CodesDashboardPage } from "./CodesDashboardPage";
-export { ValueEmbedNewPage } from "./ValueEmbedNewPage";
-export { ValueEmbedDetailPage } from "./ValueEmbedDetailPage";
-export { SelfTitlingNewPage } from "./SelfTitlingNewPage";
-export { SelfTitlingDetailPage } from "./SelfTitlingDetailPage";
 export { CheckBalancePage } from "./CheckBalancePage";
-export { RedeemPage } from "./RedeemPage";
+export { CodesDashboardPage } from "./CodesDashboardPage";
 export { ItemProfilePage } from "./ItemProfilePage";
+export { RedeemPage } from "./RedeemPage";
+export { SelfTitlingDetailPage } from "./SelfTitlingDetailPage";
+export { SelfTitlingNewPage } from "./SelfTitlingNewPage";
+export { ValueEmbedDetailPage } from "./ValueEmbedDetailPage";
+export { ValueEmbedNewPage } from "./ValueEmbedNewPage";

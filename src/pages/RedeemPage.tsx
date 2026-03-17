@@ -1,10 +1,16 @@
-import React, { useState } from "react";
-import { useSearchParams, Link } from "react-router-dom";
+import type React from "react";
+import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
+import { Button, Input } from "../components/ui";
+import { ROUTES } from "../constants/routes";
 import { redeem } from "../services/api";
 import type { RedeemResult } from "../types";
-import { ROUTES } from "../constants/routes";
-import { Button, Input } from "../components/ui";
-import { validatePublicCode, validatePrivateCode, validateUnsName, UNS_NAME_HINT } from "../utils/validation";
+import {
+  UNS_NAME_HINT,
+  validatePrivateCode,
+  validatePublicCode,
+  validateUnsName,
+} from "../utils/validation";
 
 export function RedeemPage(): React.ReactElement {
   const [searchParams] = useSearchParams();
@@ -54,7 +60,10 @@ export function RedeemPage(): React.ReactElement {
           required
           hint="From the QR or outside sticker. Letters, numbers, and hyphens only."
           value={publicCode}
-          onChange={(e) => { setPublicCode(e.target.value); setPublicCodeError(undefined); }}
+          onChange={(e) => {
+            setPublicCode(e.target.value);
+            setPublicCodeError(undefined);
+          }}
           placeholder="e.g. VE-A1B2-C3D4-E5F6"
           error={publicCodeError}
         />
@@ -64,7 +73,10 @@ export function RedeemPage(): React.ReactElement {
           type="password"
           hint="From inside sticker or secure message. Never share this."
           value={privateCode}
-          onChange={(e) => { setPrivateCode(e.target.value); setPrivateCodeError(undefined); }}
+          onChange={(e) => {
+            setPrivateCode(e.target.value);
+            setPrivateCodeError(undefined);
+          }}
           placeholder="From inside sticker or secure message"
           error={privateCodeError}
         />
@@ -73,20 +85,22 @@ export function RedeemPage(): React.ReactElement {
           required
           hint={UNS_NAME_HINT}
           value={unsName}
-          onChange={(e) => { setUnsName(e.target.value); setUnsNameError(undefined); }}
+          onChange={(e) => {
+            setUnsName(e.target.value);
+            setUnsNameError(undefined);
+          }}
           placeholder="e.g. alice.uns"
           error={unsNameError}
         />
-        <Button
-          onClick={handleRedeem}
-          disabled={loading}
-        >
+        <Button onClick={handleRedeem} disabled={loading}>
           {loading ? "Redeeming…" : "Redeem"}
         </Button>
       </div>
 
       {result && (
-        <div className={`p-4 sm:p-6 rounded-[8px] mb-6 ${result.success ? "bg-green-100" : "bg-red-100"}`}>
+        <div
+          className={`p-4 sm:p-6 rounded-[8px] mb-6 ${result.success ? "bg-green-100" : "bg-red-100"}`}
+        >
           {result.success ? (
             <>
               <h2>Redemption complete</h2>
@@ -110,9 +124,16 @@ export function RedeemPage(): React.ReactElement {
       <section className="mt-6 sm:mt-8 p-4 sm:p-4 bg-white/60 rounded-[8px]">
         <h2>Instructions</h2>
         <ul>
-          <li><strong>Public code</strong> — on the QR or outside sticker; safe to share for balance check.</li>
-          <li><strong>Private code</strong> — on the inside sticker or sent securely; never share.</li>
-          <li><strong>Bronze badge</strong> — required to receive redeemed value; get it via the app.</li>
+          <li>
+            <strong>Public code</strong> — on the QR or outside sticker; safe to share for balance
+            check.
+          </li>
+          <li>
+            <strong>Private code</strong> — on the inside sticker or sent securely; never share.
+          </li>
+          <li>
+            <strong>Bronze badge</strong> — required to receive redeemed value; get it via the app.
+          </li>
         </ul>
         <p>
           <Link to={ROUTES.CHECK_BALANCE} className="text-primary font-semibold">

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 /** Centered X icon for close buttons. Use inside a flex container for alignment. */
 export function CloseIcon({ className }: { className?: string }): React.ReactElement {

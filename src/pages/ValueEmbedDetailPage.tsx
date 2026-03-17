@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getValueEmbedCodeById, cancelValueEmbedCode } from "../services/api";
-import type { ValueEmbedCodeSet } from "../types";
-import { ROUTES } from "../constants/routes";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Badge,
-  CopyIconButton,
-  StickerPrintModal,
-  QRCodeDisplay,
-  Modal,
   Button,
+  CopyIconButton,
+  Modal,
+  QRCodeDisplay,
+  StickerPrintModal,
 } from "../components/ui";
+import { ROUTES } from "../constants/routes";
+import { cancelValueEmbedCode, getValueEmbedCodeById } from "../services/api";
+import type { ValueEmbedCodeSet } from "../types";
 import { formatTableDate } from "../utils/date";
 
 export function ValueEmbedDetailPage(): React.ReactElement {
@@ -105,9 +106,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
                 Value Embed
               </p>
               <div className="flex items-center gap-3">
-                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">
-                  {code.label}
-                </h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-zinc-950 m-0">{code.label}</h1>
                 <Badge status={code.status} />
               </div>
             </div>
@@ -213,7 +212,8 @@ export function ValueEmbedDetailPage(): React.ReactElement {
         size="confirmation"
       >
         <p className="text-zinc-700 mb-4">
-          Cancel this code? The wallet will send the value back to your funding source and the code will no longer be active.
+          Cancel this code? The wallet will send the value back to your funding source and the code
+          will no longer be active.
         </p>
         <div className="flex flex-wrap gap-2 justify-end">
           <Button variant="outline" onClick={() => setCancelConfirmOpen(false)}>

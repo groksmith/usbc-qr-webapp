@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button, Input, SearchInput, Textarea } from "../components/ui";
+import { pathToSelfTitlingDetail, ROUTES } from "../constants/routes";
 import { createSelfTitlingCodes } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
-import { ROUTES, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input, Textarea, SearchInput } from "../components/ui";
 
 const STEPS = ["Type", "Configuration", "Review", "Create"] as const;
 
@@ -62,7 +63,10 @@ export function SelfTitlingNewPage(): React.ReactElement {
 
       {step === 0 && (
         <div>
-          <p>You are creating <strong>Self-Titling</strong> code sets (item tag + UNS name, single sticker).</p>
+          <p>
+            You are creating <strong>Self-Titling</strong> code sets (item tag + UNS name, single
+            sticker).
+          </p>
           <Button onClick={() => setStep(1)}>Next</Button>
         </div>
       )}
@@ -90,19 +94,33 @@ export function SelfTitlingNewPage(): React.ReactElement {
             placeholder="e.g. alice.uns"
           />
           <div className="flex gap-3 mt-6">
-            <Button variant="outline" onClick={() => setStep(0)}>Back</Button>
-            <Button onClick={() => setStep(2)} disabled={!itemTag.trim() || !unsName.trim()}>Next</Button>
+            <Button variant="outline" onClick={() => setStep(0)}>
+              Back
+            </Button>
+            <Button onClick={() => setStep(2)} disabled={!itemTag.trim() || !unsName.trim()}>
+              Next
+            </Button>
           </div>
         </div>
       )}
 
       {step === 2 && (
         <div>
-          <p><strong>Item tag:</strong> {itemTag}</p>
-          <p><strong>UNS name:</strong> {unsName}</p>
-          {description.trim() && <p><strong>Description:</strong> {description.trim()}</p>}
+          <p>
+            <strong>Item tag:</strong> {itemTag}
+          </p>
+          <p>
+            <strong>UNS name:</strong> {unsName}
+          </p>
+          {description.trim() && (
+            <p>
+              <strong>Description:</strong> {description.trim()}
+            </p>
+          )}
           <div className="flex gap-3 mt-6">
-            <Button variant="outline" onClick={() => setStep(1)}>Back</Button>
+            <Button variant="outline" onClick={() => setStep(1)}>
+              Back
+            </Button>
             <Button onClick={handleCreate} disabled={loading}>
               {loading ? "Creating…" : "Create"}
             </Button>

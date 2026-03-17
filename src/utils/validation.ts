@@ -32,7 +32,10 @@ export function validatePublicCode(value: string): ValidationResult {
   if (!r.valid) return r;
   const trimmed = value.trim();
   if (trimmed.length > PUBLIC_CODE_MAX_LENGTH) {
-    return { valid: false, message: `Public code must be ${PUBLIC_CODE_MAX_LENGTH} characters or less.` };
+    return {
+      valid: false,
+      message: `Public code must be ${PUBLIC_CODE_MAX_LENGTH} characters or less.`,
+    };
   }
   if (!PUBLIC_CODE_PATTERN.test(trimmed)) {
     return { valid: false, message: "Public code can only contain letters, numbers, and hyphens." };
@@ -44,7 +47,10 @@ export function validatePrivateCode(value: string): ValidationResult {
   const r = validateRequired(value, "Private code");
   if (!r.valid) return r;
   if (value.length > PUBLIC_CODE_MAX_LENGTH) {
-    return { valid: false, message: `Private code must be ${PUBLIC_CODE_MAX_LENGTH} characters or less.` };
+    return {
+      valid: false,
+      message: `Private code must be ${PUBLIC_CODE_MAX_LENGTH} characters or less.`,
+    };
   }
   return { valid: true };
 }
@@ -54,7 +60,11 @@ export function validateUnsName(value: string): ValidationResult {
   if (!r.valid) return r;
   const trimmed = value.trim().toLowerCase();
   if (!UNS_NAME_PATTERN.test(trimmed)) {
-    return { valid: false, message: "UNS name must end with .uns (e.g. alice.uns). Use lowercase letters, numbers, and hyphens." };
+    return {
+      valid: false,
+      message:
+        "UNS name must end with .uns (e.g. alice.uns). Use lowercase letters, numbers, and hyphens.",
+    };
   }
   return { valid: true };
 }
@@ -63,7 +73,10 @@ export function validateDescriptionTag(value: string): ValidationResult {
   const r = validateRequired(value, "Description tag");
   if (!r.valid) return r;
   if (value.trim().length > DESCRIPTION_TAG_MAX_LENGTH) {
-    return { valid: false, message: `Description tag must be ${DESCRIPTION_TAG_MAX_LENGTH} characters or less.` };
+    return {
+      valid: false,
+      message: `Description tag must be ${DESCRIPTION_TAG_MAX_LENGTH} characters or less.`,
+    };
   }
   return { valid: true };
 }
@@ -90,7 +103,7 @@ export function validateValueAmount(value: string): ValidationResult {
 export function validateQuantity(value: string): ValidationResult {
   const r = validateRequired(value, "Quantity");
   if (!r.valid) return r;
-  const num = parseInt(value, 10);
+  const num = Number.parseInt(value, 10);
   if (Number.isNaN(num) || num < 1) {
     return { valid: false, message: "Quantity must be at least 1." };
   }

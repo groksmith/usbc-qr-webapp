@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import type React from "react";
+import { useState } from "react";
 import { transferSelfTitling } from "../services/api";
+import { UNS_NAME_HINT, validateUnsName } from "../utils/validation";
 import { Button, CopyIconButton, Modal, SearchInput } from "./ui";
-import { validateUnsName, UNS_NAME_HINT } from "../utils/validation";
 
 export interface TransferTitleModalProps {
   open: boolean;
@@ -52,9 +53,13 @@ export function TransferTitleModal({
     <Modal open={open} onClose={handleClose} title="Transfer title">
       <div className="flex flex-col gap-5 w-full min-w-0 sm:min-w-[320px]">
         <div className="p-3 px-4 bg-slate-50 rounded-card text-sm">
-          <p className="m-0 mb-1.5 text-muted"><strong>Item tag</strong></p>
+          <p className="m-0 mb-1.5 text-muted">
+            <strong>Item tag</strong>
+          </p>
           <p className="m-0 text-zinc-950">{itemTag}</p>
-          <p className="mt-3 mb-0 text-muted"><strong>Public code</strong></p>
+          <p className="mt-3 mb-0 text-muted">
+            <strong>Public code</strong>
+          </p>
           <div className="flex items-center gap-0 mt-1">
             <code className="font-mono text-sm text-zinc-950">{publicCode}</code>
             <CopyIconButton text={publicCode} />
@@ -65,7 +70,10 @@ export function TransferTitleModal({
           required
           hint={UNS_NAME_HINT}
           value={recipient}
-          onChange={(e) => { setRecipient(e.target.value); setRecipientError(undefined); }}
+          onChange={(e) => {
+            setRecipient(e.target.value);
+            setRecipientError(undefined);
+          }}
           placeholder="Search or enter e.g. bob.uns"
           error={recipientError}
         />

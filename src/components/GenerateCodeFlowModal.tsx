@@ -1,18 +1,18 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createValueEmbedCodes, createSelfTitlingCodes } from "../services/api";
-import type { ValueEmbedCodeSet, SelfTitlingCodeSet, BulkValueEmbedItem } from "../types";
-import { pathToValueEmbedDetail, pathToSelfTitlingDetail } from "../constants/routes";
-import { Button, Input, Textarea, SearchInput, CloseIcon } from "./ui";
+import { pathToSelfTitlingDetail, pathToValueEmbedDetail } from "../constants/routes";
+import { createSelfTitlingCodes, createValueEmbedCodes } from "../services/api";
+import type { BulkValueEmbedItem, SelfTitlingCodeSet, ValueEmbedCodeSet } from "../types";
 import {
-  validateDescriptionTag,
-  validateValueAmount,
-  validateQuantity,
-  validateItemTag,
-  validateUnsName,
-  validateImageFile,
   UNS_NAME_HINT,
+  validateDescriptionTag,
+  validateImageFile,
+  validateItemTag,
+  validateQuantity,
+  validateUnsName,
+  validateValueAmount,
 } from "../utils/validation";
+import { Button, CloseIcon, Input, SearchInput, Textarea } from "./ui";
 
 type CodeType = "value-embed" | "self-titling" | null;
 
@@ -95,7 +95,7 @@ export function GenerateCodeFlowModal({
 
   if (!open) return null;
 
-  const parsedQty = Math.max(1, parseInt(quantity, 10) || 1);
+  const parsedQty = Math.max(1, Number.parseInt(quantity, 10) || 1);
   const isBulk = codeType === "value-embed" && parsedQty > 1;
   const totalSteps = isBulk ? 5 : 4;
 
@@ -165,7 +165,7 @@ export function GenerateCodeFlowModal({
   const validateBulkItems = (): boolean => {
     for (const item of bulkItems) {
       const n = Number(item.value);
-      if (!item.value || isNaN(n) || n <= 0) return false;
+      if (!item.value || Number.isNaN(n) || n <= 0) return false;
     }
     return true;
   };
@@ -234,7 +234,9 @@ export function GenerateCodeFlowModal({
   };
 
   const applyExpirationToAll = (): void => {
-    setBulkItems((prev) => prev.map((item) => ({ ...item, expiration: prev[0]?.expiration ?? "" })));
+    setBulkItems((prev) =>
+      prev.map((item) => ({ ...item, expiration: prev[0]?.expiration ?? "" }))
+    );
   };
 
   const successList = createdVE ?? createdST ?? [];
@@ -244,9 +246,10 @@ export function GenerateCodeFlowModal({
   const bulkMin = bulkValues.length > 0 ? Math.min(...bulkValues) : 0;
   const bulkMax = bulkValues.length > 0 ? Math.max(...bulkValues) : 0;
 
-  const shellClass = isBulk && step === 2
-    ? "w-full max-w-[640px] rounded-[16px] sm:rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-4 sm:p-6"
-    : "w-full max-w-[420px] rounded-[16px] sm:rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-4 sm:p-6";
+  const shellClass =
+    isBulk && step === 2
+      ? "w-full max-w-[640px] rounded-[16px] sm:rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-4 sm:p-6"
+      : "w-full max-w-[420px] rounded-[16px] sm:rounded-[20px] bg-white border-0 outline-none shadow-[0_8px_48px_rgba(0,0,0,0.10)] p-4 sm:p-6";
 
   const codeTypeBtnClass = (type: "value-embed" | "self-titling", marginClass: string): string => {
     const selected = codeType === type;
@@ -255,8 +258,8 @@ export function GenerateCodeFlowModal({
       selected
         ? "border-2 border-primary bg-primary/[0.06]"
         : hovered
-        ? "border-2 border-primary/50 bg-primary/[0.04]"
-        : "border border-[#E0E0E0] bg-white"
+          ? "border-2 border-primary/50 bg-primary/[0.04]"
+          : "border border-[#E0E0E0] bg-white"
     }`;
   };
 
@@ -295,7 +298,8 @@ export function GenerateCodeFlowModal({
                   Value Embed
                 </span>
                 <span className="text-[13px] font-normal text-muted leading-[1.4]">
-                  Embed value onto physical objects (coins, cards). Includes funding source, balance check, and redemption via public/private code pair.
+                  Embed value onto physical objects (coins, cards). Includes funding source, balance
+                  check, and redemption via public/private code pair.
                 </span>
               </button>
 
@@ -310,12 +314,15 @@ export function GenerateCodeFlowModal({
                   Self-Titling
                 </span>
                 <span className="text-[13px] font-normal text-muted leading-[1.4]">
-                  Enable self-titling of physical objects using stickers. Attached to a UNS name with auto-generated profile page and transferable ownership.
+                  Enable self-titling of physical objects using stickers. Attached to a UNS name
+                  with auto-generated profile page and transferable ownership.
                 </span>
               </button>
 
               <Button
-                onClick={() => { if (codeType) setStep(1); }}
+                onClick={() => {
+                  if (codeType) setStep(1);
+                }}
                 disabled={!codeType}
                 className="w-full h-11 text-sm font-semibold"
               >
@@ -327,15 +334,22 @@ export function GenerateCodeFlowModal({
           {/* STEP 1 — Configuration (Value Embed) */}
           {step === 1 && codeType === "value-embed" && (
             <>
-              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Configure Value Embed Code</h2>
-              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">Set up your code parameters.</p>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+                Configure Value Embed Code
+              </h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
+                Set up your code parameters.
+              </p>
 
               <Input
                 label="Description tag"
                 required
                 hint="Short label for this code set (e.g. Holiday promo 2024)"
                 value={descriptionTag}
-                onChange={(e) => { setDescriptionTag(e.target.value); setErrors((prev) => ({ ...prev, descriptionTag: undefined })); }}
+                onChange={(e) => {
+                  setDescriptionTag(e.target.value);
+                  setErrors((prev) => ({ ...prev, descriptionTag: undefined }));
+                }}
                 placeholder="e.g. Holiday promo 2024"
                 error={errors.descriptionTag}
                 style={{ border: "1px solid #E0E0E0" }}
@@ -362,7 +376,10 @@ export function GenerateCodeFlowModal({
                 min={1}
                 hint="At least 1. For bulk (>1), you can customize each code's value next."
                 value={quantity}
-                onChange={(e) => { setQuantity(e.target.value); setErrors((prev) => ({ ...prev, quantity: undefined })); }}
+                onChange={(e) => {
+                  setQuantity(e.target.value);
+                  setErrors((prev) => ({ ...prev, quantity: undefined }));
+                }}
                 error={errors.quantity}
                 style={{ border: "1px solid #E0E0E0" }}
               />
@@ -374,7 +391,10 @@ export function GenerateCodeFlowModal({
                     type="number"
                     hint="Positive number (e.g. 50)"
                     value={value}
-                    onChange={(e) => { setValue(e.target.value); setErrors((prev) => ({ ...prev, value: undefined })); }}
+                    onChange={(e) => {
+                      setValue(e.target.value);
+                      setErrors((prev) => ({ ...prev, value: undefined }));
+                    }}
                     placeholder="e.g. 50"
                     error={errors.value}
                     style={{ border: "1px solid #E0E0E0" }}
@@ -406,8 +426,16 @@ export function GenerateCodeFlowModal({
                 </p>
               )}
               <div className="flex justify-end gap-2 sm:gap-3 mt-2 flex-wrap">
-                <Button variant="outline" onClick={() => setStep(0)} className="w-full sm:w-[120px] h-11">Back</Button>
-                <Button onClick={handleConfigNext} className="w-full sm:w-[120px] h-11">Next</Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(0)}
+                  className="w-full sm:w-[120px] h-11"
+                >
+                  Back
+                </Button>
+                <Button onClick={handleConfigNext} className="w-full sm:w-[120px] h-11">
+                  Next
+                </Button>
               </div>
             </>
           )}
@@ -415,8 +443,12 @@ export function GenerateCodeFlowModal({
           {/* STEP 1 — Configuration (Self-Titling) */}
           {step === 1 && codeType === "self-titling" && (
             <>
-              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Configure Self-Titling Code</h2>
-              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">Set up your code parameters.</p>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+                Configure Self-Titling Code
+              </h2>
+              <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
+                Set up your code parameters.
+              </p>
 
               <div className="mb-4">
                 <label className="block text-sm font-medium text-zinc-950 mb-1.5">
@@ -455,7 +487,10 @@ export function GenerateCodeFlowModal({
                       </label>
                       <button
                         type="button"
-                        onClick={() => { setSelfTitlingImageUrl(null); setSelfTitlingImageError(undefined); }}
+                        onClick={() => {
+                          setSelfTitlingImageUrl(null);
+                          setSelfTitlingImageError(undefined);
+                        }}
                         className="py-2 px-3 text-sm font-medium text-zinc-700 bg-zinc-100 border border-zinc-200 rounded-[8px] cursor-pointer hover:bg-zinc-200"
                       >
                         Remove
@@ -499,7 +534,9 @@ export function GenerateCodeFlowModal({
                     <span className="text-sm font-medium text-zinc-600">
                       {isDraggingOverImage ? "Drop image here" : "Click or drag and drop to upload"}
                     </span>
-                    <span className="text-xs text-muted mt-1 block text-center">Recommended: 1:1 aspect ratio (e.g. 1080×1080 px), minimum 100 KB.</span>
+                    <span className="text-xs text-muted mt-1 block text-center">
+                      Recommended: 1:1 aspect ratio (e.g. 1080×1080 px), minimum 100 KB.
+                    </span>
                     <span className="text-xs text-muted mt-0.5 block">PNG, JPG, JPEG</span>
                     <input
                       type="file"
@@ -531,7 +568,10 @@ export function GenerateCodeFlowModal({
                 required
                 hint="Short label for this item (e.g. Conference badge)"
                 value={itemTag}
-                onChange={(e) => { setItemTag(e.target.value); setErrors((prev) => ({ ...prev, itemTag: undefined })); }}
+                onChange={(e) => {
+                  setItemTag(e.target.value);
+                  setErrors((prev) => ({ ...prev, itemTag: undefined }));
+                }}
                 placeholder="e.g. Conference badge"
                 error={errors.itemTag}
                 style={{ border: "1px solid #E0E0E0" }}
@@ -549,14 +589,25 @@ export function GenerateCodeFlowModal({
                 required
                 hint={UNS_NAME_HINT}
                 value={unsName}
-                onChange={(e) => { setUnsName(e.target.value); setErrors((prev) => ({ ...prev, unsName: undefined })); }}
+                onChange={(e) => {
+                  setUnsName(e.target.value);
+                  setErrors((prev) => ({ ...prev, unsName: undefined }));
+                }}
                 placeholder="e.g. alice.uns"
                 error={errors.unsName}
               />
               <div className="flex justify-end gap-2 sm:gap-3 mt-2 flex-wrap">
-                <Button variant="outline" onClick={() => setStep(0)} className="w-full sm:w-[120px] h-11">Back</Button>
                 <Button
-                  onClick={() => { if (validateSelfTitlingConfig()) setStep(2); }}
+                  variant="outline"
+                  onClick={() => setStep(0)}
+                  className="w-full sm:w-[120px] h-11"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (validateSelfTitlingConfig()) setStep(2);
+                  }}
                   className="w-full sm:w-[120px] h-11"
                 >
                   Next
@@ -568,7 +619,9 @@ export function GenerateCodeFlowModal({
           {/* STEP 2 (bulk only) — Bulk Grid */}
           {isBulk && step === 2 && (
             <>
-              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Customize each code</h2>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+                Customize each code
+              </h2>
               <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
                 Set individual values and expirations for {parsedQty} codes.
               </p>
@@ -601,14 +654,23 @@ export function GenerateCodeFlowModal({
                 <table className="w-full border-collapse text-sm hidden sm:table">
                   <thead>
                     <tr className="bg-[#f8fafa] sticky top-0 z-[1]">
-                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7] w-12">#</th>
-                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7]">Value ($)</th>
-                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7]">Expiration</th>
+                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7] w-12">
+                        #
+                      </th>
+                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7]">
+                        Value ($)
+                      </th>
+                      <th className="p-[10px_12px] text-left font-semibold text-body-text text-xs border-b border-[#e4e4e7]">
+                        Expiration
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {bulkItems.map((item, i) => (
-                      <tr key={i} className={i < bulkItems.length - 1 ? "border-b border-[#f0f0f0]" : ""}>
+                      <tr
+                        key={i}
+                        className={i < bulkItems.length - 1 ? "border-b border-[#f0f0f0]" : ""}
+                      >
                         <td className="p-[8px_12px] text-muted font-medium">{i + 1}</td>
                         <td className="p-[6px_8px]">
                           <input
@@ -652,13 +714,22 @@ export function GenerateCodeFlowModal({
               </div>
 
               <div className="text-[13px] text-muted mb-4">
-                Total: <strong className="text-zinc-950">${bulkTotal.toLocaleString()}</strong> across {parsedQty} codes
+                Total: <strong className="text-zinc-950">${bulkTotal.toLocaleString()}</strong>{" "}
+                across {parsedQty} codes
               </div>
 
               <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
-                <Button variant="outline" onClick={() => setStep(1)} className="w-full sm:w-[120px] h-11">Back</Button>
                 <Button
-                  onClick={() => { if (validateBulkItems()) setStep(reviewStep); }}
+                  variant="outline"
+                  onClick={() => setStep(1)}
+                  className="w-full sm:w-[120px] h-11"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={() => {
+                    if (validateBulkItems()) setStep(reviewStep);
+                  }}
                   disabled={!validateBulkItems()}
                   className="w-full sm:w-[120px] h-11"
                 >
@@ -671,7 +742,9 @@ export function GenerateCodeFlowModal({
           {/* STEP 2 or 3 — Review */}
           {step === reviewStep && (
             <>
-              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Review and create</h2>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+                Review and create
+              </h2>
               <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
                 Confirm your details and generate {isBulk ? "codes" : "code"}.
               </p>
@@ -679,38 +752,75 @@ export function GenerateCodeFlowModal({
               <div className="p-5 rounded-card bg-slate-50 mb-6 text-sm text-zinc-950 leading-loose">
                 {codeType === "value-embed" && !isBulk && (
                   <>
-                    <div><span className="text-muted">Type:</span> Value Embed</div>
-                    <div><span className="text-muted">Description:</span> {descriptionTag}</div>
-                    <div><span className="text-muted">Funding source:</span> {fundingSourceId}</div>
-                    <div><span className="text-muted">Value:</span> ${value}</div>
-                    <div><span className="text-muted">Expiration:</span> {expirationEnabled && expiration ? expiration : "None"}</div>
+                    <div>
+                      <span className="text-muted">Type:</span> Value Embed
+                    </div>
+                    <div>
+                      <span className="text-muted">Description:</span> {descriptionTag}
+                    </div>
+                    <div>
+                      <span className="text-muted">Funding source:</span> {fundingSourceId}
+                    </div>
+                    <div>
+                      <span className="text-muted">Value:</span> ${value}
+                    </div>
+                    <div>
+                      <span className="text-muted">Expiration:</span>{" "}
+                      {expirationEnabled && expiration ? expiration : "None"}
+                    </div>
                   </>
                 )}
                 {codeType === "value-embed" && isBulk && (
                   <>
-                    <div><span className="text-muted">Type:</span> Value Embed (bulk)</div>
-                    <div><span className="text-muted">Description:</span> {descriptionTag}</div>
-                    <div><span className="text-muted">Funding source:</span> {fundingSourceId}</div>
-                    <div><span className="text-muted">Quantity:</span> {parsedQty} codes</div>
+                    <div>
+                      <span className="text-muted">Type:</span> Value Embed (bulk)
+                    </div>
+                    <div>
+                      <span className="text-muted">Description:</span> {descriptionTag}
+                    </div>
+                    <div>
+                      <span className="text-muted">Funding source:</span> {fundingSourceId}
+                    </div>
+                    <div>
+                      <span className="text-muted">Quantity:</span> {parsedQty} codes
+                    </div>
                     <div>
                       <span className="text-muted">Values:</span>{" "}
                       {bulkMin === bulkMax ? `$${bulkMin} each` : `$${bulkMin}–$${bulkMax}`}
                     </div>
-                    <div><span className="text-muted">Total value:</span> ${bulkTotal.toLocaleString()}</div>
+                    <div>
+                      <span className="text-muted">Total value:</span> ${bulkTotal.toLocaleString()}
+                    </div>
                   </>
                 )}
                 {codeType === "self-titling" && (
                   <>
-                    <div><span className="text-muted">Type:</span> Self-Titling</div>
-                    <div><span className="text-muted">Item tag:</span> {itemTag}</div>
-                    <div><span className="text-muted">UNS name:</span> {unsName}</div>
+                    <div>
+                      <span className="text-muted">Type:</span> Self-Titling
+                    </div>
+                    <div>
+                      <span className="text-muted">Item tag:</span> {itemTag}
+                    </div>
+                    <div>
+                      <span className="text-muted">UNS name:</span> {unsName}
+                    </div>
                     {selfTitlingDescription.trim() && (
-                      <div><span className="text-muted">Description:</span> {selfTitlingDescription.trim()}</div>
+                      <div>
+                        <span className="text-muted">Description:</span>{" "}
+                        {selfTitlingDescription.trim()}
+                      </div>
                     )}
-                    <div><span className="text-muted">Image:</span> {selfTitlingImageUrl ? "Yes" : "None"}</div>
+                    <div>
+                      <span className="text-muted">Image:</span>{" "}
+                      {selfTitlingImageUrl ? "Yes" : "None"}
+                    </div>
                     {selfTitlingImageUrl && (
                       <div className="mt-2 w-[120px] h-[120px] rounded-[8px] overflow-hidden border border-[#e4e4e7] bg-zinc-100">
-                        <img src={selfTitlingImageUrl} alt="" className="w-full h-full object-cover" />
+                        <img
+                          src={selfTitlingImageUrl}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
                       </div>
                     )}
                   </>
@@ -718,8 +828,18 @@ export function GenerateCodeFlowModal({
               </div>
 
               <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
-                <Button variant="outline" onClick={() => setStep(isBulk ? 2 : 1)} className="w-full sm:w-[120px] h-11">Back</Button>
-                <Button onClick={handleCreate} disabled={loading} className="w-full sm:w-[140px] h-11">
+                <Button
+                  variant="outline"
+                  onClick={() => setStep(isBulk ? 2 : 1)}
+                  className="w-full sm:w-[120px] h-11"
+                >
+                  Back
+                </Button>
+                <Button
+                  onClick={handleCreate}
+                  disabled={loading}
+                  className="w-full sm:w-[140px] h-11"
+                >
                   {loading ? "Creating…" : isBulk ? "Create codes" : "Create code"}
                 </Button>
               </div>
@@ -732,7 +852,9 @@ export function GenerateCodeFlowModal({
               <div className="text-center mb-2">
                 <span className="text-[40px]">✓</span>
               </div>
-              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">Code created successfully</h2>
+              <h2 className="m-0 mb-2 text-[22px] font-bold text-zinc-950 text-center">
+                Code created successfully
+              </h2>
               <p className="m-0 mb-7 text-sm text-muted font-normal text-center">
                 {successList.length === 1
                   ? "Your code is ready to use."
@@ -740,32 +862,44 @@ export function GenerateCodeFlowModal({
               </p>
 
               <div className="p-4 px-5 rounded-card bg-slate-50 mb-6 text-sm max-h-[180px] overflow-y-auto">
-                {successList.slice(0, 8).map((c: { id: string; publicCode: string; label?: string; itemTag?: string }) => (
-                  <div key={c.id} className="mb-1.5">
-                    <a
-                      href={createdVE ? pathToValueEmbedDetail(c.id) : pathToSelfTitlingDetail(c.id)}
-                      className="text-primary font-medium underline"
-                    >
-                      {(c as ValueEmbedCodeSet).label ?? (c as SelfTitlingCodeSet).itemTag} — {c.publicCode}
-                    </a>
-                  </div>
-                ))}
+                {successList
+                  .slice(0, 8)
+                  .map(
+                    (c: { id: string; publicCode: string; label?: string; itemTag?: string }) => (
+                      <div key={c.id} className="mb-1.5">
+                        <a
+                          href={
+                            createdVE ? pathToValueEmbedDetail(c.id) : pathToSelfTitlingDetail(c.id)
+                          }
+                          className="text-primary font-medium underline"
+                        >
+                          {(c as ValueEmbedCodeSet).label ?? (c as SelfTitlingCodeSet).itemTag} —{" "}
+                          {c.publicCode}
+                        </a>
+                      </div>
+                    )
+                  )}
                 {successList.length > 8 && (
                   <div className="text-muted mt-1">and {successList.length - 8} more…</div>
                 )}
               </div>
 
               <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
-                <Button variant="outline" onClick={resetAndClose} className="w-full sm:w-[120px] h-11">
+                <Button
+                  variant="outline"
+                  onClick={resetAndClose}
+                  className="w-full sm:w-[120px] h-11"
+                >
                   Done
                 </Button>
                 <Button
                   onClick={() => {
-                    const href = createdVE?.length
-                      ? pathToValueEmbedDetail(createdVE[0].id)
-                      : createdST?.length
-                        ? pathToSelfTitlingDetail(createdST[0].id)
-                        : "/codes";
+                    const href =
+                      (createdVE?.length ?? 0) > 0
+                        ? pathToValueEmbedDetail(createdVE![0].id)
+                        : (createdST?.length ?? 0) > 0
+                          ? pathToSelfTitlingDetail(createdST![0].id)
+                          : "/codes";
                     resetAndClose();
                     navigate(href);
                   }}

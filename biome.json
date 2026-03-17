@@ -1,0 +1,84 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.4.7/schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": { "ignoreUnknown": false, "includes": ["src/**", "*.json", "*.js", "*.mjs", "*.cjs"] },
+  "css": { "parser": { "tailwindDirectives": true }, "linter": { "enabled": true }, "formatter": { "enabled": false } },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineEnding": "lf",
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "jsxQuoteStyle": "double",
+      "trailingCommas": "es5",
+      "semicolons": "always",
+      "arrowParentheses": "always",
+      "bracketSameLine": false
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        "noForEach": "error",
+        "noStaticOnlyClass": "error",
+        "noUselessSwitchCase": "error",
+        "noUselessUndefined": "error",
+        "useDateNow": "error",
+        "useFlatMap": "error",
+        "useIndexOf": "error"
+      },
+      "correctness": {
+        "noUnusedVariables": "error",
+        "noUnusedPrivateClassMembers": "error",
+        "useExhaustiveDependencies": "warn",
+        "useHookAtTopLevel": "error",
+        "useJsxKeyInIterable": "error"
+      },
+      "style": {
+        "noNegationElse": "off",
+        "noNestedTernary": "off",
+        "noNonNullAssertion": "off",
+        "noSubstr": "error",
+        "useCollapsedIf": "error",
+        "useExplicitLengthCheck": "error",
+        "useForOf": "error",
+        "useNumberNamespace": "error",
+        "useNumericSeparators": "error",
+        "useThrowNewError": "error",
+        "useTrimStartEnd": "error",
+        "useConst": "error",
+        "noCommonJs": "off"
+      },
+      "suspicious": {
+        "noDocumentCookie": "error",
+        "noEmptyBlockStatements": "error",
+        "noArrayIndexKey": "warn",
+        "noExplicitAny": "error",
+        "noThenProperty": "error",
+        "noUnusedExpressions": "off",
+        "useErrorMessage": "error",
+        "useIsArray": "error",
+        "useNumberToFixedDigitsArgument": "error"
+      },
+      "a11y": {
+        "recommended": true,
+        "noSvgWithoutTitle": "warn",
+        "useKeyWithClickEvents": "warn",
+        "noNoninteractiveElementInteractions": "warn",
+        "noStaticElementInteractions": "warn",
+        "useSemanticElements": "warn",
+        "noLabelWithoutControl": "warn"
+      }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": { "source": { "organizeImports": "on" } }
+  }
+}

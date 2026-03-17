@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -11,7 +11,16 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   optional?: boolean;
 }
 
-export function Input({ label, error, hint, required, optional, id, style, ...props }: InputProps): React.ReactElement {
+export function Input({
+  label,
+  error,
+  hint,
+  required,
+  optional,
+  id,
+  style,
+  ...props
+}: InputProps): React.ReactElement {
   const inputId = id ?? (label ? label.replace(/\s+/g, "-").toLowerCase() : undefined);
   return (
     <div className="mb-4 w-full">
@@ -22,9 +31,7 @@ export function Input({ label, error, hint, required, optional, id, style, ...pr
             {optional && <span className="font-normal text-muted"> (optional)</span>}
             {required && <span className="text-negative ml-0.5">*</span>}
           </label>
-          {hint && !error && (
-            <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>
-          )}
+          {hint && !error && <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>}
         </>
       )}
       <input

@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getSelfTitlingCodeById } from "../services/api";
-import type { SelfTitlingCodeSet } from "../types";
-import { ROUTES } from "../constants/routes";
-import { SelfTitlingItemCard } from "../components/SelfTitlingItemCard";
+import type React from "react";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { EditSelfTitlingModal } from "../components/EditSelfTitlingModal";
+import { SelfTitlingItemCard } from "../components/SelfTitlingItemCard";
 import { TransferTitleModal } from "../components/TransferTitleModal";
 import { StickerPrintModal } from "../components/ui";
+import { ROUTES } from "../constants/routes";
+import { getSelfTitlingCodeById } from "../services/api";
+import type { SelfTitlingCodeSet } from "../types";
 
 export function SelfTitlingDetailPage(): React.ReactElement {
   const { id } = useParams<{ id: string }>();

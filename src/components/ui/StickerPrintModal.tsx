@@ -1,6 +1,6 @@
-import React from "react";
-import { Modal } from "./Modal";
+import type React from "react";
 import { Button } from "./Button";
+import { Modal } from "./Modal";
 
 /** Optional code data for Value Embed 2-sticker print (3.11: outside = QR + public code, inside = private code). */
 export interface ValueEmbedCodePrintData {
@@ -44,8 +44,8 @@ export function StickerPrintModal({
         "Value Embed – Outside sticker (QR code + public code)",
         "======================================================",
         "",
-        "QR code links to: " + qrUrl,
-        "Public code: " + publicCode,
+        `QR code links to: ${qrUrl}`,
+        `Public code: ${publicCode}`,
         "",
         "Place this sticker on the outside. Recipients can scan the QR or enter the public code to check balance.",
       ].join("\n");
@@ -53,15 +53,21 @@ export function StickerPrintModal({
         "Value Embed – Inside sticker (private code)",
         "===========================================",
         "",
-        "Private code: " + (privateCode ?? "(not provided)"),
+        `Private code: ${privateCode ?? "(not provided)"}`,
         "",
         "Keep this sticker hidden. Use the private code only when redeeming.",
       ].join("\n");
       mockDownload("value-embed-outside-sticker.txt", outsideContent);
       mockDownload("value-embed-inside-sticker.txt", insideContent);
     } else if (variant === "value-embed") {
-      mockDownload("value-embed-outside-sticker.txt", "Mock sticker print file - replace with real print. Open from a code detail to get a template with QR URL and codes.");
-      mockDownload("value-embed-inside-sticker.txt", "Mock sticker print file - replace with real print.");
+      mockDownload(
+        "value-embed-outside-sticker.txt",
+        "Mock sticker print file - replace with real print. Open from a code detail to get a template with QR URL and codes."
+      );
+      mockDownload(
+        "value-embed-inside-sticker.txt",
+        "Mock sticker print file - replace with real print."
+      );
     } else {
       mockDownload("self-titling-sticker.txt", "Mock sticker print file - replace with real print");
     }

@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useEffect, useState } from "react";
 import { updateSelfTitlingCode } from "../services/api";
 import type { SelfTitlingCodeSet } from "../types";
 import { validateImageFile } from "../utils/validation";
-import { Button, Input, Textarea, CloseIcon } from "./ui";
+import { Button, CloseIcon, Input, Textarea } from "./ui";
 
 function CloseButton({ onClick }: { onClick: () => void }): React.ReactElement {
   return (
@@ -85,20 +86,18 @@ export function EditSelfTitlingModal({
       aria-modal="true"
       aria-labelledby="edit-self-titling-title"
     >
-      <div
-        className={`${shellClass} mx-0 sm:mx-4`}
-        onClick={(ev) => ev.stopPropagation()}
-      >
+      <div className={`${shellClass} mx-0 sm:mx-4`} onClick={(ev) => ev.stopPropagation()}>
         <div className="flex items-center justify-between mb-1 min-h-[32px] gap-2">
-          <h2 id="edit-self-titling-title" className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950">
+          <h2
+            id="edit-self-titling-title"
+            className="m-0 text-lg sm:text-[22px] font-bold text-zinc-950"
+          >
             Edit Self-Titling Code
           </h2>
           <CloseButton onClick={handleClose} />
         </div>
 
-        <p className="m-0 mb-6 text-sm text-muted">
-          Update item image, tag, and description.
-        </p>
+        <p className="m-0 mb-6 text-sm text-muted">Update item image, tag, and description.</p>
 
         <form onSubmit={handleSubmit} className="w-full">
           <div className="mb-4">
@@ -108,11 +107,7 @@ export function EditSelfTitlingModal({
             {imageUrl ? (
               <div className="flex flex-col gap-2">
                 <div className="w-[200px] h-[200px] rounded-[8px] overflow-hidden border border-[#e4e4e7] bg-zinc-100">
-                  <img
-                    src={imageUrl}
-                    alt="Item preview"
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={imageUrl} alt="Item preview" className="w-full h-full object-cover" />
                 </div>
                 <div className="flex gap-2">
                   <label className="py-2 px-3 text-sm font-medium text-primary bg-primary/[0.08] border border-primary/20 rounded-[8px] cursor-pointer">
@@ -138,7 +133,10 @@ export function EditSelfTitlingModal({
                   </label>
                   <button
                     type="button"
-                    onClick={() => { setImageUrl(null); setImageError(undefined); }}
+                    onClick={() => {
+                      setImageUrl(null);
+                      setImageError(undefined);
+                    }}
                     className="py-2 px-3 text-sm font-medium text-zinc-700 bg-zinc-100 border border-zinc-200 rounded-[8px] cursor-pointer hover:bg-zinc-200"
                   >
                     Remove
@@ -171,16 +169,17 @@ export function EditSelfTitlingModal({
                 />
               </label>
             )}
-            {imageError && (
-              <p className="mt-1 mb-0 text-sm text-negative">{imageError}</p>
-            )}
+            {imageError && <p className="mt-1 mb-0 text-sm text-negative">{imageError}</p>}
           </div>
 
           <Input
             label="Item tag"
             required
             value={itemTag}
-            onChange={(e) => { setItemTag(e.target.value); setErrors((prev) => ({ ...prev, itemTag: undefined })); }}
+            onChange={(e) => {
+              setItemTag(e.target.value);
+              setErrors((prev) => ({ ...prev, itemTag: undefined }));
+            }}
             placeholder="e.g. Conference badge"
             error={errors.itemTag}
             style={{ border: "1px solid #E0E0E0" }}
@@ -204,11 +203,7 @@ export function EditSelfTitlingModal({
             >
               Cancel
             </Button>
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full sm:w-[120px] h-11"
-            >
+            <Button type="submit" disabled={loading} className="w-full sm:w-[120px] h-11">
               {loading ? "Saving…" : "Save"}
             </Button>
           </div>

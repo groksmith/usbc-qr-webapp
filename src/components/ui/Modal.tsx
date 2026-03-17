@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { CloseIcon } from "./CloseIcon";
 
 interface ModalProps {
@@ -10,7 +10,13 @@ interface ModalProps {
   size?: "default" | "confirmation";
 }
 
-export function Modal({ open, onClose, title, children, size = "default" }: ModalProps): React.ReactElement {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  size = "default",
+}: ModalProps): React.ReactElement {
   if (!open) return <></>;
   const innerClass =
     size === "confirmation"
@@ -24,10 +30,7 @@ export function Modal({ open, onClose, title, children, size = "default" }: Moda
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      <div
-        className={innerClass}
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className={innerClass} onClick={(e) => e.stopPropagation()}>
         <div className="flex justify-between items-center gap-2 mb-4">
           <h2 id="modal-title" className="m-0 text-lg sm:text-xl font-semibold truncate min-w-0">
             {title}
