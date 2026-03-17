@@ -21,9 +21,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
     "eject": "react-scripts eject",
     "lint": "biome check src/",
     "lint:fix": "biome check --write src/",
@@ -45,6 +45,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.7",
+    "@craco/craco": "^7.1.0",
     "@tailwindcss/postcss": "^4.2.0",
     "knip": "^5.85.0",
     "postcss": "^8.5.8",
