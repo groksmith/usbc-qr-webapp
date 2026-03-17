@@ -1,6 +1,6 @@
 import React from "react";
 import { QRCodeSVG } from "qrcode.react";
-import usbcIcon from "../../assets/images/usbc-icon.svg";
+const usbcIcon = "/assets/images/usbc-icon.svg";
 
 interface QRCodeDisplayProps {
   /** URL or text to encode in the QR code */

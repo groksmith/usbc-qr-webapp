@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../constants/routes";
-import brandLogo from "../../assets/images/brand_logo.svg";
-import profilePicPlaceholder from "../../assets/images/profile-pic-placeholder.jpg";
+const brandLogo = "/assets/images/brand_logo.svg";
+const profilePicPlaceholder = "/assets/images/profile-pic-placeholder.jpg";
 
 export function AppHeader(): React.ReactElement {
   const [userMenuOpen, setUserMenuOpen] = useState(false);

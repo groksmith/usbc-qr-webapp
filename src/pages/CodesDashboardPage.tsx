@@ -7,7 +7,7 @@ import type { ValueEmbedCodePrintData } from "../components/ui/StickerPrintModal
 import { STATUS_LABELS, STATUS_COLORS } from "../constants/status";
 import { downloadValueEmbedCsv, downloadSelfTitlingCsv } from "../utils/csvExport";
 import { formatTableDate } from "../utils/date";
-import csvIcon from "../assets/icons/csv_icon.png";
+const csvIcon = "/assets/icons/csv_icon.png";
 import { GenerateCodeFlowModal } from "../components/GenerateCodeFlowModal";
 import { EditValueEmbedModal } from "../components/EditValueEmbedModal";
 import { EditSelfTitlingModal } from "../components/EditSelfTitlingModal";
