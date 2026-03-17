@@ -213,7 +213,7 @@ export function CodesDashboardPage(): React.ReactElement {
               aria-label="Download CSV"
               className="h-11 w-full sm:w-[165px] px-4 rounded-card border border-[#dcdcdc] outline-none bg-white text-[#1e1e1e] text-sm font-semibold font-sans inline-flex items-center justify-center gap-[10px] cursor-pointer box-border"
             >
-              <img src={csvIcon} alt="" width={18} height={18} className="block flex-shrink-0" />
+              <img src={csvIcon} alt="" width={18} height={18} className="block shrink-0" />
               <span>Download csv</span>
             </button>
             <div className="h-11 w-full sm:w-[165px] flex">

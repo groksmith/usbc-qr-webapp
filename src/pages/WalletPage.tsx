@@ -50,7 +50,7 @@ export function WalletPage(): React.ReactElement {
             {valueEmbedItems.map((row) => (
               <div
                 key={row.id}
-                className="rounded-lg border border-[#e5e7eb] bg-white p-4 shadow-sm"
+                className="rounded-lg border border-[#e5e7eb] bg-white p-4 shadow-xs"
               >
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="flex justify-between items-start gap-2">
@@ -123,7 +123,7 @@ export function WalletPage(): React.ReactElement {
             {selfTitlingItems.map((row) => (
               <div
                 key={row.id}
-                className="rounded-lg border border-[#e5e7eb] bg-white p-4 shadow-sm"
+                className="rounded-lg border border-[#e5e7eb] bg-white p-4 shadow-xs"
               >
                 <div className="flex flex-col gap-2 text-sm">
                   <div className="flex justify-between items-start gap-2">

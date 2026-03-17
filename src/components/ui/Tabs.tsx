@@ -30,7 +30,7 @@ export function Tabs({ tabs, activeId, onChange, variant = "default" }: TabsProp
               key={tab.id}
               type="button"
               onClick={() => onChange(tab.id)}
-              className={`flex items-center justify-center min-w-[140px] sm:min-w-[165px] px-4 sm:px-[30px] h-12 sm:h-[54px] text-sm sm:text-base font-semibold border-0 cursor-pointer rounded-bl-none rounded-br-none flex-shrink-0 ${radiusTL} ${radiusTR} ${
+              className={`flex items-center justify-center min-w-[140px] sm:min-w-[165px] px-4 sm:px-[30px] h-12 sm:h-[54px] text-sm sm:text-base font-semibold border-0 cursor-pointer rounded-bl-none rounded-br-none shrink-0 ${radiusTL} ${radiusTR} ${
                 isActive ? "bg-primary text-white" : "bg-transparent text-[#333333]"
               }`}
             >
@@ -44,7 +44,7 @@ export function Tabs({ tabs, activeId, onChange, variant = "default" }: TabsProp
             key={tab.id}
             type="button"
             onClick={() => onChange(tab.id)}
-            className={`py-3 sm:py-[15px] px-4 sm:px-[30px] text-sm sm:text-base border-0 border-b-[3px] border-solid cursor-pointer rounded-tl-[6px] rounded-tr-[6px] rounded-bl-none rounded-br-none flex-shrink-0 ${
+            className={`py-3 sm:py-[15px] px-4 sm:px-[30px] text-sm sm:text-base border-0 border-b-[3px] border-solid cursor-pointer rounded-tl-[6px] rounded-tr-[6px] rounded-bl-none rounded-br-none shrink-0 ${
               isActive
                 ? "font-semibold text-primary bg-primary/15 border-primary"
                 : "font-normal text-body-text bg-transparent border-transparent"

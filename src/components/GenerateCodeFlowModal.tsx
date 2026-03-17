@@ -30,14 +30,14 @@ function ProgressDots({ current, total }: { current: number; total: number }): R
         return (
           <React.Fragment key={i}>
             <span
-              className={`w-[5px] h-[5px] rounded-full flex-shrink-0 transition-all duration-200 ${
+              className={`w-[5px] h-[5px] rounded-full shrink-0 transition-all duration-200 ${
                 isActive ? "bg-transparent border border-[#09090b]" : "bg-[#6B7280] border-0"
               }`}
               aria-hidden
             />
             {i < total - 1 && (
               <span
-                className="w-[10px] h-0 border-t border-dashed border-[#6B7280] mx-px flex-shrink-0"
+                className="w-[10px] h-0 border-t border-dashed border-[#6B7280] mx-px shrink-0"
                 aria-hidden
               />
             )}
@@ -53,7 +53,7 @@ function CloseButton({ onClick }: { onClick: () => void }): React.ReactElement {
     <button
       type="button"
       onClick={onClick}
-      className="w-9 h-9 min-w-[36px] min-h-[36px] p-0 flex items-center justify-center rounded-full bg-transparent border-0 text-slate-400 cursor-pointer flex-shrink-0 hover:bg-zinc-200 transition-colors"
+      className="w-9 h-9 min-w-[36px] min-h-[36px] p-0 flex items-center justify-center rounded-full bg-transparent border-0 text-slate-400 cursor-pointer shrink-0 hover:bg-zinc-200 transition-colors"
       aria-label="Close"
     >
       <CloseIcon />

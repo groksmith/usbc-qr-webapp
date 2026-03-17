@@ -95,7 +95,7 @@ export function AppHeader(): React.ReactElement {
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" role="separator" />
               <div className="flex items-center gap-3 py-3 rounded-[8px]">
                 <div
-                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden flex-shrink-0"
+                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden shrink-0"
                   aria-hidden
                 >
                   <img
@@ -160,7 +160,7 @@ export function AppHeader(): React.ReactElement {
       </div>
 
       {/* Right (desktop only): user menu (Get Help hidden for now) */}
-      <div className="hidden sm:flex items-center justify-end gap-3 sm:gap-6 flex-shrink-0">
+      <div className="hidden sm:flex items-center justify-end gap-3 sm:gap-6 shrink-0">
         <div
           ref={userMenuRef}
           className="relative flex items-center gap-[10px] cursor-pointer"
@@ -211,7 +211,7 @@ export function AppHeader(): React.ReactElement {
               <hr className="h-px bg-[#e5e5e7] my-2 -mx-4 border-0" role="separator" />
               <div className="flex items-center gap-3 py-3 rounded-[8px]">
                 <div
-                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden flex-shrink-0"
+                  className="w-9 h-9 rounded-full bg-zinc-200 flex items-center justify-center overflow-hidden shrink-0"
                   aria-hidden
                 >
                   <img

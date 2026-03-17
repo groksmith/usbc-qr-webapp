@@ -38,7 +38,7 @@ export function QRCodeDisplay({
         aria-label={alt}
       />
       <div
-        className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded border border-zinc-200 bg-white p-[3px] shadow-sm"
+        className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded border border-zinc-200 bg-white p-[3px] shadow-xs"
         style={{ width: logoBoxSize, height: logoBoxSize }}
       >
         <img

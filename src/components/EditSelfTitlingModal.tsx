@@ -9,7 +9,7 @@ function CloseButton({ onClick }: { onClick: () => void }): React.ReactElement {
     <button
       type="button"
       onClick={onClick}
-      className="w-9 h-9 min-w-[36px] min-h-[36px] p-0 flex items-center justify-center rounded-full bg-transparent border-0 text-slate-400 cursor-pointer flex-shrink-0 hover:bg-zinc-200 transition-colors"
+      className="w-9 h-9 min-w-[36px] min-h-[36px] p-0 flex items-center justify-center rounded-full bg-transparent border-0 text-slate-400 cursor-pointer shrink-0 hover:bg-zinc-200 transition-colors"
       aria-label="Close"
     >
       <CloseIcon />
