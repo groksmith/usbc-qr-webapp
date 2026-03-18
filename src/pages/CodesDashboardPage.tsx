@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import {
   Button,
   CopyIconButton,
+  ImagePlaceholderIcon,
   Modal,
   SearchIcon,
   StickerPrintModal,
@@ -815,10 +816,10 @@ export function CodesDashboardPage(): React.ReactElement {
                           <img src={row.imageUrl} alt="" className="w-full h-full object-cover" />
                         ) : (
                           <div
-                            className="w-full h-full flex items-center justify-center text-zinc-400 text-xs"
+                            className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-400"
                             aria-hidden
                           >
-                            —
+                            <ImagePlaceholderIcon />
                           </div>
                         )}
                       </div>
@@ -1071,10 +1072,10 @@ export function CodesDashboardPage(): React.ReactElement {
                               />
                             ) : (
                               <div
-                                className="w-10 h-10 rounded-lg bg-zinc-200 border border-zinc-200 flex items-center justify-center text-zinc-400 text-xs"
+                                className="w-10 h-10 rounded-lg bg-zinc-200 border border-zinc-200 flex items-center justify-center text-zinc-400"
                                 aria-hidden
                               >
-                                —
+                                <ImagePlaceholderIcon />
                               </div>
                             )}
                           </td>

@@ -3,7 +3,7 @@ import type React from "react";
 import { ITEM_CONDITION_LABELS } from "../constants/status";
 import type { CodeSetStatus, ItemConditionStatus, OwnershipChange } from "../types";
 import { formatTableDate } from "../utils/date";
-import { Badge, CopyIconButton, QRCodeDisplay } from "./ui";
+import { Badge, CopyIconButton, ImagePlaceholderIcon, QRCodeDisplay } from "./ui";
 
 export interface SelfTitlingItemCardData {
   itemTag: string;
@@ -90,8 +90,8 @@ export function SelfTitlingItemCard({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-500 text-sm">
-                  No image
+                <div className="w-full h-full flex items-center justify-center bg-zinc-200 text-zinc-400">
+                  <ImagePlaceholderIcon className="w-[29px] h-[29px]" />
                 </div>
               )}
             </div>

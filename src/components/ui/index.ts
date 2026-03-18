@@ -5,6 +5,7 @@ export { CopyButton } from "./CopyButton";
 export { CopyIconButton } from "./CopyIconButton";
 export { DownloadIcon } from "./DownloadIcon";
 export { Input } from "./Input";
+export { ImagePlaceholderIcon } from "./ImagePlaceholderIcon";
 export { Modal } from "./Modal";
 export { QRCodeDisplay } from "./QRCodeDisplay";
 export { SearchIcon } from "./SearchIcon";
