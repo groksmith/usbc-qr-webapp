@@ -25,6 +25,12 @@ export function ValueEmbedDetailPage(): React.ReactElement {
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
 
   useEffect(() => {
+    if (!revealPrivate) return;
+    const timeoutId = window.setTimeout(() => setRevealPrivate(false), 5000);
+    return () => window.clearTimeout(timeoutId);
+  }, [revealPrivate]);
+
+  useEffect(() => {
     if (!id) return;
     getValueEmbedCodeById(id).then((c) => {
       setCode(c ?? null);
@@ -42,9 +48,11 @@ export function ValueEmbedDetailPage(): React.ReactElement {
   };
 
   const handleRevealPrivate = (): void => {
-    if (window.confirm("Reveal private code? It should be kept secure.")) {
-      setRevealPrivate(true);
-    }
+    setRevealPrivate(true);
+  };
+
+  const handleHidePrivate = (): void => {
+    setRevealPrivate(false);
   };
 
   if (loading) {
@@ -62,6 +70,11 @@ export function ValueEmbedDetailPage(): React.ReactElement {
       </div>
     );
   }
+
+  const maskedPrivateCode =
+    code.privateCode && code.privateCode.length > 0
+      ? "●".repeat(code.privateCode.length)
+      : "●●●●●●●●";
 
   return (
     <div className="max-w-[68rem] mx-auto px-4 sm:px-6">
@@ -155,20 +168,37 @@ export function ValueEmbedDetailPage(): React.ReactElement {
             <div className="pt-2 border-t border-zinc-200">
               <p className="text-[14px] font-medium text-zinc-500 m-0 mb-1">Private code</p>
               {revealPrivate ? (
-                <div className="flex flex-wrap items-center gap-2">
-                  <code className="text-base font-mono font-normal text-zinc-950 break-all">
-                    {code.privateCode ?? "—"}
-                  </code>
-                  <CopyIconButton text={code.privateCode ?? ""} />
+                <div className="flex items-center gap-6">
+                  <div className="flex flex-wrap items-center gap-2 min-w-0">
+                    <code className="text-base font-mono font-normal text-zinc-950 break-all">
+                      {code.privateCode ?? "—"}
+                    </code>
+                    <CopyIconButton text={code.privateCode ?? ""} />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleHidePrivate}
+                    className="text-sm font-medium text-zinc-950 hover:underline bg-transparent border-0 cursor-pointer p-0 shrink-0"
+                  >
+                    Hide
+                  </button>
                 </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={handleRevealPrivate}
-                  className="text-sm font-medium text-primary hover:underline bg-transparent border-0 cursor-pointer p-0"
-                >
-                  Reveal private code
-                </button>
+                <div className="flex items-center gap-6">
+                  <code
+                    className="text-base font-mono font-normal text-zinc-400 select-none"
+                    style={{ letterSpacing: "0.15em" }}
+                  >
+                    {maskedPrivateCode}
+                  </code>
+                  <button
+                    type="button"
+                    onClick={handleRevealPrivate}
+                    className="text-sm font-medium text-zinc-950 hover:underline bg-transparent border-0 cursor-pointer p-0 shrink-0"
+                  >
+                    Reveal
+                  </button>
+                </div>
               )}
             </div>
 

@@ -249,7 +249,7 @@ export function CodesDashboardPage(): React.ReactElement {
               className="h-11 w-full sm:w-[165px] px-4 rounded-card border border-[#dcdcdc] outline-none bg-white text-[#1e1e1e] text-sm font-semibold font-sans inline-flex items-center justify-center gap-[10px] cursor-pointer box-border"
             >
               <img src={csvIcon} alt="" width={18} height={18} className="block shrink-0" />
-              <span>Download csv</span>
+              <span>Download CSV</span>
             </button>
             <div className="h-11 w-full sm:w-[165px] flex">
               <Button onClick={() => setGenerateModalOpen(true)} className="!h-full w-full min-h-0">
@@ -1079,7 +1079,18 @@ export function CodesDashboardPage(): React.ReactElement {
                               </div>
                             )}
                           </td>
-                          <td className={tdClass}>{row.itemTag}</td>
+                          <td className={tdClass}>
+                            <div className="min-w-0">
+                              <div className="font-semibold text-heading truncate">{row.itemTag}</div>
+                              {row.description ? (
+                                <div className="text-xs text-zinc-500 mt-0.5 truncate">
+                                  {row.description}
+                                </div>
+                              ) : (
+                                <div className="text-xs text-zinc-400 mt-0.5">No description</div>
+                              )}
+                            </div>
+                          </td>
                           <td className={`${tdClass} font-mono`}>
                             <span className="inline-flex items-center">
                               {row.publicCode}
