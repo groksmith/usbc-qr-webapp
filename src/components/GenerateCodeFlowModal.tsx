@@ -425,15 +425,18 @@ export function GenerateCodeFlowModal({
                   You&apos;ll customize individual values and expirations in the next step.
                 </p>
               )}
-              <div className="flex justify-end gap-2 sm:gap-3 mt-2 flex-wrap">
+              <div className="flex w-full gap-3 mt-2 sm:justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setStep(0)}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Back
                 </Button>
-                <Button onClick={handleConfigNext} className="w-full sm:w-[120px] h-11">
+                <Button
+                  onClick={handleConfigNext}
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
+                >
                   Next
                 </Button>
               </div>
@@ -596,11 +599,11 @@ export function GenerateCodeFlowModal({
                 placeholder="e.g. alice.uns"
                 error={errors.unsName}
               />
-              <div className="flex justify-end gap-2 sm:gap-3 mt-2 flex-wrap">
+              <div className="flex w-full gap-3 mt-2 sm:justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setStep(0)}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Back
                 </Button>
@@ -608,7 +611,7 @@ export function GenerateCodeFlowModal({
                   onClick={() => {
                     if (validateSelfTitlingConfig()) setStep(2);
                   }}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Next
                 </Button>
@@ -718,11 +721,11 @@ export function GenerateCodeFlowModal({
                 across {parsedQty} codes
               </div>
 
-              <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
+              <div className="flex w-full gap-3 sm:justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setStep(1)}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Back
                 </Button>
@@ -731,7 +734,7 @@ export function GenerateCodeFlowModal({
                     if (validateBulkItems()) setStep(reviewStep);
                   }}
                   disabled={!validateBulkItems()}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Next
                 </Button>
@@ -827,18 +830,18 @@ export function GenerateCodeFlowModal({
                 )}
               </div>
 
-              <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
+              <div className="flex w-full gap-3 sm:justify-end">
                 <Button
                   variant="outline"
                   onClick={() => setStep(isBulk ? 2 : 1)}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Back
                 </Button>
                 <Button
                   onClick={handleCreate}
                   disabled={loading}
-                  className="w-full sm:w-[140px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[140px] h-11"
                 >
                   {loading ? "Creating…" : isBulk ? "Create codes" : "Create code"}
                 </Button>
@@ -884,11 +887,11 @@ export function GenerateCodeFlowModal({
                 )}
               </div>
 
-              <div className="flex justify-end gap-2 sm:gap-3 flex-wrap">
+              <div className="flex w-full gap-3 sm:justify-end">
                 <Button
                   variant="outline"
                   onClick={resetAndClose}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   Done
                 </Button>
@@ -903,7 +906,7 @@ export function GenerateCodeFlowModal({
                     resetAndClose();
                     navigate(href);
                   }}
-                  className="w-full sm:w-[120px] h-11"
+                  className="flex-1 sm:flex-none sm:w-[120px] h-11"
                 >
                   {successList.length === 1 ? "View code" : "View codes"}
                 </Button>

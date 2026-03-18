@@ -261,7 +261,7 @@ export function CodesDashboardPage(): React.ReactElement {
 
         <div className="flex flex-col gap-0">
           {/* Tab bar + per-tab search/filter on the same row */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 mb-3 sm:mb-0">
             <div className="flex gap-0 shrink-0">
               {tabs.map((tab, index) => {
                 const isActive = activeTab === tab.id;
