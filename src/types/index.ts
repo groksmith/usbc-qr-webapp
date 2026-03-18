@@ -7,11 +7,13 @@ export type {
   CodeSetStatus,
   CreateSelfTitlingParams,
   CreateValueEmbedParams,
+  ItemConditionStatus,
   ItemProfilePublic,
   OwnershipChange,
   RedeemParams,
   RedeemResult,
   SelfTitlingCodeSet,
+  StolenReportParams,
   UpdateSelfTitlingParams,
   ValueEmbedCodeSet,
 } from "./codeSet";

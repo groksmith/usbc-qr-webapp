@@ -53,7 +53,7 @@ export function TransferTitleModal({
     <Modal open={open} onClose={handleClose} title="Transfer title">
       <div className="flex flex-col gap-5 w-full min-w-0 sm:min-w-[320px]">
         <div className="p-3 px-4 bg-slate-50 rounded-card text-sm">
-          <p className="m-0 mb-1.5 text-muted">
+          <p className="m-0 mb-1.5 text-muted" style={{ fontSize: '12px' }}>
             <strong>Item tag</strong>
           </p>
           <p className="m-0 text-zinc-950">{itemTag}</p>

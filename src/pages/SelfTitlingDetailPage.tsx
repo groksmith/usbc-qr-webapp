@@ -59,6 +59,8 @@ export function SelfTitlingDetailPage(): React.ReactElement {
           description: code.description,
           imageUrl: code.imageUrl,
           createdAt: code.createdAt,
+          itemConditionStatus: code.itemConditionStatus,
+          rewardOffer: code.rewardOffer,
         }}
         showBackLink
         onBack={() => navigate(ROUTES.CODES)}

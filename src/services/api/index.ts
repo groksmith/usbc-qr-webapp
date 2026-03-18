@@ -13,6 +13,7 @@ export {
   getValueEmbedCodes,
   getValueEmbedWalletItems,
   redeem,
+  submitStolenReport,
   transferSelfTitling,
   updateSelfTitlingCode,
   updateValueEmbedCode,

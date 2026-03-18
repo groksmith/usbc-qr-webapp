@@ -114,7 +114,7 @@ export function EditValueEmbedModal({
           <CloseButton onClick={handleClose} />
         </div>
 
-        <p className="m-0 mb-1 text-sm text-muted">
+        <p className="m-0 mb-1 text-muted" style={{ fontSize: '12px' }}>
           Update the value amount and expiration for this code.
         </p>
         <p className="m-0 mb-6 text-sm font-medium text-zinc-950">

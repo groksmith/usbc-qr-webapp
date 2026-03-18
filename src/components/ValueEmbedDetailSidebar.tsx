@@ -110,7 +110,7 @@ export function ValueEmbedDetailSidebar({
           {!loading && !code && <p className="text-muted">Code not found.</p>}
           {!loading && code && (
             <>
-              <p className="m-0 mb-1 text-sm text-muted">
+              <p className="m-0 mb-1 text-muted" style={{ fontSize: '12px' }}>
                 <strong>Description tag:</strong> {code.label}
               </p>
               <p className="m-0">

@@ -38,6 +38,52 @@
   ::file-selector-button {
     border-color: var(--color-gray-200, currentcolor);
   }
+
+  body {
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+    background: linear-gradient(to bottom left, #a1c4da, #c6dfe6);
+    background-attachment: fixed;
+  }
+
+  /* Ensure Inter is used for all UI text (variable font supports 100–900) */
+  button,
+  input,
+  select,
+  textarea,
+  a,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6,
+  p,
+  span,
+  label {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+
+  h1 {
+    font-size: 30px;
+    font-weight: 700;
+    color: #101010;
+    margin: 0 0 0.5em;
+  }
+
+  h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: #101010;
+    margin: 0 0 0.5em;
+  }
+
+  p {
+    color: #3f3f46;
+    margin: 0 0 0.5em;
+  }
 }
 
 /**
@@ -45,54 +91,6 @@
  * Design tokens live in @theme above. Below are global base styles that cannot
  * be expressed as Tailwind utilities.
  */
-
-body {
-  margin: 0;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  min-height: 100vh;
-  background: linear-gradient(to bottom left, #a1c4da, #c6dfe6);
-  background-attachment: fixed;
-}
-
-/* Ensure Inter is used for all UI text (variable font supports 100–900) */
-button,
-input,
-select,
-textarea,
-a,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-p,
-span,
-label {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-h1 {
-  font-size: 30px;
-  font-weight: 700;
-  color: #101010;
-  margin: 0 0 0.5em;
-}
-
-h2 {
-  font-size: 24px;
-  font-weight: 700;
-  color: #101010;
-  margin: 0 0 0.5em;
-}
-
-p {
-  font-size: 18px;
-  font-weight: 400;
-  color: #3f3f46;
-  margin: 0 0 0.5em;
-}
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New", monospace;

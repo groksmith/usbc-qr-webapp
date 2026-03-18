@@ -102,7 +102,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
             </div>
 
             <div>
-              <p className="text-xs font-semibold text-zinc-500 uppercase tracking-wider mb-1">
+              <p className="text-sm font-semibold text-zinc-500 uppercase tracking-wider mb-1">
                 Value Embed
               </p>
               <div className="flex items-center gap-3">
@@ -113,7 +113,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
 
             <div className="flex flex-wrap items-start gap-9">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Public code</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Public code</p>
                 <div className="flex items-center gap-2">
                   <code className="text-base font-mono font-normal text-zinc-950 whitespace-nowrap break-all">
                     {code.publicCode}
@@ -122,13 +122,13 @@ export function ValueEmbedDetailPage(): React.ReactElement {
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Value</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Value</p>
                 <p className="text-base font-normal text-zinc-950 m-0">
                   {code.value} {code.fundingSourceId}
                 </p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Created at</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Created at</p>
                 <p className="text-base font-normal text-zinc-950 m-0">
                   {formatTableDate(code.createdAt)}
                 </p>
@@ -137,14 +137,14 @@ export function ValueEmbedDetailPage(): React.ReactElement {
 
             <div className="flex flex-wrap items-start gap-9">
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Value</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Value</p>
                 <p className="text-base font-normal text-zinc-950 m-0">
                   {code.balance} {code.fundingSourceId}
                 </p>
               </div>
               {code.expiration && (
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-zinc-500 m-0">Expiration</p>
+                  <p className="text-[14px] font-medium text-zinc-500 m-0">Expiration</p>
                   <p className="text-base font-normal text-zinc-950 m-0">
                     {formatTableDate(code.expiration)}
                   </p>
@@ -153,7 +153,7 @@ export function ValueEmbedDetailPage(): React.ReactElement {
             </div>
 
             <div className="pt-2 border-t border-zinc-200">
-              <p className="text-sm font-medium text-zinc-500 m-0 mb-1">Private code</p>
+              <p className="text-[14px] font-medium text-zinc-500 m-0 mb-1">Private code</p>
               {revealPrivate ? (
                 <div className="flex flex-wrap items-center gap-2">
                   <code className="text-base font-mono font-normal text-zinc-950 break-all">

@@ -94,10 +94,10 @@ export function SelfTitlingDetailSidebar({
           {!loading && !code && <p className="text-muted">Code not found.</p>}
           {!loading && code && (
             <>
-              <p className="m-0 mb-1 text-sm text-muted">
+              <p className="m-0 mb-1 text-muted" style={{ fontSize: '12px' }}>
                 <strong>Item tag:</strong> {code.itemTag}
               </p>
-              <p className="m-0 mb-1 text-sm text-muted">
+              <p className="m-0 mb-1 text-muted" style={{ fontSize: '12px' }}>
                 <strong>UNS name:</strong> {code.unsName}
               </p>
               <p className="m-0">

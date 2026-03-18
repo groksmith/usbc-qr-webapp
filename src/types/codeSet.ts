@@ -4,6 +4,17 @@
 
 export type CodeSetStatus = "active" | "redeemed" | "expired" | "cancelled" | "pending_transfer";
 
+/** Owner-set condition status for a self-titled item. */
+export type ItemConditionStatus = "normal" | "lost" | "stolen";
+
+export interface StolenReportParams {
+  publicCode: string;
+  name: string;
+  email: string;
+  whereWasSeen: string;
+  message: string;
+}
+
 export interface CodeSetBase {
   id: string;
   publicCode: string;
@@ -45,6 +56,10 @@ export interface SelfTitlingCodeSet extends CodeSetBase {
   ownershipHistory?: OwnershipChange[];
   ownershipTokenId?: string;
   ownershipStatus?: "owned" | "transferred" | "pending_transfer";
+  /** Owner-reported condition of the item. Defaults to "normal". */
+  itemConditionStatus?: ItemConditionStatus;
+  /** Optional reward description for lost/stolen items. */
+  rewardOffer?: string;
 }
 
 export type CodeSet = ValueEmbedCodeSet | SelfTitlingCodeSet;
@@ -92,6 +107,10 @@ export interface ItemProfilePublic {
   status: CodeSetStatus;
   /** Created at date (ISO string). */
   createdAt?: string;
+  /** Owner-reported condition of the item. */
+  itemConditionStatus?: ItemConditionStatus;
+  /** Optional reward description for lost/stolen items. */
+  rewardOffer?: string;
 }
 
 export interface BulkValueEmbedItem {
@@ -126,4 +145,8 @@ export interface UpdateSelfTitlingParams {
   imageUrl?: string | null;
   /** Optional description for the item. */
   description?: string | null;
+  /** Owner-reported condition status; pass null to reset to "normal". */
+  itemConditionStatus?: ItemConditionStatus | null;
+  /** Optional reward description; pass null to clear. */
+  rewardOffer?: string | null;
 }

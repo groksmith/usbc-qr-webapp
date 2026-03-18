@@ -1,7 +1,8 @@
 import type React from "react";
 import { useEffect, useState } from "react";
+import { ITEM_CONDITION_LABELS } from "../constants/status";
 import { updateSelfTitlingCode } from "../services/api";
-import type { SelfTitlingCodeSet } from "../types";
+import type { ItemConditionStatus, SelfTitlingCodeSet } from "../types";
 import { validateImageFile } from "../utils/validation";
 import { Button, CloseIcon, Input, Textarea } from "./ui";
 
@@ -35,6 +36,8 @@ export function EditSelfTitlingModal({
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [imageError, setImageError] = useState<string | undefined>(undefined);
   const [description, setDescription] = useState("");
+  const [itemConditionStatus, setItemConditionStatus] = useState<ItemConditionStatus>("normal");
+  const [rewardOffer, setRewardOffer] = useState("");
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
 
@@ -44,6 +47,8 @@ export function EditSelfTitlingModal({
       setImageUrl(code.imageUrl ?? null);
       setImageError(undefined);
       setDescription(code.description ?? "");
+      setItemConditionStatus(code.itemConditionStatus ?? "normal");
+      setRewardOffer(code.rewardOffer ?? "");
       setErrors({});
     }
   }, [open, code]);
@@ -67,6 +72,8 @@ export function EditSelfTitlingModal({
         itemTag: itemTagTrimmed,
         imageUrl: imageUrl ?? null,
         description: description.trim() || null,
+        itemConditionStatus,
+        rewardOffer: rewardOffer.trim() || null,
       });
       onSuccess?.();
       handleClose();
@@ -192,6 +199,44 @@ export function EditSelfTitlingModal({
             placeholder="e.g. Limited edition conference badge 2024"
             style={{ border: "1px solid #E0E0E0" }}
           />
+
+          <div className="mb-4">
+            <label className="block text-[14px] font-medium text-zinc-950 mb-1.5">
+              Item status
+            </label>
+            <div className="flex gap-2">
+              {(["normal", "lost", "stolen"] as ItemConditionStatus[]).map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setItemConditionStatus(s)}
+                  className={[
+                    "flex-1 h-9 rounded-[8px] text-sm font-medium border transition-colors",
+                    itemConditionStatus === s
+                      ? s === "normal"
+                        ? "bg-green-500 text-white border-green-500"
+                        : s === "lost"
+                          ? "bg-amber-400 text-white border-amber-400"
+                          : "bg-red-500 text-white border-red-500"
+                      : "bg-white text-zinc-600 border-zinc-200 hover:border-zinc-400",
+                  ].join(" ")}
+                >
+                  {ITEM_CONDITION_LABELS[s]}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {(itemConditionStatus === "lost" || itemConditionStatus === "stolen") && (
+            <Input
+              label="Reward offer"
+              optional
+              value={rewardOffer}
+              onChange={(e) => setRewardOffer(e.target.value)}
+              placeholder="e.g. $50 reward for safe return"
+              style={{ border: "1px solid #E0E0E0" }}
+            />
+          )}
 
           <div className="flex flex-wrap gap-3 mt-6 justify-end">
             <Button

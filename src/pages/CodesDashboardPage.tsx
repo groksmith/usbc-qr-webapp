@@ -7,12 +7,11 @@ import {
   Modal,
   SearchIcon,
   StickerPrintModal,
-  Tabs,
 } from "../components/ui";
 import type { ValueEmbedCodePrintData } from "../components/ui/StickerPrintModal";
-import { STATUS_COLORS, STATUS_LABELS } from "../constants/status";
+import { ITEM_CONDITION_COLORS, ITEM_CONDITION_LABELS, STATUS_COLORS, STATUS_LABELS } from "../constants/status";
 import { cancelValueEmbedCode, getSelfTitlingCodes, getValueEmbedCodes } from "../services/api";
-import type { CodeSetStatus, SelfTitlingCodeSet, ValueEmbedCodeSet } from "../types";
+import type { CodeSetStatus, ItemConditionStatus, SelfTitlingCodeSet, ValueEmbedCodeSet } from "../types";
 import { downloadSelfTitlingCsv, downloadValueEmbedCsv } from "../utils/csvExport";
 import { formatTableDate } from "../utils/date";
 
@@ -52,9 +51,13 @@ export function CodesDashboardPage(): React.ReactElement {
   const [activeTab, setActiveTab] = useState<DashboardTab>("value-embed");
   const [valueEmbedList, setValueEmbedList] = useState<ValueEmbedCodeSet[]>([]);
   const [selfTitlingList, setSelfTitlingList] = useState<SelfTitlingCodeSet[]>([]);
-  const [statusFilter, setStatusFilter] = useState<CodeSetStatus | "">("");
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
+  // Per-tab search state
+  const [veSearchInput, setVeSearchInput] = useState("");
+  const [veSearch, setVeSearch] = useState("");
+  const [veStatusFilter, setVeStatusFilter] = useState<CodeSetStatus | "">("");
+  const [stSearchInput, setStSearchInput] = useState("");
+  const [stSearch, setStSearch] = useState("");
+  const [stConditionFilter, setStConditionFilter] = useState<ItemConditionStatus | "">("");
   const [loading, setLoading] = useState(true);
   const [stickerModalOpen, setStickerModalOpen] = useState(false);
   const [stickerValueEmbedCode, setStickerValueEmbedCode] =
@@ -96,8 +99,11 @@ export function CodesDashboardPage(): React.ReactElement {
 
   useEffect(() => {
     setValueEmbedPage(1);
+  }, [veStatusFilter, veSearch]);
+
+  useEffect(() => {
     setSelfTitlingPage(1);
-  }, []);
+  }, [stSearch, stConditionFilter]);
 
   useEffect(() => {
     if (!valueEmbedMenuRowId) return;
@@ -128,8 +134,8 @@ export function CodesDashboardPage(): React.ReactElement {
     let cancelled = false;
     setLoading(true);
     void Promise.all([
-      getValueEmbedCodes({ status: statusFilter || undefined, search: search || undefined }),
-      getSelfTitlingCodes({ status: statusFilter || undefined, search: search || undefined }),
+      getValueEmbedCodes({ status: veStatusFilter || undefined, search: veSearch || undefined }),
+      getSelfTitlingCodes({ search: stSearch || undefined }),
     ]).then(([ve, st]) => {
       if (!cancelled) {
         setValueEmbedList(ve);
@@ -140,7 +146,7 @@ export function CodesDashboardPage(): React.ReactElement {
     return () => {
       cancelled = true;
     };
-  }, [statusFilter, search]);
+  }, [veStatusFilter, veSearch, stSearch]);
 
   const sortValueEmbed = (
     list: ValueEmbedCodeSet[],
@@ -182,8 +188,18 @@ export function CodesDashboardPage(): React.ReactElement {
     [selfTitlingList, selfTitlingSort, sortSelfTitling]
   );
 
+  const filteredSelfTitlingList = useMemo(
+    () =>
+      stConditionFilter
+        ? sortedSelfTitlingList.filter(
+            (r) => (r.itemConditionStatus ?? "normal") === stConditionFilter
+          )
+        : sortedSelfTitlingList,
+    [sortedSelfTitlingList, stConditionFilter]
+  );
+
   const valueEmbedTotalPages = Math.max(1, Math.ceil(sortedValueEmbedList.length / PAGE_SIZE));
-  const selfTitlingTotalPages = Math.max(1, Math.ceil(sortedSelfTitlingList.length / PAGE_SIZE));
+  const selfTitlingTotalPages = Math.max(1, Math.ceil(filteredSelfTitlingList.length / PAGE_SIZE));
 
   const paginatedValueEmbedList = useMemo(
     () => sortedValueEmbedList.slice((valueEmbedPage - 1) * PAGE_SIZE, valueEmbedPage * PAGE_SIZE),
@@ -191,8 +207,8 @@ export function CodesDashboardPage(): React.ReactElement {
   );
   const paginatedSelfTitlingList = useMemo(
     () =>
-      sortedSelfTitlingList.slice((selfTitlingPage - 1) * PAGE_SIZE, selfTitlingPage * PAGE_SIZE),
-    [sortedSelfTitlingList, selfTitlingPage]
+      filteredSelfTitlingList.slice((selfTitlingPage - 1) * PAGE_SIZE, selfTitlingPage * PAGE_SIZE),
+    [filteredSelfTitlingList, selfTitlingPage]
   );
 
   const handleValueEmbedSort = (column: ValueEmbedSortColumn): void => {
@@ -221,36 +237,6 @@ export function CodesDashboardPage(): React.ReactElement {
         <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4 sm:mb-6">
           <h1 className="m-0 text-xl sm:text-2xl font-semibold">Codes Dashboard</h1>
           <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-            <div className="relative flex-1 sm:flex-initial min-w-0 w-full sm:w-auto sm:min-w-[220px]">
-              <span
-                className="absolute left-3 top-1/2 -translate-y-1/2 scale-[0.8] text-gray-400 pointer-events-none flex items-center justify-center"
-                aria-hidden
-              >
-                <SearchIcon />
-              </span>
-              <input
-                type="search"
-                placeholder="Search by tag or code... (press Enter to search)"
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") setSearch(searchInput.trim());
-                }}
-                className="h-11 w-full min-w-0 py-0 pr-3.5 pl-10 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white"
-              />
-            </div>
-            <select
-              className="select-chevron-right h-11 box-border text-sm rounded-card border border-[#E0E0E0] outline-none bg-white px-3.5 w-full sm:w-[165px] min-w-0"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter((e.target.value || "") as CodeSetStatus | "")}
-            >
-              <option value="">All statuses</option>
-              <option value="active">Active</option>
-              <option value="redeemed">Redeemed</option>
-              <option value="expired">Expired</option>
-              <option value="cancelled">Cancelled</option>
-              <option value="pending_transfer">Pending transfer</option>
-            </select>
             <button
               type="button"
               onClick={() => {
@@ -273,12 +259,92 @@ export function CodesDashboardPage(): React.ReactElement {
         </div>
 
         <div className="flex flex-col gap-0">
-          <Tabs
-            tabs={tabs}
-            activeId={activeTab}
-            onChange={(id) => setActiveTab(id as DashboardTab)}
-            variant="dashboard"
-          />
+          {/* Tab bar + per-tab search/filter on the same row */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+            <div className="flex gap-0 shrink-0">
+              {tabs.map((tab, index) => {
+                const isActive = activeTab === tab.id;
+                const isFirst = index === 0;
+                const isLast = index === tabs.length - 1;
+                const radiusTL = isActive || isFirst ? "rounded-tl-card" : "rounded-tl-none";
+                const radiusTR = isActive || isLast ? "rounded-tr-card" : "rounded-tr-none";
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id as DashboardTab)}
+                    className={`flex items-center justify-center min-w-[140px] sm:min-w-[165px] px-4 sm:px-[30px] h-12 sm:h-[54px] text-sm sm:text-base font-semibold border-0 cursor-pointer rounded-bl-none rounded-br-none shrink-0 ${radiusTL} ${radiusTR} ${
+                      isActive ? "bg-primary text-white" : "bg-transparent text-[#333333]"
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1 sm:flex-initial min-w-0 sm:w-[240px]">
+                <span
+                  className="absolute left-3 top-1/2 -translate-y-1/2 scale-[0.8] text-gray-400 pointer-events-none flex items-center justify-center"
+                  aria-hidden
+                >
+                  <SearchIcon />
+                </span>
+                {activeTab === "value-embed" ? (
+                  <input
+                    key="ve-search"
+                    type="search"
+                    placeholder="Search by description…"
+                    value={veSearchInput}
+                    onChange={(e) => setVeSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") setVeSearch(veSearchInput.trim());
+                    }}
+                    className="h-9 w-full min-w-0 py-0 pr-3.5 pl-9 box-border text-sm rounded-[10px] border border-[#E0E0E0] outline-none bg-white"
+                  />
+                ) : (
+                  <input
+                    key="st-search"
+                    type="search"
+                    placeholder="Search by item name…"
+                    value={stSearchInput}
+                    onChange={(e) => setStSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") setStSearch(stSearchInput.trim());
+                    }}
+                    className="h-9 w-full min-w-0 py-0 pr-3.5 pl-9 box-border text-sm rounded-[10px] border border-[#E0E0E0] outline-none bg-white"
+                  />
+                )}
+              </div>
+              {activeTab === "value-embed" ? (
+                <select
+                  className="select-chevron-right h-9 box-border text-sm rounded-[10px] border border-[#E0E0E0] outline-none bg-white shrink-0 w-[150px]"
+                  value={veStatusFilter}
+                  onChange={(e) => setVeStatusFilter((e.target.value || "") as CodeSetStatus | "")}
+                >
+                  <option value="">All statuses</option>
+                  <option value="active">Active</option>
+                  <option value="redeemed">Redeemed</option>
+                  <option value="expired">Expired</option>
+                  <option value="cancelled">Cancelled</option>
+                  <option value="pending_transfer">Pending transfer</option>
+                </select>
+              ) : (
+                <select
+                  className="select-chevron-right h-9 box-border text-sm rounded-[10px] border border-[#E0E0E0] outline-none bg-white shrink-0 w-[150px]"
+                  value={stConditionFilter}
+                  onChange={(e) =>
+                    setStConditionFilter((e.target.value || "") as ItemConditionStatus | "")
+                  }
+                >
+                  <option value="">All statuses</option>
+                  <option value="normal">Normal</option>
+                  <option value="lost">Lost</option>
+                  <option value="stolen">Stolen</option>
+                </select>
+              )}
+            </div>
+          </div>
           {loading ? (
             <p className="p-6 m-0">Loading...</p>
           ) : activeTab === "value-embed" ? (
@@ -760,10 +826,10 @@ export function CodesDashboardPage(): React.ReactElement {
                         <div className="flex justify-between items-start gap-2 pr-8">
                           <span className="font-semibold text-heading">{row.itemTag}</span>
                           <span
-                            style={{ color: STATUS_COLORS[row.status] }}
+                            style={{ color: ITEM_CONDITION_COLORS[row.itemConditionStatus ?? "normal"] }}
                             className="font-medium shrink-0"
                           >
-                            {STATUS_LABELS[row.status]}
+                            {ITEM_CONDITION_LABELS[row.itemConditionStatus ?? "normal"]}
                           </span>
                         </div>
                         <div className="grid grid-cols-1 gap-1.5 text-muted">
@@ -1022,10 +1088,10 @@ export function CodesDashboardPage(): React.ReactElement {
                           <td className={tdClass}>{row.unsName}</td>
                           <td className={tdClass}>
                             <span
-                              style={{ color: STATUS_COLORS[row.status] }}
+                              style={{ color: ITEM_CONDITION_COLORS[row.itemConditionStatus ?? "normal"] }}
                               className="font-medium"
                             >
-                              {STATUS_LABELS[row.status]}
+                              {ITEM_CONDITION_LABELS[row.itemConditionStatus ?? "normal"]}
                             </span>
                           </td>
                           <td className={tdClass}>{formatTableDate(row.createdAt)}</td>
@@ -1208,8 +1274,8 @@ export function CodesDashboardPage(): React.ReactElement {
                   } else {
                     await cancelValueEmbedCode(valueEmbedConfirm.row.id);
                     void getValueEmbedCodes({
-                      status: statusFilter || undefined,
-                      search: search || undefined,
+                      status: veStatusFilter || undefined,
+                      search: veSearch || undefined,
                     }).then(setValueEmbedList);
                   }
                   setValueEmbedConfirm(null);
@@ -1232,8 +1298,8 @@ export function CodesDashboardPage(): React.ReactElement {
         code={editValueEmbedRow}
         onSuccess={() => {
           void getValueEmbedCodes({
-            status: statusFilter || undefined,
-            search: search || undefined,
+            status: veStatusFilter || undefined,
+            search: veSearch || undefined,
           }).then(setValueEmbedList);
         }}
       />
@@ -1243,8 +1309,7 @@ export function CodesDashboardPage(): React.ReactElement {
         code={editSelfTitlingRow}
         onSuccess={() => {
           void getSelfTitlingCodes({
-            status: statusFilter || undefined,
-            search: search || undefined,
+            search: stSearch || undefined,
           }).then(setSelfTitlingList);
         }}
       />
@@ -1262,14 +1327,8 @@ export function CodesDashboardPage(): React.ReactElement {
           publicCode={transferModal.publicCode}
           onTransferred={() => {
             void Promise.all([
-              getSelfTitlingCodes({
-                status: statusFilter || undefined,
-                search: search || undefined,
-              }),
-              getValueEmbedCodes({
-                status: statusFilter || undefined,
-                search: search || undefined,
-              }),
+              getSelfTitlingCodes({ search: stSearch || undefined }),
+              getValueEmbedCodes({ status: veStatusFilter || undefined, search: veSearch || undefined }),
             ]).then(([st, ve]) => {
               setSelfTitlingList(st);
               setValueEmbedList(ve);

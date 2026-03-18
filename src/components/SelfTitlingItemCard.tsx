@@ -1,6 +1,7 @@
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import type React from "react";
-import type { CodeSetStatus, OwnershipChange } from "../types";
+import { ITEM_CONDITION_LABELS } from "../constants/status";
+import type { CodeSetStatus, ItemConditionStatus, OwnershipChange } from "../types";
 import { formatTableDate } from "../utils/date";
 import { Badge, CopyIconButton, QRCodeDisplay } from "./ui";
 
@@ -16,6 +17,10 @@ export interface SelfTitlingItemCardData {
   ownershipHistory?: OwnershipChange[];
   imageUrl?: string;
   createdAt?: string;
+  /** Owner-reported condition status. */
+  itemConditionStatus?: ItemConditionStatus;
+  /** Optional reward description for lost/stolen items. */
+  rewardOffer?: string;
 }
 
 export interface SelfTitlingItemCardProps {
@@ -149,11 +154,64 @@ export function SelfTitlingItemCard({
                   {data.description}
                 </p>
               )}
+              {data.itemConditionStatus != null && data.itemConditionStatus !== "normal" && (
+                <div
+                  className={[
+                    "mt-3 rounded-xl px-4 py-3 flex flex-col gap-1",
+                    data.itemConditionStatus === "lost"
+                      ? "bg-amber-50 border border-amber-200"
+                      : "bg-red-50 border border-red-200",
+                  ].join(" ")}
+                >
+                  <p
+                    className={[
+                      "m-0 text-sm font-semibold",
+                      data.itemConditionStatus === "lost" ? "text-amber-700" : "text-red-700",
+                    ].join(" ")}
+                  >
+                    {data.itemConditionStatus === "lost"
+                      ? "This item has been reported lost"
+                      : "This item has been reported stolen"}
+                  </p>
+                  {data.rewardOffer && (
+                    <p
+                      className={[
+                        "m-0 text-sm",
+                        data.itemConditionStatus === "lost" ? "text-amber-600" : "text-red-600",
+                      ].join(" ")}
+                    >
+                      Reward: {data.rewardOffer}
+                    </p>
+                  )}
+                  {data.itemConditionStatus === "stolen" && (
+                    <p className="m-0 text-sm text-red-600">
+                      If you have seen this item, please use the contact form below.
+                    </p>
+                  )}
+                </div>
+              )}
             </div>
 
             <div className="flex flex-wrap items-start gap-9">
+              {data.itemConditionStatus != null && (
+                <div className="space-y-1">
+                  <p className="text-[14px] font-medium text-zinc-500 m-0">Item status</p>
+                  <p
+                    className={[
+                      "text-base font-medium m-0",
+                      data.itemConditionStatus === "normal"
+                        ? "text-green-600"
+                        : data.itemConditionStatus === "lost"
+                          ? "text-amber-600"
+                          : "text-red-600",
+                    ].join(" ")}
+                  >
+                    {ITEM_CONDITION_LABELS[data.itemConditionStatus]}
+                  </p>
+                </div>
+              )}
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Public code</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Public code</p>
                 <div className="flex items-center gap-2">
                   <code className="text-base font-mono font-normal text-zinc-950 whitespace-nowrap">
                     {data.publicCode}
@@ -162,11 +220,11 @@ export function SelfTitlingItemCard({
                 </div>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Owned by</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Owned by</p>
                 <p className="text-base font-normal text-zinc-950 m-0">{data.ownerDisplay}</p>
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-medium text-zinc-500 m-0">Created at</p>
+                <p className="text-[14px] font-medium text-zinc-500 m-0">Created at</p>
                 <p className="text-base font-normal text-zinc-950 m-0">
                   {formatTableDate(data.createdAt)}
                 </p>
@@ -176,7 +234,7 @@ export function SelfTitlingItemCard({
             <div className="pt-4 border-t border-zinc-200">
               <p className="text-sm font-medium text-zinc-500 m-0 mb-3">Scan to view</p>
               <QRCodeDisplay value={data.qrUrl} size={180} linkToUrl alt="Item profile QR code" />
-              <p className="text-xs text-muted mt-2">{qrCaption}</p>
+              <p className="text-[14px] text-muted mt-2">{qrCaption}</p>
             </div>
 
             {showCTAs && (

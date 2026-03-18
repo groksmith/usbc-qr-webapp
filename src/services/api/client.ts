@@ -11,6 +11,7 @@ import type {
   RedeemParams,
   RedeemResult,
   SelfTitlingCodeSet,
+  StolenReportParams,
   UpdateSelfTitlingParams,
   ValueEmbedCodeSet,
 } from "../../types";
@@ -196,6 +197,8 @@ export async function updateSelfTitlingCode(
     ...(params.itemTag !== undefined && { itemTag: params.itemTag, label: params.itemTag }),
     ...(params.imageUrl !== undefined && { imageUrl: params.imageUrl ?? undefined }),
     description: params.description ?? undefined,
+    itemConditionStatus: params.itemConditionStatus ?? current.itemConditionStatus ?? "normal",
+    rewardOffer: params.rewardOffer ?? undefined,
     updatedAt: new Date().toISOString(),
   };
   selfTitlingStore[index] = updated;
@@ -276,7 +279,15 @@ export async function getItemProfile(publicCode: string): Promise<ItemProfilePub
     imageUrl: st.imageUrl,
     status: st.status,
     createdAt: st.createdAt,
+    itemConditionStatus: st.itemConditionStatus,
+    rewardOffer: st.rewardOffer,
   };
+}
+
+export async function submitStolenReport(params: StolenReportParams): Promise<void> {
+  await delay();
+  // Mock: in production this would POST to a backend endpoint
+  console.log("Stolen report submitted:", params);
 }
 
 export async function getValueEmbedWalletItems(): Promise<ValueEmbedCodeSet[]> {

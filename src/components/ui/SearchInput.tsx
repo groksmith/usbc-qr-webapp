@@ -26,7 +26,7 @@ export function SearchInput({
             {label}
             {required && <span className="text-negative ml-0.5">*</span>}
           </label>
-          {hint && !error && <p className="m-0 mb-1 text-xs text-muted font-normal">{hint}</p>}
+          {hint && !error && <p className="m-0 mb-1 text-muted font-normal" style={{ fontSize: '12px' }}>{hint}</p>}
         </>
       )}
       <div className="relative flex items-center w-full">
